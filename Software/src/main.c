@@ -1,74 +1,119 @@
+/******************** (C) COPYRIGHT 2009 STMicroelectronics ********************
+* File Name          : main.c
+* Author             : MCD Application Team
+* Version            : V3.1.0
+* Date               : 10/30/2009
+* Description        : Virtual Com Port Demo main file
+********************************************************************************
+* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+* WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME.
+* AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY DIRECT,
+* INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE
+* CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING
+* INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+*******************************************************************************/
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
+#include "usbd_cdc_core.h"
+#include "usbd_cdc_vcp.h"
+#include "usbd_usr.h"
+#include "usbd_desc.h"
+#include "Oscilloscope.h"
 
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+
+__ALIGN_BEGIN USB_OTG_CORE_HANDLE    USB_OTG_dev __ALIGN_END ;
+
+
+/* Extern variables ----------------------------------------------------------*/
+
+/* extern uint16_t VCP_DataTx(uint8_t* Buf, uint32_t Len); */
+
+/* Private function prototypes -----------------------------------------------*/
+void Delay(__IO uint32_t nTick);
+
+
+/* Private functions ---------------------------------------------------------*/
+
+/*******************************************************************************
+* Function Name  : main.
+* Description    : Main routine.
+* Input          : None.
+* Output         : None.
+* Return         : None.
+*******************************************************************************/
 int main(void)
 {
-  GPIO_InitTypeDef portinit;	//GPIO init struktúra
-  TIM_TimeBaseInitTypeDef timerinit; // Timer init struktúra
-  NVIC_InitTypeDef nvicinit; // NVIC init struktúra
-  EXTI_InitTypeDef extiinit; // EXTI init struktúra
 
-  // Órajelet adunk a GPIOA és GPIOD portoknak
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA|RCC_AHB1Periph_GPIOD, ENABLE);
+  STM32F4_Discovery_LEDInit(LED3);
+  STM32F4_Discovery_LEDInit(LED4);
+  STM32F4_Discovery_LEDInit(LED5);
+  STM32F4_Discovery_LEDInit(LED6);
+  STM32F4_Discovery_PBInit(BUTTON_USER, BUTTON_MODE_EXTI);
 
-  portinit.GPIO_Mode = GPIO_Mode_OUT;
-  portinit.GPIO_OType = GPIO_OType_PP;
-  portinit.GPIO_Pin = GPIO_Pin_12;
-  portinit.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  portinit.GPIO_Speed = GPIO_Speed_2MHz;
-  GPIO_Init(GPIOD, &portinit); // LED pin beállítása
+  USBD_Init(&USB_OTG_dev,
+#ifdef USE_USB_OTG_HS 
+  USB_OTG_HS_CORE_ID,
+#else            
+  USB_OTG_FS_CORE_ID,
+#endif  
+  &USR_desc, 
+  &USBD_CDC_cb,
+  &USR_cb);
 
+//  __IO uint32_t i = 0;
+//  __IO uint8_t z = 0;
 
-  GPIO_StructInit(&portinit);
-  portinit.GPIO_Mode = GPIO_Mode_IN;
-  portinit.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  portinit.GPIO_Pin = GPIO_Pin_0;
-  GPIO_Init(GPIOD, &portinit); // BTN pin beállítása
-
-  // Órajelet adunk a TIM4 idõzítõnek
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-
-  // Beállítjuk az idõzítõ paramétereit
-  TIM_TimeBaseStructInit(&timerinit);
-  timerinit.TIM_CounterMode = TIM_CounterMode_Up; // felfelé számolunk
-  timerinit.TIM_Period = 41999; // eddig számolunk
-  timerinit.TIM_Prescaler = 999; // a busz órajelet ennyivel osztjuk le
-  TIM_TimeBaseInit(TIM4, &timerinit);
-
-  // Emgedélyezzük, hogy a TIM4 újratöltéskor IT-t generáljon
-  TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
-
-  // Órajelet adunk a SYSCFG eszköznek (külsõ interrupthoz kell)
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-
-  // Engedélyezzük, hogy az A port 0-s lába külsõ megszakítást generálhasson
-  SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource0);
-
-  // Beállítjuk, hogy mire keletkezzen megszakítás
-  extiinit.EXTI_Line = EXTI_Line0; // 0-s vonal
-  extiinit.EXTI_LineCmd = ENABLE; // engedélyez
-  extiinit.EXTI_Mode = EXTI_Mode_Interrupt; // interrupt legyen
-  extiinit.EXTI_Trigger = EXTI_Trigger_Rising; // felfutó élre
-  EXTI_Init(&extiinit);
-
-  // Beállítjuk a prioritás modelt (1 bit csoport, 3 bit al prioritás)
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-
-  // TIM4 timer IT beállítása
-  nvicinit.NVIC_IRQChannel = TIM4_IRQn; // TIM4 IT
-  nvicinit. NVIC_IRQChannelCmd = ENABLE; // engedélyez
-  nvicinit.NVIC_IRQChannelPreemptionPriority = 0; // legmagasabb csoport prioritás
-  nvicinit.NVIC_IRQChannelSubPriority = 0; // csoporton belül a legmagasabb prioritás
-  NVIC_Init(&nvicinit);
-
-  // EXTI0 IT beállítása
-  nvicinit.NVIC_IRQChannel = EXTI0_IRQn; //EXTI0 vonal
-  nvicinit. NVIC_IRQChannelCmd = ENABLE; // engedélyez
-  nvicinit.NVIC_IRQChannelPreemptionPriority = 1; // alacsony csoport prioritás
-  nvicinit.NVIC_IRQChannelSubPriority = 0; // csoporton belül a legmagasabb prioritás
-  NVIC_Init(&nvicinit);
-
-  // TIM4 elindítása
-  TIM_Cmd(TIM4, ENABLE);
-
-  while (1){}
+  Oscilloscope();
+  return 0;
 }
+
+
+void Delay(__IO uint32_t nTick)
+{
+  for(; nTick != 0; nTick--);
+}
+
+/*
+ * Callback used by stm32f4_discovery_audio_codec.c.
+ * Refer to stm32f4_discovery_audio_codec.h for more info.
+ */
+void EVAL_AUDIO_TransferComplete_CallBack(uint32_t pBuffer, uint32_t Size){
+  /* TODO, implement your code here */
+  return;
+}
+
+/*
+ * Callback used by stm324xg_eval_audio_codec.c.
+ * Refer to stm324xg_eval_audio_codec.h for more info.
+ */
+uint16_t EVAL_AUDIO_GetSampleCallBack(void){
+  /* TODO, implement your code here */
+  return -1;
+}
+
+#ifdef USE_FULL_ASSERT
+/*******************************************************************************
+* Function Name  : assert_failed
+* Description    : Reports the name of the source file and the source line number
+*                  where the assert_param error has occurred.
+* Input          : - file: pointer to the source file name
+*                  - line: assert_param error line source number
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void assert_failed(uint8_t* file, uint32_t line)
+{
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+
+  /* Infinite loop */
+  while (1)
+  {}
+}
+#endif
+
+/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/

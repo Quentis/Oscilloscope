@@ -1,5 +1,60 @@
-#include "stm32f4xx_it.h"
+/**
+*****************************************************************************
+**
+**  File        : stm32f4xx_it.c
+**
+**  Abstract    : Main Interrupt Service Routines.
+**                This file provides template for all exceptions handler and
+**                peripherals interrupt service routine.
+**
+**  Environment : Atollic TrueSTUDIO(R)
+**                STMicroelectronics STM32F4xx Standard Peripherals Library
+**
+**  Distribution: The file is distributed “as is,” without any warranty
+**                of any kind.
+**
+**  (c)Copyright Atollic AB.
+**  You may use this file as-is or modify it according to the needs of your
+**  project. Distribution of this file (unmodified or modified) is not
+**  permitted. Atollic AB permit registered Atollic TrueSTUDIO(R) users the
+**  rights to distribute the assembled, compiled & linked contents of this
+**  file as part of an application binary file, provided that it is built
+**  using the Atollic TrueSTUDIO(R) toolchain.
+**
+**
+*****************************************************************************
+*/
 
+/* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx_it.h"
+#include "usb_core.h"
+#include "usbd_core.h"
+#include "usbd_cdc_core.h"
+#include "stm32f4xx_conf.h"
+#include "stm32f4_discovery.h"
+#include "MonitorInterface.h"
+
+extern void MTR_SysTimeHandler(void);
+
+
+
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+
+extern USB_OTG_CORE_HANDLE           USB_OTG_dev;
+extern uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
+//extern void DISCOVERY_EXTI_IRQHandler(void);    /*It was only an example*/
+
+#ifdef USB_OTG_HS_DEDICATED_EP1_ENABLED
+extern uint32_t USBD_OTG_EP1IN_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
+extern uint32_t USBD_OTG_EP1OUT_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
+#endif
+
+
+/* Private functions ---------------------------------------------------------*/
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Exceptions Handlers                         */
@@ -100,7 +155,81 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
+  MTR_SysTimeHandler();
+  /*SCB->ICSR &= ~SCB_ICSR_PENDSTCLR_Msk; //Not needed because it is the only interrupt source on this channel */
 }
+
+/**
+  * @brief  This function handles OTG_FS_WKUP_IRQ Handler.
+  * @param  None
+  * @retval None
+  */
+#ifdef USE_USB_OTG_FS
+void OTG_FS_WKUP_IRQHandler(void)
+{
+  if(USB_OTG_dev.cfg.low_power)
+  {
+    *(uint32_t *)(0xE000ED10) &= 0xFFFFFFF9 ;
+    SystemInit();
+    USB_OTG_UngateClock(&USB_OTG_dev);
+  }
+  EXTI_ClearITPendingBit(EXTI_Line18);
+}
+#endif
+
+/**
+  * @brief  This function handles OTG_HS_WKUP_IRQ Handler.
+  * @param  None
+  * @retval None
+  */
+#ifdef USE_USB_OTG_HS
+void OTG_HS_WKUP_IRQHandler(void)
+{
+  if(USB_OTG_dev.cfg.low_power)
+  {
+    *(uint32_t *)(0xE000ED10) &= 0xFFFFFFF9 ;
+    SystemInit();
+    USB_OTG_UngateClock(&USB_OTG_dev);
+  }
+  EXTI_ClearITPendingBit(EXTI_Line20);
+}
+#endif
+
+/**
+  * @brief  This function handles OTG_xx_IRQ Handler.
+  * @param  None
+  * @retval None
+  */
+#ifdef USE_USB_OTG_HS
+void OTG_HS_IRQHandler(void)
+#else
+void OTG_FS_IRQHandler(void)
+#endif
+{
+  USBD_OTG_ISR_Handler (&USB_OTG_dev);
+}
+
+#ifdef USB_OTG_HS_DEDICATED_EP1_ENABLED
+/**
+  * @brief  This function handles EP1_IN Handler.
+  * @param  None
+  * @retval None
+  */
+void OTG_HS_EP1_IN_IRQHandler(void)
+{
+  USBD_OTG_EP1IN_ISR_Handler (&USB_OTG_dev);
+}
+
+/**
+  * @brief  This function handles EP1_OUT Handler.
+  * @param  None
+  * @retval None
+  */
+void OTG_HS_EP1_OUT_IRQHandler(void)
+{
+  USBD_OTG_EP1OUT_ISR_Handler (&USB_OTG_dev);
+}
+#endif
 
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */
@@ -108,6 +237,9 @@ void SysTick_Handler(void)
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f4xx.s).                                               */
 /******************************************************************************/
+
+
+
 
 /**
   * @brief  This function handles PPP interrupt request.
@@ -118,31 +250,16 @@ void SysTick_Handler(void)
 {
 }*/
 
-void TIM4_IRQHandler(void)
-{
-	// lekérdezzük, hogy mi okozta a megszakítást
-	if ( TIM_GetITStatus(TIM4, TIM_IT_Update))
-	{
-		// invertáljuk a ledet
-		GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
-		// töröljük a megszakítás jelzõ flaget
-		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
-	}
-}
-FunctionalState EnableTimer = ENABLE;
+/**
+  * @brief  This function handles EXTI0_IRQ Handler.
+  * @param  None
+  * @retval None
+  */
 void EXTI0_IRQHandler(void)
 {
-	// lekérdezzük, hogy mi okozta a megszakítást
-	if ( EXTI_GetITStatus(EXTI_Line0))
-	{
-		// negáljuk az állapotváltozónkat
-		EnableTimer=!EnableTimer;
-		// az állapotváltozónak megfelelõen engedélyezzük/tiltjuk a timert
-		TIM_Cmd(TIM4, EnableTimer);
-		// töröljük a megszakítást jelzõ flaget
-		EXTI_ClearITPendingBit(EXTI_Line0);
-	}
+  MTR_Event_Set(MTR_EVENT_NAME_DISCOVERY_USER_BTN_PUSH);
+  /* Clear the EXTI line pending bit */
+  EXTI_ClearITPendingBit(USER_BUTTON_EXTI_LINE);
 
 }
-
 

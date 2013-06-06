@@ -66,11 +66,11 @@
   *-----------------------------------------------------------------------------
   *        PLL_Q                                  | 7
   *-----------------------------------------------------------------------------
-  *        PLLI2S_N                               | NA
+  *        PLLI2S_N                               | 192
   *-----------------------------------------------------------------------------
-  *        PLLI2S_R                               | NA
+  *        PLLI2S_R                               | 5
   *-----------------------------------------------------------------------------
-  *        I2S input clock                        | NA
+  *        I2S input clock(Hz)                    | 38400000
   *-----------------------------------------------------------------------------
   *        VDD(V)                                 | 3.3
   *-----------------------------------------------------------------------------
@@ -153,6 +153,11 @@
 /* USB OTG FS, SDIO and RNG Clock =  PLL_VCO / PLLQ */
 #define PLL_Q      7
 
+/* PLLI2S_VCO = (HSE_VALUE Or HSI_VALUE / PLL_M) * PLLI2S_N
+   I2SCLK = PLLI2S_VCO / PLLI2S_R */
+#define PLLI2S_N   192
+#define PLLI2S_R   5
+
 /**
   * @}
   */
@@ -203,11 +208,6 @@ static void SetSysClock(void);
   */
 void SystemInit(void)
 {
-  /* FPU settings ------------------------------------------------------------*/
-  #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
-	SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
-  #endif
-
   /* Reset the RCC clock configuration to the default reset state ------------*/
   /* Set HSION bit */
   RCC->CR |= (uint32_t)0x00000001;
@@ -405,6 +405,22 @@ static void SetSysClock(void)
          configuration. User can add here some code to deal with this error */
   }
 
+/******************************************************************************/
+/*                        I2S clock configuration                             */
+/******************************************************************************/
+  /* PLLI2S clock used as I2S clock source */
+  RCC->CFGR &= ~RCC_CFGR_I2SSRC;
+
+  /* Configure PLLI2S */
+  RCC->PLLI2SCFGR = (PLLI2S_N << 6) | (PLLI2S_R << 28);
+
+  /* Enable PLLI2S */
+  RCC->CR |= ((uint32_t)RCC_CR_PLLI2SON);
+
+  /* Wait till PLLI2S is ready */
+  while((RCC->CR & RCC_CR_PLLI2SRDY) == 0)
+  {
+  }
 }
 
 /**
