@@ -1,6 +1,8 @@
 #ifndef OSCILLOSCOPECOMMONTYPES_H_
 #define OSCILLOSCOPECOMMONTYPES_H_
 
+/* OscilloscopeMenu.h and OscilloscopeSettings.h includes this file in order to share the same events and
+ * to avoid cross-include in the same time (rule: higher modules can include lower modules)*/
 typedef enum {
   OSC_Menu_Event_Menu_Open,
   OSC_Menu_Event_MenuElement_Next,
