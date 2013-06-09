@@ -2,10 +2,15 @@
 #define OSCILLOSCOPEDSP_H_
 
 #include "OscilloscopeLCD.h"
+#include "OscilloscopeConfiguration.h"
 
+#define OSC_DSP_MAX_DATA_RANGE                                       256
+#define OSC_DSP_MAX_DATA_VALUE                                       255
 #define OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE                         40960     /*20kByte*/
 extern uint8_t OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
 extern uint8_t OSC_DSP_Channel_B_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
+
+#define OSC_DSP_SAMPLE_RATE       10000000
 
 typedef enum {
   OSC_DSP_State_Disabled,
@@ -54,9 +59,10 @@ typedef struct {
   OSC_DSP_TriggerSource_Type    triggerSource;
   OSC_DSP_TriggerState_Type     triggerState;
   OSC_DSP_SampleRate_Type       sampleRate;       /*Number of samples per second -> 1Msample/s -> 1000000*/
-} OSC_DSP_StateMachine;
+} OSC_DSP_StateMachine_Type;
 
 void OSC_DSP_Init(void);
 void OSC_DSP_Calculate(void);
+void OSC_DSP_StateMachineUpdate(void);
 
 #endif /* OSCILLOSCOPEDSP_H_ */

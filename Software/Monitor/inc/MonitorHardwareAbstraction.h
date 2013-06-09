@@ -5,6 +5,7 @@
 #include "core_cm4.h"
 
 void MTR_HardwareInit(void);
-
+#define MTR_ENABLE_INTERRUPTS()       do{}while(0)
+#define MTR_DISABLE_INTERRUPTS()      do{}while(0)
 
 #endif /* MONITORHARDWAREABSTRACTION_H_ */

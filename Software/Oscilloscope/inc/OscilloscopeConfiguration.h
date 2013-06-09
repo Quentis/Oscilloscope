@@ -4,6 +4,9 @@
 #include "OscilloscopeSettings.h"
 #include "OscilloscopeMenu.h"
 
+#define OSC_CFG_TRIGGER_LEVEL_LOWER_BOUND           (-7500)
+#define OSC_CFG_TRIGGER_LEVEL_UPPER_BOUND            (7500)
+
 #define OSC_CFG_TRIGGER_SLOPE_RISING                     0
 #define OSC_CFG_TRIGGER_SLOPE_FALLING                    1
 

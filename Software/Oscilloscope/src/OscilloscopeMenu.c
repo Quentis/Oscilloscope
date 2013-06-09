@@ -7,7 +7,7 @@ static OSC_Menu_ElementIndex_Type OSC_Menu_Element_FirstOnScreen = 0;
 
 static OSC_Menu_Err_Type  OSC_Menu_StringBuilder(OSC_Menu_Element_Type menuElement,uint32_t position){
   char strTemp[OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE];
-  const char menuTextFormat[] = "%-14s%7s";
+  const char menuTextFormat[] = "%-13s%8s";
 
   if(position >= OSC_MENU_SCREEN_LINE_COUNT) return OSC_Menu_Err_InvalidLineNumber;
   switch(menuElement.typeInfo){

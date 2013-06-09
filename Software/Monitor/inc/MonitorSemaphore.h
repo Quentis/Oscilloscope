@@ -2,6 +2,7 @@
 #define MONITORSEMAPHORE_H_
 
 #include "MonitorHardwareAbstraction.h"
+#include "MonitorTypes.h"
 
 
 

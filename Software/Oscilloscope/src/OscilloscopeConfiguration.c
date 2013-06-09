@@ -49,14 +49,14 @@
 
 /*============================================ TRIGGER LEVEL ==========================================*/
     OSC_Settings_IntegerContinuous_Type OSC_Settings_TriggerLevel = {
-        31,                   /*value*/
-        0,                    /*lowerBound*/
-        63,                   /*upperBound*/
-        1,                    /*incrementStepSingle*/
-        8,                    /*incrementStepMultiple*/
-        NULL,                 /*callback*/
-        "TriggerLvl",         /*name*/
-        "p"                   /*unitName*/
+        0,                                        /*value*/
+        OSC_CFG_TRIGGER_LEVEL_LOWER_BOUND,        /*lowerBound*/
+        OSC_CFG_TRIGGER_LEVEL_UPPER_BOUND,        /*upperBound*/
+        5,                                        /*incrementStepSingle*/
+        100,                                      /*incrementStepMultiple*/
+        NULL,                                     /*callback*/
+        "TriggerLvl",                             /*name*/
+        "mV"                                      /*unitName*/
     };
 
 /*============================================ TRIGGER SLOPE ==========================================*/
