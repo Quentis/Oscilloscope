@@ -10,7 +10,7 @@
 extern uint8_t OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
 extern uint8_t OSC_DSP_Channel_B_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
 
-#define OSC_DSP_SAMPLE_RATE       10000000
+#define OSC_DSP_SAMPLE_RATE       1000000
 
 typedef enum {
   OSC_DSP_State_Disabled,
@@ -53,7 +53,7 @@ typedef struct {
   OSC_DSP_State_Type            dataAcquisitionState;
   OSC_DSP_State_Type            dataAcquisitionState_Channel_A;
   OSC_DSP_State_Type            dataAcquisitionState_Channel_B;
-  uint32_t                      triggerPosition;  /*It must be the same for the two channel -> index of the data array*/
+  uint32_t                      triggerPosition;  /*It must be the same for the two channel -> number of samples before trigger*/
   uint8_t                       triggerLevel;     /*The trigger level in the unprocessed raw data units*/
   OSC_DSP_TriggerSlope_Type     triggerSlope;
   OSC_DSP_TriggerSource_Type    triggerSource;

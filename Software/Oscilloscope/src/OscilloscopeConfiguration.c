@@ -8,15 +8,15 @@
     OSC_Settings_IntegerContinuous_Type OSC_Settings_TriggerPosition = {
         63,                   /*value*/
         0,                    /*lowerBound*/
-        128,                  /*upperBound*/
+        100,                  /*upperBound*/
         1,                    /*incrementStepSingle*/
-        8,                    /*incrementStepMultiple*/
+        10,                   /*incrementStepMultiple*/
         NULL,                 /*callback*/
         "TriggerPos",         /*name*/
-        "p"                   /*unitName*/
+        "%"                   /*unitName*/
     };
 
-/*======================================== HORIZONTAL RESOLUTION ======================================*/
+/*======================================= HORIZONTAL RESOLUTION =======================================*/
     OSC_Settings_IntegerDiscreteValue_Type OSC_Settings_HorizontalResolution_valueSet[] = {20,40,100,500,1000};
     char* OSC_Settings_HorizontalResolution_nameOfValues[] = {"20us","40us","100us","500us","1ms"};
 
@@ -31,7 +31,8 @@
         "HorizontalRes"                                     /*name*/
     };
 
-/*######################################### HORIIZONTAL MENU ##########################################*/
+/*########################################## HORIIZONTAL MENU #########################################*/
+
     OSC_Menu_Element_Type OSC_Menu_ElementList_HorizontalMenu[] = {
         {OSC_Menu_Element_TypeInfo_IntegerContinuous,(void*)&OSC_Settings_TriggerPosition},
         {OSC_Menu_Element_TypeInfo_IntegerDiscrete,  (void*)&OSC_Settings_HorizontalResolution}
@@ -216,10 +217,26 @@
         "%"                                                     /*unitName*/
     };
 
+/*============================================= SAMPLE RATE ===========================================*/
+    OSC_Settings_IntegerDiscreteValue_Type OSC_Settings_SampleRate_valueSet[] = {500000,1000000};
+	char* OSC_Settings_SampleRate_nameOfValues[] = {"0,5MS/s","1MS/s"};
+
+    OSC_Settings_IntegerDiscrete_Type OSC_Settings_SampleRate = {
+        (OSC_Settings_IntegerDiscreteValue_Type*)
+        OSC_Settings_SampleRate_valueSet,         			/*valueSet*/
+        1,                                                  /*currentIndex*/
+        2,                                                  /*length*/
+        NULL,                                               /*callback*/
+        (char** const)
+        OSC_Settings_SampleRate_nameOfValues,     			/*nameOfValues*/
+        "SampleRate"                                        /*name*/
+    };
+
 /*########################################## HARDWARE MENU ############################################*/
 
     OSC_Menu_Element_Type OSC_Menu_ElementList_HardwareMenu[] = {
-        {OSC_Menu_Element_TypeInfo_IntegerContinuous, (void*)&OSC_Settings_BacklightIntensity}
+        {OSC_Menu_Element_TypeInfo_IntegerContinuous, (void*)&OSC_Settings_BacklightIntensity},
+        {OSC_Menu_Element_TypeInfo_IntegerDiscrete,   (void*)&OSC_Settings_SampleRate}
     };
 
     OSC_Menu_Type OSC_Menu_Hardware = {
