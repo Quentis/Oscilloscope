@@ -53,6 +53,8 @@ typedef struct {
   OSC_DSP_State_Type            dataAcquisitionState;
   OSC_DSP_State_Type            dataAcquisitionState_Channel_A;
   OSC_DSP_State_Type            dataAcquisitionState_Channel_B;
+  uint32_t                      firstDataPosition;
+  uint32_t                      postTriggerMemoryLength;
   uint32_t                      triggerPosition;  /*It must be the same for the two channel -> number of samples before trigger*/
   uint8_t                       triggerLevel;     /*The trigger level in the unprocessed raw data units*/
   OSC_DSP_TriggerSlope_Type     triggerSlope;

@@ -219,16 +219,16 @@
 
 /*============================================= SAMPLE RATE ===========================================*/
     OSC_Settings_IntegerDiscreteValue_Type OSC_Settings_SampleRate_valueSet[] = {500000,1000000};
-	char* OSC_Settings_SampleRate_nameOfValues[] = {"0,5MS/s","1MS/s"};
+    char* OSC_Settings_SampleRate_nameOfValues[] = {"0,5MS/s","1MS/s"};
 
     OSC_Settings_IntegerDiscrete_Type OSC_Settings_SampleRate = {
         (OSC_Settings_IntegerDiscreteValue_Type*)
-        OSC_Settings_SampleRate_valueSet,         			/*valueSet*/
+        OSC_Settings_SampleRate_valueSet,                   /*valueSet*/
         1,                                                  /*currentIndex*/
         2,                                                  /*length*/
         NULL,                                               /*callback*/
         (char** const)
-        OSC_Settings_SampleRate_nameOfValues,     			/*nameOfValues*/
+        OSC_Settings_SampleRate_nameOfValues,               /*nameOfValues*/
         "SampleRate"                                        /*name*/
     };
 

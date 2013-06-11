@@ -7,6 +7,8 @@ OSC_DSP_StateMachine_Type  OSC_DSP_StateMachine = {
     OSC_DSP_State_Disabled,                         /*dataAcquisitionState*/
     OSC_DSP_State_Disabled,                         /*dataAcquisitionState_Channel_A*/
     OSC_DSP_State_Disabled,                         /*dataAcquisitionState_Channel_B*/
+    0,                                              /*firstDataPosition*/
+    0,                                              /*postTriggerMemoryLength*/
     0,                                              /*triggerPosition*/
     127,                                            /*triggerLevel*/
     OSC_DSP_TriggerSlope_RisingEdge,                /*triggerSlope*/
@@ -28,8 +30,10 @@ void OSC_DSP_StateMachineUpdate(void){
   OSC_DSP_StateMachine.dataAcquisitionState_Channel_A = OSC_DSP_State_Disabled;
   OSC_DSP_StateMachine.dataAcquisitionState_Channel_B = OSC_DSP_State_Disabled;
 
-  OSC_DSP_StateMachine.triggerPosition =  ((OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE * OSC_Settings_TriggerPosition.value)) /
-		  	  	  	  	  	  	  	  	   (OSC_Settings_TriggerPosition.upperBound - OSC_Settings_TriggerPosition.lowerBound);
+  OSC_DSP_StateMachine.postTriggerMemoryLength =
+        ((OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE *
+        ((OSC_Settings_TriggerPosition.upperBound - OSC_Settings_TriggerPosition.lowerBound) - OSC_Settings_TriggerPosition.value))) /
+         (OSC_Settings_TriggerPosition.upperBound - OSC_Settings_TriggerPosition.lowerBound);
 
   OSC_DSP_StateMachine.triggerLevel = (uint8_t)(
           ( ((OSC_Settings_TriggerLevel.value - OSC_CFG_TRIGGER_LEVEL_LOWER_BOUND)) * OSC_DSP_MAX_DATA_VALUE) /
@@ -45,6 +49,5 @@ void OSC_DSP_StateMachineUpdate(void){
                                          OSC_DSP_TriggerSource_Channel_B;
 
   OSC_DSP_StateMachine.triggerState  = OSC_DSP_TriggerState_Disabled;
-
 
 }
