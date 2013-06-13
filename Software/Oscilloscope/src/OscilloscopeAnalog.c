@@ -265,20 +265,20 @@ OSC_Analog_Err_Type OSC_Analog_Conversion_Start(OSC_Analog_ChannelSelect_Type ch
 
   switch(channelSelect){        /*It doesn't stop the timer because it won't trigger any conversion if the ADC doesn't operate*/
     case OSC_Analog_ChannelSelect_Channel_A:
-      DMA_ClearFlag(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_FLAGS);
+      OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS_CLEAR();
       DMA_Cmd(OSC_ANALOG_CHANNEL_A_DMA_STREAM,ENABLE);
       ADC_Cmd(OSC_ANALOG_CHANNEL_A_ADC, ENABLE);
       break;
 
     case OSC_Analog_ChannelSelect_Channel_B:
-      DMA_ClearFlag(OSC_ANALOG_CHANNEL_B_DMA_STREAM,OSC_ANALOG_CHANNEL_B_DMA_FLAGS);
+      OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS_CLEAR();
       DMA_Cmd(OSC_ANALOG_CHANNEL_B_DMA_STREAM,ENABLE);
       ADC_Cmd(OSC_ANALOG_CHANNEL_B_ADC, ENABLE);
       break;
 
     case OSC_Analog_ChannelSelect_ChannelBoth:    /*In this case the DMA address and length is ignored*/
-      DMA_ClearFlag(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_FLAGS);
-      DMA_ClearFlag(OSC_ANALOG_CHANNEL_B_DMA_STREAM,OSC_ANALOG_CHANNEL_B_DMA_FLAGS);
+      OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS_CLEAR();
+      OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS_CLEAR();
       DMA_Cmd(OSC_ANALOG_CHANNEL_A_DMA_STREAM,ENABLE);
       DMA_Cmd(OSC_ANALOG_CHANNEL_B_DMA_STREAM,ENABLE);
       ADC_Cmd(OSC_ANALOG_CHANNEL_A_ADC, ENABLE);
@@ -361,13 +361,13 @@ OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigure(
 }
 
 OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
-    OSC_Analog_Channel_DataAcquisitionConfig_Type* channel_A_DMA_Configuration,
-    OSC_Analog_Channel_DataAcquisitionConfig_Type* channel_B_DMA_Configuration
+    const OSC_Analog_Channel_DataAcquisitionConfig_Type* const channel_A_DMA_Configuration,
+    const OSC_Analog_Channel_DataAcquisitionConfig_Type* const channel_B_DMA_Configuration
 ){
   uint32_t timer = OSC_ANALOG_DMA_DISABLE_TIMEOUT;
 
-  OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR &= ~DMA_SxCR_EN;
-  OSC_ANALOG_CHANNEL_B_DMA_STREAM->CR &= ~DMA_SxCR_EN;
+  OSC_ANALOG_CHANNEL_A_DMA_STREAM_STOP();
+  OSC_ANALOG_CHANNEL_B_DMA_STREAM_STOP();
 
   /*Because of the FIFO flush the effective disable happens later*/
   while((OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR & DMA_SxCR_EN) && (OSC_ANALOG_CHANNEL_B_DMA_STREAM->CR & DMA_SxCR_EN)){
@@ -395,16 +395,16 @@ OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
   OSC_ANALOG_CHANNEL_A_DMA_STREAM_MEMORY_DEST_SET(channel_A_DMA_Configuration->dataAcquisitionMemory);
   OSC_ANALOG_CHANNEL_B_DMA_STREAM_MEMORY_DEST_SET(channel_B_DMA_Configuration->dataAcquisitionMemory);
 
-  DMA_ClearFlag(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_FLAGS);
-  DMA_ClearFlag(OSC_ANALOG_CHANNEL_B_DMA_STREAM,OSC_ANALOG_CHANNEL_B_DMA_FLAGS);
+  OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS_CLEAR();
+  OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS_CLEAR();
 
-  DMA_Cmd(OSC_ANALOG_CHANNEL_A_DMA_STREAM,ENABLE);
-  DMA_Cmd(OSC_ANALOG_CHANNEL_B_DMA_STREAM,ENABLE);
+  OSC_ANALOG_CHANNEL_A_DMA_STREAM_START();
+  OSC_ANALOG_CHANNEL_B_DMA_STREAM_START();
 
   return OSC_Analog_Err_OK;
 }
 
-OSC_Analog_Err_Type OSC_Analog_Trigger_Enable(void)
+OSC_Analog_Err_Type OSC_Analog_Trigger_Enable(uint32_t actualValue)
 {
   ADC_TypeDef* triggerSourceADC;
   uint32_t triggerLevelAdjusted;
@@ -421,7 +421,7 @@ OSC_Analog_Err_Type OSC_Analog_Trigger_Enable(void)
 
   triggerLevelAdjusted = OSC_Settings_TriggerLevel.value;
 
-  switch(OSC_Settings_TriggerSlope.status)
+  switch(OSC_Settings_TriggerSlope.status)  /*TODO: refactor to consider the actual value*/
   {
     case OSC_CFG_TRIGGER_SLOPE_RISING:
       ADC_AnalogWatchdogThresholdsConfig(triggerSourceADC, triggerLevelAdjusted, 0x0);

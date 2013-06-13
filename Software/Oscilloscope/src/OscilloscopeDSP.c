@@ -5,12 +5,48 @@ uint8_t OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_
 uint8_t OSC_DSP_Channel_B_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
 
 /*===================================== DMA MODE STRUCTURE DEFINITIONS ======================================*/
+static const OSC_Analog_Channel_DataAcquisitionConfig_Type OSC_Analog_Channel_DataAcquisitionConfig_Normal_PreTrigger_Channel_A = {
+    OSC_DSP_Channel_A_DataAcquisitionMemory,
+    OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE,
+    OSC_Analog_DMA_Mode_Normal
+};
 
+static const OSC_Analog_Channel_DataAcquisitionConfig_Type OSC_Analog_Channel_DataAcquisitionConfig_Normal_PreTrigger_Channel_B = {
+    OSC_DSP_Channel_B_DataAcquisitionMemory,
+    OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE,
+    OSC_Analog_DMA_Mode_Normal
+};
+
+static const OSC_Analog_Channel_DataAcquisitionConfig_Type OSC_Analog_Channel_DataAcquisitionConfig_Circular_PreTrigger_Channel_A = {
+    OSC_DSP_Channel_A_DataAcquisitionMemory,
+    OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE,
+    OSC_Analog_DMA_Mode_Circular
+};
+
+static const OSC_Analog_Channel_DataAcquisitionConfig_Type OSC_Analog_Channel_DataAcquisitionConfig_Circular_PreTrigger_Channel_B = {
+    OSC_DSP_Channel_B_DataAcquisitionMemory,
+    OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE,
+    OSC_Analog_DMA_Mode_Circular
+};
+
+/*In case of postTrigger sampling the length and the start address changes from data acquisition to data acquisition*/
+static OSC_Analog_Channel_DataAcquisitionConfig_Type OSC_Analog_Channel_DataAcquisitionConfig_Normal_PostTrigger_Channel_A = {
+    0,
+    0,
+    OSC_Analog_DMA_Mode_Normal
+};
+
+static OSC_Analog_Channel_DataAcquisitionConfig_Type OSC_Analog_Channel_DataAcquisitionConfig_Normal_PostTrigger_Channel_B = {
+    0,
+    0,
+    OSC_Analog_DMA_Mode_Normal
+};
 
 /*======================================== STATE MACHINE DEFINITIONS ========================================*/
 OSC_DSP_StateMachine_Type  OSC_DSP_StateMachine = {
     OSC_DSP_State_Disabled,                         /*dataAcquisitionState*/
     0,                                              /*firstDataPosition*/
+    0,                                              /*preTriggerMemoryLength*/
     0,                                              /*postTriggerMemoryLength*/
     0,                                              /*triggerPosition*/
     127,                                            /*triggerLevel*/
@@ -31,10 +67,11 @@ void OSC_DSP_Calculate(void){
 void OSC_DSP_StateMachineUpdate(void){
   OSC_DSP_StateMachine.dataAcquisitionState           = OSC_DSP_State_Disabled;
 
-  OSC_DSP_StateMachine.postTriggerMemoryLength =
-        ((OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE *
-        ((OSC_Settings_TriggerPosition.upperBound - OSC_Settings_TriggerPosition.lowerBound) - OSC_Settings_TriggerPosition.value))) /
+  OSC_DSP_StateMachine.preTriggerMemoryLength =
+        (OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE * OSC_Settings_TriggerPosition.value) /
          (OSC_Settings_TriggerPosition.upperBound - OSC_Settings_TriggerPosition.lowerBound);
+
+  OSC_DSP_StateMachine.postTriggerMemoryLength = OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - OSC_DSP_StateMachine.preTriggerMemoryLength;
 
   OSC_DSP_StateMachine.triggerLevel = (uint8_t)(
           ( ((OSC_Settings_TriggerLevel.value - OSC_CFG_TRIGGER_LEVEL_LOWER_BOUND)) * OSC_DSP_MAX_DATA_VALUE) /
@@ -62,21 +99,20 @@ void OSC_DSP_StateMachineUpdate(void){
  */
 
 void OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER(void){
-  OSC_Analog_Channel_DataAcquisitionConfig_Type dataAcquisitionConfig_Channel_A, dataAcquisitionConfig_Channel_B;
 
   while((OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER & OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER_FLAG_TC) !=
          OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER_FLAG_TC);
 
   switch(OSC_DSP_StateMachine.dataAcquisitionState){
     case OSC_DSP_State_Sampling_Single_PreTriggerMemory:
-        dataAcquisitionConfig_Channel_A.dataAcquisitionMemory = OSC_DSP_Channel_A_DataAcquisitionMemory;
-        dataAcquisitionConfig_Channel_B.dataAcquisitionMemory = OSC_DSP_Channel_A_DataAcquisitionMemory;
-        dataAcquisitionConfig_Channel_A.datalength = OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
-        dataAcquisitionConfig_Channel_B.datalength = OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
-        dataAcquisitionConfig_Channel_A.dmaMode    = OSC_Analog_DMA_Mode_Circular;
-        dataAcquisitionConfig_Channel_B.dmaMode    = OSC_Analog_DMA_Mode_Circular;
-        OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(0,0);
-
+        OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
+            &OSC_Analog_Channel_DataAcquisitionConfig_Circular_PreTrigger_Channel_A,
+            &OSC_Analog_Channel_DataAcquisitionConfig_Circular_PreTrigger_Channel_B
+        );
+        OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Sampling_Circular_PreTriggerMemory;
+        OSC_Analog_Trigger_Enable(OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - 1]);
+        /*the last converted data is in the end of the array*/
+        /*TODO: Start the Analog Watchdog*/
       break;
     case OSC_DSP_State_Sampling_Single_PostTriggerMemory_NoOverflow:
 
