@@ -131,7 +131,9 @@ void OSC_Analog_Init_ADC(void){
   ADC_CommonInit(&ADC_Common_InitStructure);
 
   ADC_AnalogWatchdogSingleChannelConfig(OSC_ANALOG_CHANNEL_A_ADC,OSC_ANALOG_CHANNEL_A_ADC_CHANNEL);
+  ADC_AnalogWatchdogSingleChannelConfig(OSC_ANALOG_CHANNEL_B_ADC,OSC_ANALOG_CHANNEL_B_ADC_CHANNEL);
   ADC_AnalogWatchdogThresholdsConfig(OSC_ANALOG_CHANNEL_A_ADC,0x7F,0x0);
+  ADC_AnalogWatchdogThresholdsConfig(OSC_ANALOG_CHANNEL_B_ADC,0x7F,0x0);
 
   ADC_DMARequestAfterLastTransferCmd(OSC_ANALOG_CHANNEL_A_ADC,ENABLE);
   ADC_DMACmd(OSC_ANALOG_CHANNEL_A_ADC,ENABLE);
@@ -404,41 +406,20 @@ OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
   return OSC_Analog_Err_OK;
 }
 
-OSC_Analog_Err_Type OSC_Analog_Trigger_Enable(uint32_t actualValue)
+OSC_Analog_Err_Type OSC_Analog_AnalogWatchdog_Enable(ADC_TypeDef* triggerSourceADC, uint32_t middleThreshold, OSC_Analog_AnalogWatchdog_Range_Type range)
 {
-  ADC_TypeDef* triggerSourceADC;
-  uint32_t triggerLevelAdjusted;
-
-  if(OSC_Settings_ChannelSelect.status == OSC_CFG_CHANNEL_SELECT_CHANNEL_A_SELECTED){
-      triggerSourceADC = OSC_ANALOG_CHANNEL_A_ADC;
-      ADC_AnalogWatchdogSingleChannelConfig(triggerSourceADC,OSC_ANALOG_CHANNEL_A_ADC_CHANNEL);
-  } else if(OSC_Settings_ChannelSelect.status == OSC_CFG_CHANNEL_SELECT_CHANNEL_B_SELECTED){
-      triggerSourceADC = OSC_ANALOG_CHANNEL_B_ADC;
-      ADC_AnalogWatchdogSingleChannelConfig(triggerSourceADC,OSC_ANALOG_CHANNEL_B_ADC_CHANNEL);
+  if(range == OSC_Analog_AnalogWatchdog_Range_Lower){
+    ADC_AnalogWatchdogThresholdsConfig(triggerSourceADC,middleThreshold & OSC_ANALOG_ANALOGWATCHDOG_MASK,0);
+  } else if(range == OSC_Analog_AnalogWatchdog_Range_Upper){
+    ADC_AnalogWatchdogThresholdsConfig(triggerSourceADC,0xFFF,middleThreshold & OSC_ANALOG_ANALOGWATCHDOG_MASK);
   } else {
-      return OSC_Analog_Err_Consistency;
+    return OSC_Analog_Err_InvalidParameter;
   }
-
-  triggerLevelAdjusted = OSC_Settings_TriggerLevel.value;
-
-  switch(OSC_Settings_TriggerSlope.status)  /*TODO: refactor to consider the actual value*/
-  {
-    case OSC_CFG_TRIGGER_SLOPE_RISING:
-      ADC_AnalogWatchdogThresholdsConfig(triggerSourceADC, triggerLevelAdjusted, 0x0);
-      break;
-    case OSC_CFG_TRIGGER_SLOPE_FALLING:
-      ADC_AnalogWatchdogThresholdsConfig(triggerSourceADC, 0xFFF, triggerLevelAdjusted);
-      break;
-    default:
-      return OSC_Analog_Err_Consistency;
-  }
-
   ADC_AnalogWatchdogCmd(triggerSourceADC,ADC_AnalogWatchdog_SingleRegEnable);
-
   return OSC_Analog_Err_OK;
 }
 
-OSC_Analog_Err_Type OSC_Analog_Trigger_Disable(void)
+OSC_Analog_Err_Type OSC_Analog_AnalogWatchdog_Disable(void)
 {
   ADC_AnalogWatchdogCmd(OSC_ANALOG_CHANNEL_A_ADC,ADC_AnalogWatchdog_None);
   ADC_AnalogWatchdogCmd(OSC_ANALOG_CHANNEL_B_ADC,ADC_AnalogWatchdog_None);

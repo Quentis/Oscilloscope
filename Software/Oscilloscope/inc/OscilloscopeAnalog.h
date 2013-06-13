@@ -6,6 +6,11 @@
 #include "OscilloscopeConfiguration.h"
 
 typedef enum {
+  OSC_Analog_AnalogWatchdog_Range_Upper,
+  OSC_Analog_AnalogWatchdog_Range_Lower
+} OSC_Analog_AnalogWatchdog_Range_Type;
+
+typedef enum {
   OSC_Analog_DMA_Mode_Normal,
   OSC_Analog_DMA_Mode_Circular
 } OSC_Analog_DMA_Mode_Type;
@@ -71,6 +76,8 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_B_ADC_GPIO_CLK           RCC_AHB1Periph_GPIOA
 #define OSC_ANALOG_CHANNEL_B_ADC_GPIO_PORT          GPIOA
 #define OSC_ANALOG_CHANNEL_B_ADC_GPIO_PIN           GPIO_Pin_2
+
+#define OSC_ANALOG_ANALOGWATCHDOG_MASK              0xFFF
 
 /*=======================================DMA_DEFINITIONS=======================================*/
 /*DMA_CHANNEL_COMMON_DEFINITIONS*/
@@ -232,7 +239,11 @@ OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
     const OSC_Analog_Channel_DataAcquisitionConfig_Type* const channel_A_DMA_Configuration,
     const OSC_Analog_Channel_DataAcquisitionConfig_Type* const channel_B_DMA_Configuration
 );
-OSC_Analog_Err_Type OSC_Analog_Trigger_Enable(uint32_t actualValue);
-OSC_Analog_Err_Type OSC_Analog_Trigger_Disable(void);
+OSC_Analog_Err_Type OSC_Analog_AnalogWatchdog_Enable(
+        ADC_TypeDef*  triggerSourceADC,
+        uint32_t      middleThreshold,
+        OSC_Analog_AnalogWatchdog_Range_Type range
+);
+OSC_Analog_Err_Type OSC_Analog_AnalogWatchdog_Disable(void);
 
 #endif /* OSCILLOSCOPEANALOG_H_ */

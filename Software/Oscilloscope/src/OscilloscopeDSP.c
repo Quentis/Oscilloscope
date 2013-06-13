@@ -99,6 +99,7 @@ void OSC_DSP_StateMachineUpdate(void){
  */
 
 void OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER(void){
+  uint8_t actualValue;
 
   while((OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER & OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER_FLAG_TC) !=
          OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER_FLAG_TC);
@@ -110,9 +111,22 @@ void OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER(void){
             &OSC_Analog_Channel_DataAcquisitionConfig_Circular_PreTrigger_Channel_B
         );
         OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Sampling_Circular_PreTriggerMemory;
-        OSC_Analog_Trigger_Enable(OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - 1]);
+
+        actualValue = OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - 1];
+        if(actualValue > OSC_DSP_StateMachine.triggerLevel){
+          if(OSC_DSP_StateMachine.triggerSlope == OSC_DSP_TriggerSlope_RisingEdge){
+            OSC_DSP_StateMachine.triggerState = OSC_DSP_TriggerState_Enabled_TwoMoreInterrupt;
+          } else {  /*OSC_DSP_StateMachine.triggerSlope == OSC_DSP_TriggerSlope_FallingEdge*/
+            OSC_DSP_StateMachine.triggerState = OSC_DSP_TriggerState_Enabled_NextInterrupt;
+          }
+        } else {    /*actualValue <= OSC_DSP_StateMachine.triggerLevel*/
+          if(OSC_DSP_StateMachine.triggerSlope == OSC_DSP_TriggerSlope_RisingEdge){
+            OSC_DSP_StateMachine.triggerState = OSC_DSP_TriggerState_Enabled_NextInterrupt;
+          } else {  /*OSC_DSP_StateMachine.triggerSlope == OSC_DSP_TriggerSlope_FallingEdge*/
+            OSC_DSP_StateMachine.triggerState = OSC_DSP_TriggerState_Enabled_TwoMoreInterrupt;
+          }
+        }
         /*the last converted data is in the end of the array*/
-        /*TODO: Start the Analog Watchdog*/
       break;
     case OSC_DSP_State_Sampling_Single_PostTriggerMemory_NoOverflow:
 
