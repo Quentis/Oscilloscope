@@ -1,6 +1,13 @@
 #include "OscilloscopeAnalog.h"
 
 void OSC_Analog_Init_DMA(void){
+  NVIC_InitTypeDef NVIC_InitStructure = {
+      DMA2_Stream0_IRQn,
+      OSC_ANALOG_ADC_PREEMP_PRIO,
+      OSC_ANALOG_ADC_SUBPRIO,
+      ENABLE
+  }; /*DMA Transfer completed interrupt*/
+
   DMA_InitTypeDef DMA_InitStructure_Channel_A = {
     OSC_ANALOG_CHANNEL_A_DMA_CHANNEL,
     OSC_ANALOG_CHANNEL_A_DMA_PERIPH_BASE_ADDRESS,
@@ -42,6 +49,11 @@ void OSC_Analog_Init_DMA(void){
 
   DMA_Init(OSC_ANALOG_CHANNEL_A_DMA_STREAM,&DMA_InitStructure_Channel_A);
   DMA_Init(OSC_ANALOG_CHANNEL_B_DMA_STREAM,&DMA_InitStructure_Channel_B);
+
+  NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream0_IRQn;
+  NVIC_Init(&NVIC_InitStructure);
+  NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream2_IRQn;
+  NVIC_Init(&NVIC_InitStructure);
 
   DMA_Cmd(OSC_ANALOG_CHANNEL_A_DMA_STREAM,ENABLE);
   DMA_Cmd(OSC_ANALOG_CHANNEL_B_DMA_STREAM,ENABLE);
@@ -383,6 +395,9 @@ OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
   OSC_ANALOG_CHANNEL_A_DMA_STREAM_MEMORY_DEST_SET(channel_A_DMA_Configuration->dataAcquisitionMemory);
   OSC_ANALOG_CHANNEL_B_DMA_STREAM_MEMORY_DEST_SET(channel_B_DMA_Configuration->dataAcquisitionMemory);
 
+  DMA_ClearFlag(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_FLAGS);
+  DMA_ClearFlag(OSC_ANALOG_CHANNEL_B_DMA_STREAM,OSC_ANALOG_CHANNEL_B_DMA_FLAGS);
+
   DMA_Cmd(OSC_ANALOG_CHANNEL_A_DMA_STREAM,ENABLE);
   DMA_Cmd(OSC_ANALOG_CHANNEL_B_DMA_STREAM,ENABLE);
 
@@ -429,6 +444,7 @@ OSC_Analog_Err_Type OSC_Analog_Trigger_Disable(void)
   ADC_AnalogWatchdogCmd(OSC_ANALOG_CHANNEL_B_ADC,ADC_AnalogWatchdog_None);
   return OSC_Analog_Err_OK;
 }
+
 
 /*void ADC_IRQHandler(void){
   static volatile uint8_t i = 0;

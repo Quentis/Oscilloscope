@@ -3,6 +3,7 @@
 
 #include "OscilloscopeLCD.h"
 #include "OscilloscopeConfiguration.h"
+#include "OscilloscopeAnalog.h"
 
 #define OSC_DSP_MAX_DATA_RANGE                                       256
 #define OSC_DSP_MAX_DATA_VALUE                                       255
@@ -51,8 +52,6 @@ typedef enum {
 
 typedef struct {
   OSC_DSP_State_Type            dataAcquisitionState;
-  OSC_DSP_State_Type            dataAcquisitionState_Channel_A;
-  OSC_DSP_State_Type            dataAcquisitionState_Channel_B;
   uint32_t                      firstDataPosition;
   uint32_t                      postTriggerMemoryLength;
   uint32_t                      triggerPosition;  /*It must be the same for the two channel -> number of samples before trigger*/

@@ -32,7 +32,7 @@ typedef enum {
 } OSC_Analog_TriggerStatus_Type;
 
 typedef struct {
-  uint32_t*                       dataAcquisitionMemory;
+  uint8_t*                        dataAcquisitionMemory;
   uint32_t                        datalength;
   OSC_Analog_DMA_Mode_Type        dmaMode;
 } OSC_Analog_Channel_DataAcquisitionConfig_Type;
@@ -77,16 +77,23 @@ typedef struct {
 #define OSC_ANALOG_DMA_DISABLE_TIMEOUT    20
 
 /*DMA_CHANNEL_A_DEFINITIONS*/
-#define OSC_ANALOG_CHANNEL_A_DMA_CLK                        RCC_AHB1Periph_DMA2
-#define OSC_ANALOG_CHANNEL_A_DMA_STREAM                     DMA2_Stream0   /*It is important: Channel A is ADC1*/
+#define OSC_ANALOG_CHANNEL_A_DMA                                   DMA2
+#define OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER                   OSC_ANALOG_CHANNEL_B_DMA->LISR
+#define OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER_FLAG_TC           DMA_FLAG_TCIF2
 
-#define OSC_ANALOG_CHANNEL_A_DMA_FLAGS                      (DMA_FLAG_DMEIF0 | DMA_FLAG_FEIF0 | DMA_FLAG_HTIF0 |\
-                                                             DMA_FLAG_TCIF0  | DMA_FLAG_TEIF0)
+#define OSC_ANALOG_CHANNEL_A_DMA_CLK                               RCC_AHB1Periph_DMA2
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM                            DMA2_Stream0   /*It is important: Channel A is ADC1*/
 
-#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_MODE_CIRCULAR_SET()        do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR   |=  DMA_Mode_Circular;         }while(0)
-#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_MODE_NORMAL_SET()          do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR   &= ~DMA_Mode_Circular;         }while(0)
-#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_MEMORY_DEST_SET(dest)      do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->M0AR =  ((uint32_t)dest);           }while(0)
-#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_DATA_LENGTH_SET(len)       do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->NDTR =  ((uint32_t)(len) & 0xFFFF); }while(0)
+#define OSC_ANALOG_CHANNEL_A_DMA_FLAGS                            (DMA_FLAG_DMEIF0 | DMA_FLAG_FEIF0 | DMA_FLAG_HTIF0 |\
+                                                                   DMA_FLAG_TCIF0  | DMA_FLAG_TEIF0)
+
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_MODE_CIRCULAR_SET()        do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR   |=  DMA_Mode_Circular;          }while(0)
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_MODE_NORMAL_SET()          do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR   &= ~DMA_Mode_Circular;          }while(0)
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_MEMORY_DEST_SET(dest)      do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->M0AR  =  ((uint32_t)dest);           }while(0)
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_DATA_LENGTH_SET(len)       do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->NDTR  =  ((uint32_t)(len) & 0xFFFF); }while(0)
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_ENABLE()         do{NVIC_EnableIRQ(DMA2_Stream0_IRQn);}while(0)
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_DISABLE()        do{NVIC_DisableIRQ(DMA2_Stream0_IRQn);}while(0)
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER          DMA2_Stream0_IRQHandler
 
 #define OSC_ANALOG_CHANNEL_A_DMA_CHANNEL                           DMA_Channel_0
 #define OSC_ANALOG_CHANNEL_A_DMA_PERIPH_BASE_ADDRESS               ((uint32_t)(&OSC_ANALOG_CHANNEL_A_ADC->DR))
@@ -105,8 +112,11 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_A_DMA_PERIPH_BURST                      DMA_PeripheralBurst_Single
 
 
-
 /*DMA_CHANNEL_B_DEFINITIONS*/
+#define OSC_ANALOG_CHANNEL_B_DMA                                   DMA2
+#define OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER                   OSC_ANALOG_CHANNEL_B_DMA->LISR
+#define OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER_FLAG_TC           DMA_FLAG_TCIF2
+
 #define OSC_ANALOG_CHANNEL_B_DMA_CLK                               RCC_AHB1Periph_DMA2
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM                            DMA2_Stream2   /*It is important: Channel B is ADC2*/
 
@@ -117,6 +127,9 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_MODE_NORMAL_SET()          do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->CR &= ~DMA_Mode_Circular;           }while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_MEMORY_DEST_SET(dest)      do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->M0AR = ((uint32_t)dest);            }while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_DATA_LENGTH_SET(len)       do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->NDTR =  ((uint32_t)(len) & 0xFFFF); }while(0)
+#define OSC_ANALOG_CHANNEL_B_DMA_STREAM_INTERRUPT_ENABLE()         do{NVIC_EnableIRQ(DMA2_Stream2_IRQn);}while(0)
+#define OSC_ANALOG_CHANNEL_B_DMA_STREAM_INTERRUPT_DISABLE()        do{NVIC_DisableIRQ(DMA2_Stream2_IRQn);}while(0)
+#define OSC_ANALOG_CHANNEL_B_DMA_STREAM_INTERRUPT_HANDLER          DMA2_Stream2_IRQHandler
 
 #define OSC_ANALOG_CHANNEL_B_DMA_CHANNEL                           DMA_Channel_1
 #define OSC_ANALOG_CHANNEL_B_DMA_PERIPH_BASE_ADDRESS               ((uint32_t)(&OSC_ANALOG_CHANNEL_B_ADC->DR))
@@ -200,5 +213,20 @@ void OSC_Analog_Init_Timer(void);
 
 void OSC_Analog_Init_1kHzSquareWave(void);
 void OSC_Analog_Init_DMA(void);
+
+OSC_Analog_Err_Type OSC_Analog_Conversion_Start(OSC_Analog_ChannelSelect_Type channelSelect);
+OSC_Analog_Err_Type OSC_Analog_Conversion_Stop(OSC_Analog_ChannelSelect_Type   channelSelect);
+OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigure(
+    OSC_Analog_ChannelSelect_Type   channelSelect,
+    uint32_t*                       dataAcquisitionMemory,
+    uint32_t                        datalength,
+    OSC_Analog_DMA_Mode_Type        dmaMode
+);
+OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
+    OSC_Analog_Channel_DataAcquisitionConfig_Type* channel_A_DMA_Configuration,
+    OSC_Analog_Channel_DataAcquisitionConfig_Type* channel_B_DMA_Configuration
+);
+OSC_Analog_Err_Type OSC_Analog_Trigger_Enable(void);
+OSC_Analog_Err_Type OSC_Analog_Trigger_Disable(void);
 
 #endif /* OSCILLOSCOPEANALOG_H_ */
