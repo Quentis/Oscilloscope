@@ -39,7 +39,7 @@ typedef enum {
 
 typedef struct {
   uint8_t*                        dataAcquisitionMemory;
-  uint32_t                        datalength;
+  uint32_t                        dataLength;
   OSC_Analog_DMA_Mode_Type        dmaMode;
 } OSC_Analog_Channel_DataAcquisitionConfig_Type;
 
@@ -88,7 +88,8 @@ typedef struct {
 /*DMA_CHANNEL_A_DEFINITIONS*/
 #define OSC_ANALOG_CHANNEL_A_DMA                                   DMA2
 #define OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER                   OSC_ANALOG_CHANNEL_B_DMA->LISR
-#define OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER_FLAG_TC           DMA_FLAG_TCIF2
+#define OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER_FLAG_TC           DMA_FLAG_TCIF0
+#define OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER_ITFLAG_TC         DMA_IT_TCIF0
 
 #define OSC_ANALOG_CHANNEL_A_DMA_CLK                               RCC_AHB1Periph_DMA2
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM                            DMA2_Stream0   /*It is important: Channel A is ADC1*/
@@ -129,6 +130,7 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_B_DMA                                   DMA2
 #define OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER                   OSC_ANALOG_CHANNEL_B_DMA->LISR
 #define OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER_FLAG_TC           DMA_FLAG_TCIF2
+#define OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER_ITFLAG_TC         DMA_IT_TCIF2
 
 #define OSC_ANALOG_CHANNEL_B_DMA_CLK                               RCC_AHB1Periph_DMA2
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM                            DMA2_Stream2   /*It is important: Channel B is ADC2*/
@@ -213,15 +215,25 @@ typedef struct {
 #define OSC_ANALOG_DAC_GPIO_PIN                 GPIO_Pin_4
 
 /*
- * The voltage on the output of the DAC should be 0.83333 V
+ * The voltage on the analog input can be calculated from the following formula:
+ *        Van = (1/5) * Vin + (9/5) * Vdac
+ *
+ * The DAC voltage should be chosen to shift the 0V to the half of the reference voltage
+ *            Vref = 2.92 V based on measurement => Van = Vref / 2 = 1.46V
+ *            Van = (1/5) * 0 + (9/5) * Vdac
+ *            (1/2) * Vref = (1/5) * 0 + (9/5) * Vdac
+ *            Vdac = (5/18) * Vref = 0.81111V
+ *
+ * The voltage on the output of the DAC should be 0.81111 V
  * The formula for the voltage based on the reference manual:
- *        Vout = Vref * (DOR / 4095)
- *        DOD  = 4095 * (Vout / Vref) = 1169 = 0x491
- *            Vref = 2.92 V based on measurement
- *            Vout = 0.83 V
+ *        Vdac = Vref * (DOR / 4095)
+ *        DOR  = 4095 * (Vdac / Vref) = 1138 = 0x472
+ *            Vdac = 0.81147V
+ *
+ *
  */
 
-#define OSC_ANALOG_DAC_OUPUT_VALUE              0x491
+#define OSC_ANALOG_DAC_OUPUT_VALUE              0x472
 
 void OSC_Analog_Init(void);
 void OSC_Analog_Init_DAC(void);

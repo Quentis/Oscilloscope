@@ -1,12 +1,20 @@
 #ifndef OSCILLOSCOPEDSP_H_
 #define OSCILLOSCOPEDSP_H_
 
-#include "OscilloscopeLCD.h"
+#include "OscilloscopeDisplayManager.h"
 #include "OscilloscopeLED.h"
 #include "OscilloscopeConfiguration.h"
 #include "OscilloscopeAnalog.h"
 
-#define OSC_DSP_MAX_DATA_RANGE                                       256
+#define OSC_DSP_WAVEFORM_POINTS_COUNT                                OSC_DM_MATRIX_COLUMN_COUNT
+
+#define OSC_DSP_DIGITAL_DATA_CORRECTION_COUNT_PER_INVOCATION         1024
+
+#define OSC_DSP_CORRECTION_SCALE_NUMERATOR                             1
+#define OSC_DSP_CORRECTION_SCALE_DENOMINATOR                           1
+#define OSC_DSP_CORRECTION_OFFSET                                      0
+
+#define OSC_DSP_DATA_RANGE                                           256
 #define OSC_DSP_MAX_DATA_VALUE                                       255
 #define OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE                         40960     /*20kByte*/
 extern uint8_t OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];

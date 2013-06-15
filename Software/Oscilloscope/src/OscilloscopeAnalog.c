@@ -268,12 +268,14 @@ OSC_Analog_Err_Type OSC_Analog_Conversion_Start(OSC_Analog_ChannelSelect_Type ch
   switch(channelSelect){        /*It doesn't stop the timer because it won't trigger any conversion if the ADC doesn't operate*/
     case OSC_Analog_ChannelSelect_Channel_A:
       OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS_CLEAR();
+      ADC_ClearFlag(OSC_ANALOG_CHANNEL_A_ADC, OSC_ANALOG_CHANNEL_A_ADC_FLAGS);
       DMA_Cmd(OSC_ANALOG_CHANNEL_A_DMA_STREAM,ENABLE);
       ADC_Cmd(OSC_ANALOG_CHANNEL_A_ADC, ENABLE);
       break;
 
     case OSC_Analog_ChannelSelect_Channel_B:
       OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS_CLEAR();
+      ADC_ClearFlag(OSC_ANALOG_CHANNEL_B_ADC, OSC_ANALOG_CHANNEL_B_ADC_FLAGS);
       DMA_Cmd(OSC_ANALOG_CHANNEL_B_DMA_STREAM,ENABLE);
       ADC_Cmd(OSC_ANALOG_CHANNEL_B_ADC, ENABLE);
       break;
@@ -281,6 +283,8 @@ OSC_Analog_Err_Type OSC_Analog_Conversion_Start(OSC_Analog_ChannelSelect_Type ch
     case OSC_Analog_ChannelSelect_ChannelBoth:    /*In this case the DMA address and length is ignored*/
       OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS_CLEAR();
       OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS_CLEAR();
+      ADC_ClearFlag(OSC_ANALOG_CHANNEL_A_ADC, OSC_ANALOG_CHANNEL_A_ADC_FLAGS);
+      ADC_ClearFlag(OSC_ANALOG_CHANNEL_B_ADC, OSC_ANALOG_CHANNEL_B_ADC_FLAGS);
       DMA_Cmd(OSC_ANALOG_CHANNEL_A_DMA_STREAM,ENABLE);
       DMA_Cmd(OSC_ANALOG_CHANNEL_B_DMA_STREAM,ENABLE);
       ADC_Cmd(OSC_ANALOG_CHANNEL_A_ADC, ENABLE);
@@ -300,12 +304,14 @@ OSC_Analog_Err_Type OSC_Analog_Conversion_Stop(OSC_Analog_ChannelSelect_Type   c
       ADC_Cmd(OSC_ANALOG_CHANNEL_A_ADC, DISABLE);
       ADC_ClearFlag(OSC_ANALOG_CHANNEL_A_ADC,OSC_ANALOG_CHANNEL_A_ADC_FLAGS);
       DMA_Cmd(OSC_ANALOG_CHANNEL_A_DMA_STREAM,DISABLE);
+      DMA_ClearFlag(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS);
       break;
 
     case OSC_Analog_ChannelSelect_Channel_B:
       ADC_Cmd(OSC_ANALOG_CHANNEL_B_ADC, DISABLE);
       ADC_ClearFlag(OSC_ANALOG_CHANNEL_B_ADC, OSC_ANALOG_CHANNEL_B_ADC_FLAGS);
       DMA_Cmd(OSC_ANALOG_CHANNEL_B_DMA_STREAM,DISABLE);
+      DMA_ClearFlag(OSC_ANALOG_CHANNEL_B_DMA_STREAM,OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS);
       break;
 
     case OSC_Analog_ChannelSelect_ChannelBoth:
@@ -316,6 +322,8 @@ OSC_Analog_Err_Type OSC_Analog_Conversion_Stop(OSC_Analog_ChannelSelect_Type   c
 
       DMA_Cmd(OSC_ANALOG_CHANNEL_A_DMA_STREAM,DISABLE);   /*DMA FIFO is not flushed immediately - it might take a little time*/
       DMA_Cmd(OSC_ANALOG_CHANNEL_B_DMA_STREAM,DISABLE);
+      DMA_ClearFlag(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS);
+      DMA_ClearFlag(OSC_ANALOG_CHANNEL_B_DMA_STREAM,OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS);
       break;
 
     default:
@@ -392,8 +400,8 @@ OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
   } else {
     return OSC_Analog_Err_InvalidParameter;
   }
-  OSC_ANALOG_CHANNEL_A_DMA_STREAM_DATA_LENGTH_SET(channel_A_DMA_Configuration->datalength);
-  OSC_ANALOG_CHANNEL_B_DMA_STREAM_DATA_LENGTH_SET(channel_B_DMA_Configuration->datalength);
+  OSC_ANALOG_CHANNEL_A_DMA_STREAM_DATA_LENGTH_SET(channel_A_DMA_Configuration->dataLength);
+  OSC_ANALOG_CHANNEL_B_DMA_STREAM_DATA_LENGTH_SET(channel_B_DMA_Configuration->dataLength);
   OSC_ANALOG_CHANNEL_A_DMA_STREAM_MEMORY_DEST_SET(channel_A_DMA_Configuration->dataAcquisitionMemory);
   OSC_ANALOG_CHANNEL_B_DMA_STREAM_MEMORY_DEST_SET(channel_B_DMA_Configuration->dataAcquisitionMemory);
 
