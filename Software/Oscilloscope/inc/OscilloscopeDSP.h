@@ -2,6 +2,7 @@
 #define OSCILLOSCOPEDSP_H_
 
 #include "OscilloscopeLCD.h"
+#include "OscilloscopeLED.h"
 #include "OscilloscopeConfiguration.h"
 #include "OscilloscopeAnalog.h"
 
@@ -51,16 +52,17 @@ typedef enum {
 } OSC_DSP_TriggerSlope_Type;
 
 typedef struct {
-  OSC_DSP_State_Type            dataAcquisitionState;
-  uint32_t                      firstDataPosition;
-  uint32_t                      preTriggerMemoryLength;
-  uint32_t                      postTriggerMemoryLength;
-  uint32_t                      triggerPosition;  /*It must be the same for the two channel -> number of samples before trigger*/
-  uint8_t                       triggerLevel;     /*The trigger level in the unprocessed raw data units*/
-  OSC_DSP_TriggerSlope_Type     triggerSlope;
-  OSC_DSP_TriggerSource_Type    triggerSource;
-  OSC_DSP_TriggerState_Type     triggerState;
-  OSC_DSP_SampleRate_Type       sampleRate;       /*Number of samples per second -> 1Msample/s -> 1000000*/
+  OSC_DSP_State_Type                      dataAcquisitionState;
+  uint32_t                                firstDataPosition;
+  uint32_t                                preTriggerMemoryLength;
+  uint32_t                                postTriggerMemoryLength;
+  uint32_t                                triggerPosition;  /*It must be the same for the two channel -> number of samples before trigger*/
+  uint8_t                                 triggerLevel;     /*The trigger level in the unprocessed raw data units*/
+  OSC_Analog_AnalogWatchdog_Range_Type    triggerAnalogWatchdogRange;
+  OSC_DSP_TriggerSlope_Type               triggerSlope;
+  OSC_DSP_TriggerSource_Type              triggerSource;
+  OSC_DSP_TriggerState_Type               triggerState;
+  OSC_DSP_SampleRate_Type                 sampleRate;       /*Number of samples per second -> 1Msample/s -> 1000000*/
 } OSC_DSP_StateMachine_Type;
 
 void OSC_DSP_Init(void);

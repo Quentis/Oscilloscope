@@ -7,7 +7,8 @@
 
 typedef enum {
   OSC_Analog_AnalogWatchdog_Range_Upper,
-  OSC_Analog_AnalogWatchdog_Range_Lower
+  OSC_Analog_AnalogWatchdog_Range_Lower,
+  OSC_Analog_AnalogWatchdog_Range_Invalid
 } OSC_Analog_AnalogWatchdog_Range_Type;
 
 typedef enum {
@@ -78,6 +79,7 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_B_ADC_GPIO_PIN           GPIO_Pin_2
 
 #define OSC_ANALOG_ANALOGWATCHDOG_MASK              0xFFF
+#define OSC_ANALOG_ADC_INTERRUPT_HANDLER            ADC_IRQHandler
 
 /*=======================================DMA_DEFINITIONS=======================================*/
 /*DMA_CHANNEL_COMMON_DEFINITIONS*/
@@ -96,6 +98,7 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_MODE_NORMAL_SET()          do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR   &= ~DMA_Mode_Circular;          }while(0)
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_MEMORY_DEST_SET(dest)      do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->M0AR  =  ((uint32_t)dest);           }while(0)
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_DATA_LENGTH_SET(len)       do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->NDTR  =  ((uint32_t)(len) & 0xFFFF); }while(0)
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_DATA_LENGTH_GET()            (OSC_ANALOG_CHANNEL_A_DMA_STREAM->NDTR & 0xFFFF)
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_ENABLE()         do{NVIC_EnableIRQ(DMA2_Stream0_IRQn);}while(0)
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_DISABLE()        do{NVIC_DisableIRQ(DMA2_Stream0_IRQn);}while(0)
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER          DMA2_Stream0_IRQHandler
@@ -135,6 +138,7 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_MODE_NORMAL_SET()          do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->CR &= ~DMA_Mode_Circular;           }while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_MEMORY_DEST_SET(dest)      do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->M0AR = ((uint32_t)dest);            }while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_DATA_LENGTH_SET(len)       do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->NDTR =  ((uint32_t)(len) & 0xFFFF); }while(0)
+#define OSC_ANALOG_CHANNEL_B_DMA_STREAM_DATA_LENGTH_GET()            (OSC_ANALOG_CHANNEL_B_DMA_STREAM->NDTR & 0xFFFF)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_INTERRUPT_ENABLE()         do{NVIC_EnableIRQ(DMA2_Stream2_IRQn);}while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_INTERRUPT_DISABLE()        do{NVIC_DisableIRQ(DMA2_Stream2_IRQn);}while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_INTERRUPT_HANDLER          DMA2_Stream2_IRQHandler

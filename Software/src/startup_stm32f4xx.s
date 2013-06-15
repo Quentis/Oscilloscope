@@ -170,7 +170,7 @@ g_pfnVectors:
   .word     DMA1_Stream4_IRQHandler           /* DMA1 Stream 4                */                   
   .word     DMA1_Stream5_IRQHandler           /* DMA1 Stream 5                */                   
   .word     DMA1_Stream6_IRQHandler           /* DMA1 Stream 6                */                   
-  .word     ADC_IRQHandler                    /* ADC1, ADC2 and ADC3s         */                   
+  .word     ADC_IRQHandler                    /* ADC1, ADC2 and ADC3s         */
   .word     CAN1_TX_IRQHandler                /* CAN1 TX                      */                         
   .word     CAN1_RX0_IRQHandler               /* CAN1 RX0                     */                          
   .word     CAN1_RX1_IRQHandler               /* CAN1 RX1                     */                          

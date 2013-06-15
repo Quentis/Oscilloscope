@@ -425,14 +425,3 @@ OSC_Analog_Err_Type OSC_Analog_AnalogWatchdog_Disable(void)
   ADC_AnalogWatchdogCmd(OSC_ANALOG_CHANNEL_B_ADC,ADC_AnalogWatchdog_None);
   return OSC_Analog_Err_OK;
 }
-
-
-/*void ADC_IRQHandler(void){
-  static volatile uint8_t i = 0;
-
-  STM32F4_Discovery_LEDToggle(LED6);
-  if(ADC_GetFlagStatus(ADC1,ADC_FLAG_EOC))
-    i = ADC1->DR;
-  if(ADC_GetFlagStatus(ADC2,ADC_FLAG_EOC))
-    i = ADC2->DR;
-}*/
