@@ -4,9 +4,9 @@
 #include "OscilloscopeLCD.h"
 #include "OscilloscopeFont.h"
 
-#define OSC_DM_MATRIX_ROW_COUNT              8
-#define OSC_DM_MATRIX_ROW_PIXEL_COUNT        8    /*A Row element is a group of 8 pixels*/
-#define OSC_DM_MATRIX_COLUMN_COUNT         128
+#define OSC_DM_MATRIX_ROW_COUNT                      8
+#define OSC_DM_MATRIX_ROW_PIXEL_COUNT                8    /*A Row element is a group of 8 pixels*/
+#define OSC_DM_MATRIX_COLUMN_COUNT                 128
 
 #define OSC_DM_MATRIX_DIRTYBIT_ROW_COUNT             8
 #define OSC_DM_MATRIX_DIRTYBIT_COLUMN_COUNT          4

@@ -57,6 +57,17 @@ OSC_DSP_StateMachine_Type  OSC_DSP_StateMachine = {
     OSC_DSP_SAMPLE_RATE                             /*sampleRate*/                        /*UPDATE-FROM-CONFIG*/
 };
 
+/*===================================== WAVEFORM PROPERTIES DEFINITIONS =====================================*/
+OSC_DSP_WaveformProperties_Type OSC_DSP_WaveformProperties = {
+    0,      /*virtualTriggerPosition*/
+    0,      /*samplePerPixel*/
+    0,      /*scaleFactorNumerator*/
+    0,      /*scaleFactorDenominator*/
+    0       /*offset*/
+};
+
+/*====================================== EXTERNAL FUNCTION DEFINITIONS ======================================*/
+
 void OSC_DSP_Init(void){
 
 }
@@ -77,17 +88,70 @@ void OSC_DSP_StartDataAcquisition(void){
 }
 
 void OSC_DSP_Calculate(void){
+  #ifdef OSC_DSP_CORRECTION
   static uint32_t index = 0;
-  uint32_t endIndex = index + OSC_DSP_DIGITAL_DATA_CORRECTION_COUNT_PER_INVOCATION;
+  uint32_t endIndex;
+  #endif
 
+  #ifdef OSC_DSP_CORRECTION
+  endIndex = index + OSC_DSP_DIGITAL_DATA_CORRECTION_COUNT_PER_INVOCATION;
   if(endIndex > OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
     endIndex = OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
   }
 
   for(;index < endIndex; index++){
-
+    OSC_DSP_Channel_A_DataAcquisitionMemory[index] =
+        ((OSC_DSP_Channel_A_DataAcquisitionMemory[index] * OSC_DSP_CORRECTION_SCALE_NUMERATOR) /
+          OSC_DSP_CORRECTION_SCALE_DENOMINATOR) + OSC_DSP_CORRECTION_OFFSET;
+    OSC_DSP_Channel_B_DataAcquisitionMemory[index] =
+        ((OSC_DSP_Channel_B_DataAcquisitionMemory[index] * OSC_DSP_CORRECTION_SCALE_NUMERATOR) /
+          OSC_DSP_CORRECTION_SCALE_DENOMINATOR) + OSC_DSP_CORRECTION_OFFSET;
   }
 
+  if(endIndex != OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE) return;
+  #endif
+
+  if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Calculating){
+    OSC_DSP_UpdateWaveformProperties();
+  }
+
+}
+
+/*
+ * Horizontal resolution calculations
+ *    samplePerPixel = (sampleRate * timePerDivision) / pixelPerDivision
+ *    sampleCount    = samplePerPixel * pixelCount
+ */
+
+/*
+ * Vertical resolution calculations
+ *    The sample values should be converted into mV and this should be processed
+ *    voltagePerPixel = voltagePerDivision / pixelPerDivision)
+ *    valueInPixel    = (sampleValue * voltagePerLSB) / voltagePerPixel =
+ *                    = (sampleValue * voltagePerLSB * pixelPerDivision) / (voltagePerDivision)
+ */
+
+void OSC_DSP_UpdateWaveformProperties(void){
+  uint32_t sampleRate;
+  uint32_t timePerDivision;
+  int32_t voltagePerLSB;
+  int32_t voltagePerDivision;
+  int32_t offsetInPixel;
+
+  sampleRate       = OSC_Settings_SampleRate.valueSet[OSC_Settings_SampleRate.currentIndex];                      /*sample/ms*/
+  timePerDivision  = OSC_Settings_HorizontalResolution.valueSet[OSC_Settings_HorizontalResolution.currentIndex];  /*us/div*/
+
+  OSC_DSP_WaveformProperties.samplePerPixel = (sampleRate * timePerDivision) / (1000 * OSC_DSP_WAVEFORM_PIXEL_PER_HORIZONTAL_DIVISION);
+  /*division by 1000 is because of the different units (ms and us)*/
+
+  voltagePerLSB      = OSC_Settings_VoltagePerLSB.value;
+  voltagePerDivision = OSC_Settings_VerticalResolution.valueSet[OSC_Settings_VerticalResolution.currentIndex];
+
+  offsetInPixel = OSC_Settings_VerticalOffset.value;
+
+  OSC_DSP_WaveformProperties.scaleFactorNumerator   = voltagePerLSB * OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
+  OSC_DSP_WaveformProperties.scaleFactorDenominator = voltagePerDivision;
+  OSC_DSP_WaveformProperties.offset                 = (offsetInPixel * voltagePerDivision) / OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
 }
 
 void OSC_DSP_StateMachineUpdate(void){    /*Updates the DSP state machine configuration dependent attributes*/

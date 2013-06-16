@@ -5,11 +5,16 @@
 #include "OscilloscopeLED.h"
 #include "OscilloscopeConfiguration.h"
 #include "OscilloscopeAnalog.h"
+#include "stdint.h"
 
-#define OSC_DSP_WAVEFORM_POINTS_COUNT                                OSC_DM_MATRIX_COLUMN_COUNT
+#define OSC_DSP_WAVEFORM_HORIZONTAL_POINTS_COUNT                                OSC_DM_MATRIX_COLUMN_COUNT
+#define OSC_DSP_WAVEFORM_VERTICAL_POINTS_COUNT                                 (OSC_DM_MATRIX_ROW_COUNT * OSC_DM_MATRIX_ROW_PIXEL_COUNT)
+#define OSC_DSP_WAVEFORM_PIXEL_PER_HORIZONTAL_DIVISION                          20
+#define OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION                            10
 
 #define OSC_DSP_DIGITAL_DATA_CORRECTION_COUNT_PER_INVOCATION         1024
 
+#undef  OSC_DSP_CORRECTION
 #define OSC_DSP_CORRECTION_SCALE_NUMERATOR                             1
 #define OSC_DSP_CORRECTION_SCALE_DENOMINATOR                           1
 #define OSC_DSP_CORRECTION_OFFSET                                      0
@@ -73,8 +78,17 @@ typedef struct {
   OSC_DSP_SampleRate_Type                 sampleRate;       /*Number of samples per second -> 1Msample/s -> 1000000*/
 } OSC_DSP_StateMachine_Type;
 
+typedef struct {
+  uint32_t        virtualTriggerPosition;
+  uint32_t        samplePerPixel;
+  int32_t         scaleFactorNumerator;
+  int32_t         scaleFactorDenominator;
+  int32_t         offset;
+} OSC_DSP_WaveformProperties_Type;
+
 void OSC_DSP_Init(void);
 void OSC_DSP_Calculate(void);
 void OSC_DSP_StateMachineUpdate(void);
+void OSC_DSP_UpdateWaveformProperties(void);
 
 #endif /* OSCILLOSCOPEDSP_H_ */

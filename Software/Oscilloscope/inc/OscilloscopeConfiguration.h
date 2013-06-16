@@ -79,6 +79,8 @@ OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous
 /*=====================================================================================================*/
 
   extern OSC_Settings_IntegerContinuous_Type OSC_Settings_BacklightIntensity;
+  extern OSC_Settings_IntegerContinuous_Type OSC_Settings_VoltagePerLSB;
+  extern OSC_Settings_IntegerDiscrete_Type   OSC_Settings_SampleRate;
 
 /*########################################## HARDWARE MENU ############################################*/
 
