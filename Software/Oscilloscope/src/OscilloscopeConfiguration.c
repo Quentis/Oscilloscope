@@ -234,8 +234,8 @@
 /*=========================================== VOLTAGE PER LSB =========================================*/
 
     OSC_Settings_IntegerContinuous_Type OSC_Settings_VoltagePerLSB = {
-        100,                                                    /*value*/
-        57,                                                     /*lowerBound*/
+        57,                                                     /*value*/
+        0,                                                      /*lowerBound*/
         1000,                                                   /*upperBound*/
         1,                                                      /*incrementStepSingle*/
         10,                                                     /*incrementStepMultiple*/

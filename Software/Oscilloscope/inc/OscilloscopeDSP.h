@@ -15,17 +15,28 @@
 #define OSC_DSP_DIGITAL_DATA_CORRECTION_COUNT_PER_INVOCATION         1024
 
 #undef  OSC_DSP_CORRECTION
-#define OSC_DSP_CORRECTION_SCALE_NUMERATOR                             1
-#define OSC_DSP_CORRECTION_SCALE_DENOMINATOR                           1
-#define OSC_DSP_CORRECTION_OFFSET                                      0
+#define OSC_DSP_CORRECTION_SCALE_NUMERATOR                              1
+#define OSC_DSP_CORRECTION_SCALE_DENOMINATOR                            1
+#define OSC_DSP_CORRECTION_OFFSET                                       0
+
+#define OSC_DSP_SAMPLE_RATE       1000000
+
+#define OSC_DSP_DATA_MEMORY_INDEX_MAPPER(index) \
+    ((index + (OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - OSC_DSP_StateMachine.firstDataPosition)) % (OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE))
+
 
 #define OSC_DSP_DATA_RANGE                                           256
 #define OSC_DSP_MAX_DATA_VALUE                                       255
 #define OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE                         40960     /*20kByte*/
+#define OSC_DSP_INVALID_DATA_VALUE                                   (~0)
+
 extern uint8_t OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
 extern uint8_t OSC_DSP_Channel_B_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
 
-#define OSC_DSP_SAMPLE_RATE       1000000
+typedef enum {
+  OSC_DSP_Channel_A,
+  OSC_DSP_Channel_B
+} OSC_DSP_Channel_Type;
 
 typedef enum {
   OSC_DSP_State_Disabled,
@@ -67,9 +78,7 @@ typedef enum {
 typedef enum {
   OSC_DSP_DataProcessingMode_Normal   =  OSC_CFG_DATA_PROCESSING_MODE_NORMAL,
   OSC_DSP_DataProcessingMode_Average  =  OSC_CFG_DATA_PROCESSING_MODE_AVERAGE,
-  OSC_DSP_DataProcessingMode_Peak     =  OSC_CFG_DATA_PROCESSING_MODE_PEAK,
-  OSC_DSP_DataProcessingMode_PeakMin  =  OSC_CFG_DATA_PROCESSING_MODE_PEAK + 1,
-  OSC_DSP_DataProcessingMode_PeakMax  =  OSC_CFG_DATA_PROCESSING_MODE_PEAK + 2
+  OSC_DSP_DataProcessingMode_Peak     =  OSC_CFG_DATA_PROCESSING_MODE_PEAK
 } OSC_DSP_DataProcessingMode_Type;
 
 typedef struct {
@@ -87,7 +96,8 @@ typedef struct {
 } OSC_DSP_StateMachine_Type;
 
 typedef struct {
-  int32_t         virtualTriggerPosition;
+  int32_t         virtualTriggerPositionInData;
+  int32_t         triggerPositionOnDisplay;
   int32_t         samplePerPixel;
   int32_t         verticalScaleFactorNumerator;
   int32_t         verticalScaleFactorDenominator;
@@ -99,8 +109,9 @@ void OSC_DSP_Calculate(void);
 void OSC_DSP_StateMachine_Update(void);
 void OSC_DSP_WaveformProperties_Update(void);
 
-uint8_t OSC_DSP_Waveform_CalculateSampleValue(
-    uint8_t*                          data,
+uint32_t OSC_DSP_Waveform_CalculateSampleValue(
+    OSC_DSP_Channel_Type              channel,
+    int32_t                           startIndex,
     int32_t                           dataLength,
     OSC_DSP_DataProcessingMode_Type   dataProcMode
 );

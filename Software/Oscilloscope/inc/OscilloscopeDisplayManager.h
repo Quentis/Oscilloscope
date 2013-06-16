@@ -36,6 +36,8 @@
 
 #define OSC_DM_ABS(X)       ( ((X) > 0) ? (X) : (-(X)) )
 
+#define OSC_DM_GRAPHICS_INVALID_PIXEL_VALUE         ((int32_t)(~0))
+
 typedef uint8_t OSC_DisplayManager_LineNumber_Type;
 typedef uint8_t OSC_DisplayManager_CharPosition_Type;
 
@@ -55,14 +57,14 @@ typedef struct {
 } OSC_DisplayManager_Graphics_Line_Type;
 
 typedef struct {
-  uint8_t dataPoints[2][OSC_DM_MATRIX_ROW_COUNT];
-  uint8_t actualDataPoints;
+  int32_t dataPoints[2][OSC_DM_MATRIX_ROW_COUNT];
+  uint8_t actualDataPointsIndex;
 } OSC_DisplayManager_Waveform_Type;
 
 OSC_DisplayManager_Waveform_Type OSC_DisplayManager_Waveform_Channel_A;
 OSC_DisplayManager_Waveform_Type OSC_DisplayManager_Waveform_Channel_B;
 
-/*=========================================ERROR_DEFINITIONS========================================*/
+/*=========================================ERROR DEFINITIONS========================================*/
 
 typedef enum {
   OSC_DisplayManager_Err_OK,

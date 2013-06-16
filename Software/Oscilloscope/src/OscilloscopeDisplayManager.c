@@ -18,8 +18,8 @@ void OSC_DisplayManager_Init(void){
     }
   }
 
-  OSC_DisplayManager_Waveform_Channel_A.actualDataPoints = 0;
-  OSC_DisplayManager_Waveform_Channel_B.actualDataPoints = 0;
+  OSC_DisplayManager_Waveform_Channel_A.actualDataPointsIndex = 0;
+  OSC_DisplayManager_Waveform_Channel_B.actualDataPointsIndex = 0;
 }
 
 OSC_DisplayManager_Err_Type OSC_DisplayManager_ClearScreen(void){

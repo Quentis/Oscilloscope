@@ -61,6 +61,7 @@ OSC_DSP_StateMachine_Type  OSC_DSP_StateMachine = {
 /*===================================== WAVEFORM PROPERTIES DEFINITIONS =====================================*/
 OSC_DSP_WaveformProperties_Type OSC_DSP_WaveformProperties = {
     0,      /*virtualTriggerPosition*/
+    0,      /*triggerPositionOnDisplay*/
     0,      /*samplePerPixel*/
     0,      /*verticalScaleFactorNumerator*/
     0,      /*verticalScaleFactorDenominator*/
@@ -149,19 +150,21 @@ void OSC_DSP_WaveformProperties_Update(void){
   if(OSC_Settings_DataAcquisitionMode.status == OSC_CFG_DATA_ACQUISITION_MODE_SINGLE){
     horizontalOffsetInPixel = OSC_Settings_HorizontalOffset.value;
 
-    OSC_DSP_WaveformProperties.virtualTriggerPosition =
+    OSC_DSP_WaveformProperties.virtualTriggerPositionInData =
         OSC_DSP_StateMachine.triggerPosition + (OSC_DSP_WaveformProperties.samplePerPixel * horizontalOffsetInPixel);
 
     /*If the virtual trigger position runs out of the data acquisition memory then it must be saturated to the extremes*/
-    if(OSC_DSP_WaveformProperties.virtualTriggerPosition < 0){
-      OSC_DSP_WaveformProperties.virtualTriggerPosition = 0;
-    } else if(OSC_DSP_WaveformProperties.virtualTriggerPosition >= OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
-      OSC_DSP_WaveformProperties.virtualTriggerPosition = OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - 1;
+    if(OSC_DSP_WaveformProperties.virtualTriggerPositionInData < 0){
+      OSC_DSP_WaveformProperties.virtualTriggerPositionInData = 0;
+    } else if(OSC_DSP_WaveformProperties.virtualTriggerPositionInData >= OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
+      OSC_DSP_WaveformProperties.virtualTriggerPositionInData = OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - 1;
     }
-
   } else {    /*OSC_Settings_DataAcquisitionMode.status == OSC_CFG_DATA_ACQUISITION_MODE_REPETITIVE*/
-    OSC_DSP_WaveformProperties.virtualTriggerPosition = OSC_DSP_StateMachine.triggerPosition;
+    OSC_DSP_WaveformProperties.virtualTriggerPositionInData = OSC_DSP_StateMachine.triggerPosition;
   }
+
+  OSC_DSP_WaveformProperties.triggerPositionOnDisplay = (OSC_Settings_TriggerPosition.value * OSC_DSP_WAVEFORM_HORIZONTAL_POINTS_COUNT) /
+        (OSC_Settings_TriggerPosition.upperBound - OSC_Settings_TriggerPosition.lowerBound);
 
   voltagePerLSB      = OSC_Settings_VoltagePerLSB.value;
   voltagePerDivision = OSC_Settings_VerticalResolution.valueSet[OSC_Settings_VerticalResolution.currentIndex];
@@ -174,45 +177,106 @@ void OSC_DSP_WaveformProperties_Update(void){
 }
 
 void OSC_DSP_Waveform_Construct(void){
+  int32_t displayIndex;
+  int32_t dataMemoryIndex;
 
+  if(OSC_DisplayManager_Waveform_Channel_A.actualDataPointsIndex == 0){   /*Channel A and B are symmetric*/
+    OSC_DisplayManager_Waveform_Channel_A.actualDataPointsIndex = 1;
+    OSC_DisplayManager_Waveform_Channel_B.actualDataPointsIndex = 1;
+  } else {
+    OSC_DisplayManager_Waveform_Channel_A.actualDataPointsIndex = 0;
+    OSC_DisplayManager_Waveform_Channel_B.actualDataPointsIndex = 0;
+  }
+
+  for (displayIndex = OSC_DSP_WaveformProperties.triggerPositionOnDisplay; displayIndex < OSC_DSP_WAVEFORM_HORIZONTAL_POINTS_COUNT; ++displayIndex) {
+    dataMemoryIndex = OSC_DSP_StateMachine.triggerPosition +
+                     (displayIndex - OSC_DSP_WaveformProperties.triggerPositionOnDisplay) *
+                      OSC_DSP_WaveformProperties.samplePerPixel;
+    if(OSC_DSP_DATA_MEMORY_INDEX_MAPPER(dataMemoryIndex) < OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
+
+    } else {    /*OSC_DSP_DATA_MEMORY_INDEX_MAPPER(index) >= OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE*/
+
+    }
+  }
 }
 
-uint8_t OSC_DSP_Waveform_CalculateSampleValue(uint8_t* data,int32_t dataLength,OSC_DSP_DataProcessingMode_Type dataProcMode){
-  int32_t   processedDataValue;
-  uint32_t  index;
+uint32_t OSC_DSP_Waveform_CalculateSampleValue(
+    OSC_DSP_Channel_Type              channel,
+    int32_t                           startIndex,
+    int32_t                           dataLength,
+    OSC_DSP_DataProcessingMode_Type   dataProcMode
+){
+  int32_t         processedDataValue;
+  int32_t         minValue,maxValue;
+  int32_t         index, endIndex;
+  const uint8_t*  data;
 
-  switch(dataProcMode){
-  case OSC_DSP_DataProcessingMode_Normal:
-    processedDataValue = data[0];
-    break;
-
-  case OSC_DSP_DataProcessingMode_Average:
-    processedDataValue = 0;
-    for (index = 0; index < dataLength; ++index) {
-      processedDataValue += data[index];
-    }
-    processedDataValue = processedDataValue / dataLength;
-    break;
-
-  case OSC_DSP_DataProcessingMode_PeakMax:
-    processedDataValue = 0;
-    for (index = 0; index < dataLength; ++index) {
-      if(data[index] > processedDataValue) processedDataValue = data[index];
-    }
-    break;
-
-  case OSC_DSP_DataProcessingMode_PeakMin:
-    processedDataValue = 0xFFFF;
-    for (index = 0; index < dataLength; ++index) {
-      if(data[index] < processedDataValue) processedDataValue = data[index];
-    }
-    break;
-
-  default:
-    processedDataValue = 0;
-    break;
+  if(channel == OSC_DSP_Channel_A){
+    data = OSC_DSP_Channel_A_DataAcquisitionMemory;
+  } else if(channel == OSC_DSP_Channel_B) {
+    data = OSC_DSP_Channel_B_DataAcquisitionMemory;
+  } else {
+    data = NULL;
   }
-  return (uint8_t)processedDataValue;
+
+  if((data == NULL)   || (startIndex >= OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE) || (dataLength > OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE) ||
+     (startIndex < 0) || (dataLength < 1)){
+    processedDataValue = OSC_DSP_INVALID_DATA_VALUE;
+  } else {
+    switch(dataProcMode){
+    case OSC_DSP_DataProcessingMode_Normal:
+      processedDataValue = data[startIndex];
+      break;
+
+    case OSC_DSP_DataProcessingMode_Average:
+      processedDataValue = 0;
+      endIndex = startIndex + dataLength - 1;
+
+      if(endIndex < OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
+        for (index = startIndex; index < endIndex; ++index) {
+          processedDataValue += data[index];
+        }
+      } else {
+        for (index = startIndex; index < OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE; ++index) {
+          processedDataValue += data[index];
+        }
+        for (index = 0; index <= (endIndex - OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE); ++index) {
+          processedDataValue += data[index];
+        }
+      }
+      processedDataValue = processedDataValue / dataLength;
+      break;
+
+    case OSC_DSP_DataProcessingMode_Peak:
+      processedDataValue = 0;
+      minValue = 0xFFFF;
+      maxValue = 0;
+      endIndex = startIndex + dataLength - 1;
+
+      if(endIndex < OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
+        for (index = startIndex; index < endIndex; ++index) {
+          if(data[index] > maxValue) maxValue = data[index];
+          if(data[index] < minValue) minValue = data[index];
+        }
+      } else {
+        for (index = startIndex; index < OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE; ++index) {
+          if(data[index] > maxValue) maxValue = data[index];
+          if(data[index] < minValue) minValue = data[index];
+        }
+        for (index = 0; index <= (endIndex - OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE); ++index) {
+          if(data[index] > maxValue) maxValue = data[index];
+          if(data[index] < minValue) minValue = data[index];
+        }
+      }
+      processedDataValue = (maxValue << 16) | minValue;
+      break;
+
+    default:
+      processedDataValue = OSC_DSP_INVALID_DATA_VALUE;
+      break;
+    }
+  }
+  return processedDataValue;
 }
 
 void OSC_DSP_StateMachine_Update(void){    /*Updates the DSP state machine configuration dependent attributes*/
