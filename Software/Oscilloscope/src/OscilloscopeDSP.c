@@ -177,6 +177,44 @@ void OSC_DSP_Waveform_Construct(void){
 
 }
 
+uint8_t OSC_DSP_Waveform_CalculateSampleValue(uint8_t* data,int32_t dataLength,OSC_DSP_DataProcessingMode_Type dataProcMode){
+  int32_t   processedDataValue;
+  uint32_t  index;
+
+  switch(dataProcMode){
+  case OSC_DSP_DataProcessingMode_Normal:
+    processedDataValue = data[0];
+    break;
+
+  case OSC_DSP_DataProcessingMode_Average:
+    processedDataValue = 0;
+    for (index = 0; index < dataLength; ++index) {
+      processedDataValue += data[index];
+    }
+    processedDataValue = processedDataValue / dataLength;
+    break;
+
+  case OSC_DSP_DataProcessingMode_PeakMax:
+    processedDataValue = 0;
+    for (index = 0; index < dataLength; ++index) {
+      if(data[index] > processedDataValue) processedDataValue = data[index];
+    }
+    break;
+
+  case OSC_DSP_DataProcessingMode_PeakMin:
+    processedDataValue = 0xFFFF;
+    for (index = 0; index < dataLength; ++index) {
+      if(data[index] < processedDataValue) processedDataValue = data[index];
+    }
+    break;
+
+  default:
+    processedDataValue = 0;
+    break;
+  }
+  return (uint8_t)processedDataValue;
+}
+
 void OSC_DSP_StateMachine_Update(void){    /*Updates the DSP state machine configuration dependent attributes*/
   OSC_DSP_StateMachine.dataAcquisitionState           = OSC_DSP_State_Disabled;
 

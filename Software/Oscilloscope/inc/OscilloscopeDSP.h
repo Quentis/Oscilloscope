@@ -64,6 +64,14 @@ typedef enum {
   OSC_DSP_TriggerSlope_FallingEdge
 } OSC_DSP_TriggerSlope_Type;
 
+typedef enum {
+  OSC_DSP_DataProcessingMode_Normal   =  OSC_CFG_DATA_PROCESSING_MODE_NORMAL,
+  OSC_DSP_DataProcessingMode_Average  =  OSC_CFG_DATA_PROCESSING_MODE_AVERAGE,
+  OSC_DSP_DataProcessingMode_Peak     =  OSC_CFG_DATA_PROCESSING_MODE_PEAK,
+  OSC_DSP_DataProcessingMode_PeakMin  =  OSC_CFG_DATA_PROCESSING_MODE_PEAK + 1,
+  OSC_DSP_DataProcessingMode_PeakMax  =  OSC_CFG_DATA_PROCESSING_MODE_PEAK + 2
+} OSC_DSP_DataProcessingMode_Type;
+
 typedef struct {
   OSC_DSP_State_Type                      dataAcquisitionState;
   int32_t                                 firstDataPosition;
@@ -90,6 +98,13 @@ void OSC_DSP_Init(void);
 void OSC_DSP_Calculate(void);
 void OSC_DSP_StateMachine_Update(void);
 void OSC_DSP_WaveformProperties_Update(void);
+
+uint8_t OSC_DSP_Waveform_CalculateSampleValue(
+    uint8_t*                          data,
+    int32_t                           dataLength,
+    OSC_DSP_DataProcessingMode_Type   dataProcMode
+);
+
 void OSC_DSP_Waveform_Construct(void);
 void OSC_DSP_StateMachine_Update(void);
 
