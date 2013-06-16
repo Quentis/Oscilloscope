@@ -41,6 +41,7 @@ OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous
 
   extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_TriggerPosition;
   extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_HorizontalResolution;
+  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_HorizontalOffset;
 
 /*######################################### HORIIZONTAL MENU ##########################################*/
 

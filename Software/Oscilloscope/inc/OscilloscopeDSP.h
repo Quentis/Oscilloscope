@@ -45,7 +45,7 @@ typedef enum {
  * the other part of the range so after the second transition it must be a trigger event
  */
 
-typedef uint32_t OSC_DSP_SampleRate_Type;
+typedef int32_t OSC_DSP_SampleRate_Type;
 
 typedef enum {
   OSC_DSP_TriggerState_Disabled,
@@ -66,10 +66,10 @@ typedef enum {
 
 typedef struct {
   OSC_DSP_State_Type                      dataAcquisitionState;
-  uint32_t                                firstDataPosition;
-  uint32_t                                preTriggerMemoryLength;
-  uint32_t                                postTriggerMemoryLength;
-  uint32_t                                triggerPosition;  /*It must be the same for the two channel -> number of samples before trigger*/
+  int32_t                                 firstDataPosition;
+  int32_t                                 preTriggerMemoryLength;
+  int32_t                                 postTriggerMemoryLength;
+  int32_t                                 triggerPosition;  /*It must be the same for the two channel -> number of samples before trigger*/
   uint8_t                                 triggerLevel;     /*The trigger level in the unprocessed raw data units*/
   OSC_Analog_AnalogWatchdog_Range_Type    triggerAnalogWatchdogRange;
   OSC_DSP_TriggerSlope_Type               triggerSlope;
@@ -79,16 +79,18 @@ typedef struct {
 } OSC_DSP_StateMachine_Type;
 
 typedef struct {
-  uint32_t        virtualTriggerPosition;
-  uint32_t        samplePerPixel;
-  int32_t         scaleFactorNumerator;
-  int32_t         scaleFactorDenominator;
-  int32_t         offset;
+  int32_t         virtualTriggerPosition;
+  int32_t         samplePerPixel;
+  int32_t         verticalScaleFactorNumerator;
+  int32_t         verticalScaleFactorDenominator;
+  int32_t         verticalOffset;
 } OSC_DSP_WaveformProperties_Type;
 
 void OSC_DSP_Init(void);
 void OSC_DSP_Calculate(void);
-void OSC_DSP_StateMachineUpdate(void);
-void OSC_DSP_UpdateWaveformProperties(void);
+void OSC_DSP_StateMachine_Update(void);
+void OSC_DSP_WaveformProperties_Update(void);
+void OSC_DSP_Waveform_Construct(void);
+void OSC_DSP_StateMachine_Update(void);
 
 #endif /* OSCILLOSCOPEDSP_H_ */

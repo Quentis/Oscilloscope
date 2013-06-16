@@ -17,6 +17,9 @@ void OSC_DisplayManager_Init(void){
       OSC_DM_DisplayMatrix_DirtyBits[i][j] = 0;
     }
   }
+
+  OSC_DisplayManager_Waveform_Channel_A.actualDataPoints = 0;
+  OSC_DisplayManager_Waveform_Channel_B.actualDataPoints = 0;
 }
 
 OSC_DisplayManager_Err_Type OSC_DisplayManager_ClearScreen(void){
@@ -34,7 +37,7 @@ OSC_DisplayManager_Err_Type OSC_DisplayManager_ClearScreen(void){
   return OSC_DisplayManager_Err_OK;
 }
 
-OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_UpdateWaveform(OSC_DisplayManager_WaveformType* waveform){
+OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_UpdateWaveform(OSC_DisplayManager_Waveform_Type* waveform){
  return OSC_DisplayManager_Err_OK;
 }
 

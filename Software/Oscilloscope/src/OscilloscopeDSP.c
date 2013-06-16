@@ -55,15 +55,16 @@ OSC_DSP_StateMachine_Type  OSC_DSP_StateMachine = {
     OSC_DSP_TriggerSource_Channel_A,                /*triggerSource*/                     /*UPDATE-FROM-CONFIG*/
     OSC_DSP_TriggerState_Disabled,                  /*triggerState*/                      /*COMPUTED*/
     OSC_DSP_SAMPLE_RATE                             /*sampleRate*/                        /*UPDATE-FROM-CONFIG*/
+    /*FIXME: It is not used in version 1.0 --> The timer should be adjusted according to this*/
 };
 
 /*===================================== WAVEFORM PROPERTIES DEFINITIONS =====================================*/
 OSC_DSP_WaveformProperties_Type OSC_DSP_WaveformProperties = {
     0,      /*virtualTriggerPosition*/
     0,      /*samplePerPixel*/
-    0,      /*scaleFactorNumerator*/
-    0,      /*scaleFactorDenominator*/
-    0       /*offset*/
+    0,      /*verticalScaleFactorNumerator*/
+    0,      /*verticalScaleFactorDenominator*/
+    0       /*verticalOffset*/
 };
 
 /*====================================== EXTERNAL FUNCTION DEFINITIONS ======================================*/
@@ -73,7 +74,7 @@ void OSC_DSP_Init(void){
 }
 
 void OSC_DSP_StartDataAcquisition(void){
-  OSC_DSP_StateMachineUpdate();
+  OSC_DSP_StateMachine_Update();
   OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Sampling_Single_PreTriggerMemory;
   OSC_DSP_StateMachine.triggerState = OSC_DSP_TriggerState_Disabled;
   OSC_DSP_StateMachine.triggerAnalogWatchdogRange = OSC_Analog_AnalogWatchdog_Range_Invalid;
@@ -112,7 +113,7 @@ void OSC_DSP_Calculate(void){
   #endif
 
   if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Calculating){
-    OSC_DSP_UpdateWaveformProperties();
+    OSC_DSP_WaveformProperties_Update();
   }
 
 }
@@ -131,12 +132,13 @@ void OSC_DSP_Calculate(void){
  *                    = (sampleValue * voltagePerLSB * pixelPerDivision) / (voltagePerDivision)
  */
 
-void OSC_DSP_UpdateWaveformProperties(void){
-  uint32_t sampleRate;
-  uint32_t timePerDivision;
-  int32_t voltagePerLSB;
-  int32_t voltagePerDivision;
-  int32_t offsetInPixel;
+void OSC_DSP_WaveformProperties_Update(void){
+  int32_t   sampleRate;
+  int32_t   timePerDivision;
+  int32_t   horizontalOffsetInPixel;
+  int32_t   voltagePerLSB;
+  int32_t   voltagePerDivision;
+  int32_t   verticalOffsetInPixel;
 
   sampleRate       = OSC_Settings_SampleRate.valueSet[OSC_Settings_SampleRate.currentIndex];                      /*sample/ms*/
   timePerDivision  = OSC_Settings_HorizontalResolution.valueSet[OSC_Settings_HorizontalResolution.currentIndex];  /*us/div*/
@@ -144,17 +146,38 @@ void OSC_DSP_UpdateWaveformProperties(void){
   OSC_DSP_WaveformProperties.samplePerPixel = (sampleRate * timePerDivision) / (1000 * OSC_DSP_WAVEFORM_PIXEL_PER_HORIZONTAL_DIVISION);
   /*division by 1000 is because of the different units (ms and us)*/
 
+  if(OSC_Settings_DataAcquisitionMode.status == OSC_CFG_DATA_ACQUISITION_MODE_SINGLE){
+    horizontalOffsetInPixel = OSC_Settings_HorizontalOffset.value;
+
+    OSC_DSP_WaveformProperties.virtualTriggerPosition =
+        OSC_DSP_StateMachine.triggerPosition + (OSC_DSP_WaveformProperties.samplePerPixel * horizontalOffsetInPixel);
+
+    /*If the virtual trigger position runs out of the data acquisition memory then it must be saturated to the extremes*/
+    if(OSC_DSP_WaveformProperties.virtualTriggerPosition < 0){
+      OSC_DSP_WaveformProperties.virtualTriggerPosition = 0;
+    } else if(OSC_DSP_WaveformProperties.virtualTriggerPosition >= OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
+      OSC_DSP_WaveformProperties.virtualTriggerPosition = OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - 1;
+    }
+
+  } else {    /*OSC_Settings_DataAcquisitionMode.status == OSC_CFG_DATA_ACQUISITION_MODE_REPETITIVE*/
+    OSC_DSP_WaveformProperties.virtualTriggerPosition = OSC_DSP_StateMachine.triggerPosition;
+  }
+
   voltagePerLSB      = OSC_Settings_VoltagePerLSB.value;
   voltagePerDivision = OSC_Settings_VerticalResolution.valueSet[OSC_Settings_VerticalResolution.currentIndex];
 
-  offsetInPixel = OSC_Settings_VerticalOffset.value;
+  verticalOffsetInPixel = OSC_Settings_VerticalOffset.value;
 
-  OSC_DSP_WaveformProperties.scaleFactorNumerator   = voltagePerLSB * OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
-  OSC_DSP_WaveformProperties.scaleFactorDenominator = voltagePerDivision;
-  OSC_DSP_WaveformProperties.offset                 = (offsetInPixel * voltagePerDivision) / OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
+  OSC_DSP_WaveformProperties.verticalScaleFactorNumerator   = voltagePerLSB * OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
+  OSC_DSP_WaveformProperties.verticalScaleFactorDenominator = voltagePerDivision;
+  OSC_DSP_WaveformProperties.verticalOffset                 = (verticalOffsetInPixel * voltagePerDivision) / OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
 }
 
-void OSC_DSP_StateMachineUpdate(void){    /*Updates the DSP state machine configuration dependent attributes*/
+void OSC_DSP_Waveform_Construct(void){
+
+}
+
+void OSC_DSP_StateMachine_Update(void){    /*Updates the DSP state machine configuration dependent attributes*/
   OSC_DSP_StateMachine.dataAcquisitionState           = OSC_DSP_State_Disabled;
 
   OSC_DSP_StateMachine.preTriggerMemoryLength =

@@ -57,10 +57,10 @@ typedef struct {
 typedef struct {
   uint8_t dataPoints[2][OSC_DM_MATRIX_ROW_COUNT];
   uint8_t actualDataPoints;
-} OSC_DisplayManager_WaveformType;
+} OSC_DisplayManager_Waveform_Type;
 
-OSC_DisplayManager_WaveformType OSC_Waveform_Channel_A;
-OSC_DisplayManager_WaveformType OSC_Waveform_Channel_B;
+OSC_DisplayManager_Waveform_Type OSC_DisplayManager_Waveform_Channel_A;
+OSC_DisplayManager_Waveform_Type OSC_DisplayManager_Waveform_Channel_B;
 
 /*=========================================ERROR_DEFINITIONS========================================*/
 
@@ -75,7 +75,7 @@ typedef enum {
 void OSC_DisplayManager_Init(void);
 OSC_DisplayManager_Err_Type OSC_DisplayManager_ClearScreen(void);
 OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_DrawLine(const OSC_DisplayManager_Graphics_Line_Type* lineCoords);
-OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_UpdateWaveform(OSC_DisplayManager_WaveformType* waveform);
+OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_UpdateWaveform(OSC_DisplayManager_Waveform_Type* waveform);
 OSC_DisplayManager_Err_Type OSC_DisplayManager_Text_PrintChar(char                                    ch,
                                                               OSC_DisplayManager_LineNumber_Type      line,
                                                               OSC_DisplayManager_CharPosition_Type    pos);

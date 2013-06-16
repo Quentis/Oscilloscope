@@ -31,11 +31,25 @@
         "HorizontalRes"                                     /*name*/
     };
 
+/*========================================= HORIZONTAL OFFSET =========================================*/
+    OSC_Settings_IntegerContinuous_Type OSC_Settings_HorizontalOffset = {
+        0,                    /*value*/
+       -1280,                 /*lowerBound*/
+        1280,                 /*upperBound*/
+        1,                    /*incrementStepSingle*/
+        10,                   /*incrementStepMultiple*/
+        NULL,                 /*callback*/
+        "HorizOffset",        /*name*/
+        "p"                   /*unitName*/
+    };
+
+
 /*########################################## HORIIZONTAL MENU #########################################*/
 
     OSC_Menu_Element_Type OSC_Menu_ElementList_HorizontalMenu[] = {
-        {OSC_Menu_Element_TypeInfo_IntegerContinuous,(void*)&OSC_Settings_TriggerPosition       },
-        {OSC_Menu_Element_TypeInfo_IntegerDiscrete,  (void*)&OSC_Settings_HorizontalResolution  }
+        {OSC_Menu_Element_TypeInfo_IntegerContinuous, (void*)&OSC_Settings_TriggerPosition       },
+        {OSC_Menu_Element_TypeInfo_IntegerDiscrete,   (void*)&OSC_Settings_HorizontalResolution  },
+        {OSC_Menu_Element_TypeInfo_IntegerContinuous, (void*)&OSC_Settings_HorizontalOffset      }
     };
 
     OSC_Menu_Type OSC_Menu_Horizontal = {
