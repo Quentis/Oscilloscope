@@ -18,8 +18,8 @@ void OSC_DisplayManager_Init(void){
     }
   }
 
-  OSC_DisplayManager_Waveform_Channel_A.actualDataPointsIndex = 0;
-  OSC_DisplayManager_Waveform_Channel_B.actualDataPointsIndex = 0;
+  OSC_DisplayManager_Waveform_Channel_A.dataType = OSC_DisplayManager_Waveform_DataType_Normal;
+  OSC_DisplayManager_Waveform_Channel_B.dataType = OSC_DisplayManager_Waveform_DataType_Normal;
 }
 
 OSC_DisplayManager_Err_Type OSC_DisplayManager_ClearScreen(void){
@@ -38,6 +38,13 @@ OSC_DisplayManager_Err_Type OSC_DisplayManager_ClearScreen(void){
 }
 
 OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_UpdateWaveform(OSC_DisplayManager_Waveform_Type* waveform){
+  uint32_t index;
+  for (index = 0; index < OSC_DM_MATRIX_COLUMN_COUNT; ++index) {
+    OSC_DM_MATRIX_SET_PIXEL(index,waveform->dataPoints[0][index]);
+    if(waveform->dataType == OSC_DisplayManager_Waveform_DataType_MinMax){
+      OSC_DM_MATRIX_SET_PIXEL(index,waveform->dataPoints[1][index]);
+    }
+  }
  return OSC_DisplayManager_Err_OK;
 }
 

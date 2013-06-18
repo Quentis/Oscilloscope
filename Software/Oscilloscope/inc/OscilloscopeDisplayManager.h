@@ -42,6 +42,11 @@ typedef uint8_t OSC_DisplayManager_LineNumber_Type;
 typedef uint8_t OSC_DisplayManager_CharPosition_Type;
 
 typedef enum {
+  OSC_DisplayManager_Waveform_DataType_Normal,
+  OSC_DisplayManager_Waveform_DataType_MinMax
+} OSC_DisplayManager_Waveform_DataType_Type;
+
+typedef enum {
   OSC_DisplayManager_PrintMode_Positive,
   OSC_DisplayManager_PrintMode_Negative
 } OSC_DisplayManager_PrintMode_Type;
@@ -57,8 +62,8 @@ typedef struct {
 } OSC_DisplayManager_Graphics_Line_Type;
 
 typedef struct {
-  int32_t dataPoints[2][OSC_DM_MATRIX_ROW_COUNT];
-  uint8_t actualDataPointsIndex;
+  int32_t                                     dataPoints[2][OSC_DM_MATRIX_COLUMN_COUNT];
+  OSC_DisplayManager_Waveform_DataType_Type   dataType;
 } OSC_DisplayManager_Waveform_Type;
 
 OSC_DisplayManager_Waveform_Type OSC_DisplayManager_Waveform_Channel_A;

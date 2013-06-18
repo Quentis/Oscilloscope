@@ -19,16 +19,16 @@
 #define OSC_DSP_CORRECTION_SCALE_DENOMINATOR                            1
 #define OSC_DSP_CORRECTION_OFFSET                                       0
 
-#define OSC_DSP_SAMPLE_RATE       1000000
 
 #define OSC_DSP_DATA_MEMORY_INDEX_MAPPER(index) \
     ((index + (OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - OSC_DSP_StateMachine.firstDataPosition)) % (OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE))
 
 
-#define OSC_DSP_DATA_RANGE                                           256
-#define OSC_DSP_MAX_DATA_VALUE                                       255
-#define OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE                         40960     /*20kByte*/
-#define OSC_DSP_INVALID_DATA_VALUE                                   (~0)
+#define OSC_DSP_DATA_RANGE                                             256
+#define OSC_DSP_MAX_DATA_VALUE                                         255
+#define OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE                         40960     /*40kByte*/
+#define OSC_DSP_INVALID_DATA_VALUE                                     (~0)
+#define OSC_DSP_SAMPLE_RATE                                        1000000
 
 extern uint8_t OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
 extern uint8_t OSC_DSP_Channel_B_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
@@ -44,8 +44,15 @@ typedef enum {
   OSC_DSP_State_Sampling_Circular_PreTriggerMemory,
   OSC_DSP_State_Sampling_Single_PostTriggerMemory_NoOverflow,
   OSC_DSP_State_Sampling_Single_PostTriggerMemory_Overflow,
-  OSC_DSP_State_Calculating
+  OSC_DSP_State_Calculating_UpdatePhase,
+  OSC_DSP_State_Calculating_WaveformConstructPhase,
+  OSC_DSP_State_Calculating_WaveformDisplayPhase
 } OSC_DSP_State_Type;
+
+typedef enum{
+  OSC_DSP_CalculationStatus_InProgress,
+  OSC_DSP_CalculationStatus_Ready
+} OSC_DSP_CalculationStatus_Type;
 
 /*
  * The trigger detection is implemented with Analog watchdog which is able to detect if the signal has
@@ -96,18 +103,21 @@ typedef struct {
 } OSC_DSP_StateMachine_Type;
 
 typedef struct {
-  int32_t         virtualTriggerPositionInData;
-  int32_t         triggerPositionOnDisplay;
-  int32_t         samplePerPixel;
-  int32_t         verticalScaleFactorNumerator;
-  int32_t         verticalScaleFactorDenominator;
-  int32_t         verticalOffset;
+  int32_t                              virtualTriggerPositionInData;
+  int32_t                              triggerPositionOnDisplay;
+  int32_t                              samplePerPixel;
+  int32_t                              verticalScaleFactorNumerator;
+  int32_t                              verticalScaleFactorDenominator;
+  int32_t                              verticalOffsetInPixel;
+  int32_t                              verticalOffsetIn_mV;
+  OSC_DSP_DataProcessingMode_Type      dataProcessingMode;
 } OSC_DSP_WaveformProperties_Type;
 
-void OSC_DSP_Init(void);
-void OSC_DSP_Calculate(void);
-void OSC_DSP_StateMachine_Update(void);
-void OSC_DSP_WaveformProperties_Update(void);
+void    OSC_DSP_Init(void);
+void    OSC_DSP_Calculate(void);
+void    OSC_DSP_StateMachine_Update(void);
+void    OSC_DSP_WaveformProperties_Update(void);
+int32_t OSC_DSP_Waveform_VerticalAdjust(int32_t rawData);
 
 uint32_t OSC_DSP_Waveform_CalculateSampleValue(
     OSC_DSP_Channel_Type              channel,
@@ -116,7 +126,7 @@ uint32_t OSC_DSP_Waveform_CalculateSampleValue(
     OSC_DSP_DataProcessingMode_Type   dataProcMode
 );
 
-void OSC_DSP_Waveform_Construct(void);
+OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void);
 void OSC_DSP_StateMachine_Update(void);
 
 #endif /* OSCILLOSCOPEDSP_H_ */
