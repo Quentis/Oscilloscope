@@ -100,8 +100,8 @@ OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_DrawLine(const OSC_Displ
   int32_t x1,x2,dx,y1,y2,dy,gradient;
   if( ((lineCoords->pointFirst.x == lineCoords->pointSecond.x) && (lineCoords->pointFirst.y == lineCoords->pointSecond.y)) ||
        (lineCoords->pointFirst.x  <  0) || (lineCoords->pointSecond.x <   0) || (lineCoords->pointFirst.y  <   0) ||
-       (lineCoords->pointSecond.y <  0) || (lineCoords->pointFirst.x  > 127) || (lineCoords->pointSecond.x > 127) ||
-       (lineCoords->pointFirst.y  > 63) || (lineCoords->pointSecond.y >  63)){
+       (lineCoords->pointSecond.y <  0) || (lineCoords->pointFirst.x  >= OSC_DM_HORIZONTAL_PIXEL_COUNT) || (lineCoords->pointSecond.x >= OSC_DM_HORIZONTAL_PIXEL_COUNT) ||
+       (lineCoords->pointFirst.y  > OSC_DM_VERTICAL_PIXEL_COUNT) || (lineCoords->pointSecond.y >  OSC_DM_VERTICAL_PIXEL_COUNT)){
     return OSC_DisplayManager_Err_InvalidParameter_Graphics_LinePoints;
   }
 

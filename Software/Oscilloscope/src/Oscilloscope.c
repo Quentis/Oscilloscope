@@ -16,7 +16,7 @@ void Oscilloscope(void){
   MTR_Alarm_Enable(MTR_ALARM_NAME_VIEW_EVENT_MANAGER);
   //MTR_Alarm_Enable(MTR_ALARM_NAME_TESTALARM_10ms);
   //MTR_Alarm_Enable(MTR_ALARM_NAME_TESTALARM_100ms);
-  //MTR_Alarm_Enable(MTR_ALARM_NAME_TESTALARM_1000ms);
+  MTR_Alarm_Enable(MTR_ALARM_NAME_TESTALARM_1000ms);
   OSC_DisplayManager_ClearScreen();
 
   while(1){
@@ -56,6 +56,7 @@ void OSC_TestAlarm_500ms(void){
 
 void OSC_TestAlarm_1000ms(void){
   STM32F4_Discovery_LEDToggle(LED6);
+  OSC_DSP_StartDataAcquisition();
 }
 
 void OSC_ClearLEDs(void){

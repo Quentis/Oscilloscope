@@ -8,6 +8,7 @@
 #include "OscilloscopeButton.h"
 #include "OscilloscopeAnalog.h"
 #include "OscilloscopeView.h"
+#include "OscilloscopeDSP.h"
 
 void Oscilloscope(void);
 

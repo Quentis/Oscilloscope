@@ -8,6 +8,9 @@
 #define OSC_DM_MATRIX_ROW_PIXEL_COUNT                8    /*A Row element is a group of 8 pixels*/
 #define OSC_DM_MATRIX_COLUMN_COUNT                 128
 
+#define OSC_DM_HORIZONTAL_PIXEL_COUNT                (OSC_DM_MATRIX_COLUMN_COUNT)
+#define OSC_DM_VERTICAL_PIXEL_COUNT                  (OSC_DM_MATRIX_ROW_COUNT * OSC_DM_MATRIX_ROW_PIXEL_COUNT)
+
 #define OSC_DM_MATRIX_DIRTYBIT_ROW_COUNT             8
 #define OSC_DM_MATRIX_DIRTYBIT_COLUMN_COUNT          4
 #define OSC_DM_MATRIX_DIRTYBIT_COLUMN_BIT_COUNT     32

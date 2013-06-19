@@ -91,10 +91,12 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER_FLAG_TC           DMA_FLAG_TCIF0
 #define OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER_ITFLAG_TC         DMA_IT_TCIF0
 
+
 #define OSC_ANALOG_CHANNEL_A_DMA_CLK                               RCC_AHB1Periph_DMA2
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM                            DMA2_Stream0   /*It is important: Channel A is ADC1*/
 
 
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_TC_ENABLE_BIT    DMA_IT_TC
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_MODE_CIRCULAR_SET()        do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR   |=  DMA_Mode_Circular;          }while(0)
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_MODE_NORMAL_SET()          do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR   &= ~DMA_Mode_Circular;          }while(0)
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_MEMORY_DEST_SET(dest)      do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->M0AR  =  ((uint32_t)dest);           }while(0)
@@ -105,7 +107,7 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER          DMA2_Stream0_IRQHandler
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS                     (DMA_FLAG_DMEIF0 | DMA_FLAG_FEIF0 | DMA_FLAG_HTIF0 |\
                                                                    DMA_FLAG_TCIF0  | DMA_FLAG_TEIF0)
-#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS_CLEAR()              do{OSC_ANALOG_CHANNEL_A_DMA->LIFCR &= ~(OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS);}while(0)
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS_CLEAR()              do{OSC_ANALOG_CHANNEL_A_DMA->LIFCR |= (OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS);}while(0)
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_START()                    do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR |=  DMA_SxCR_EN;}while(0)
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_STOP()                     do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR &= ~DMA_SxCR_EN;}while(0)
 
@@ -136,6 +138,7 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM                            DMA2_Stream2   /*It is important: Channel B is ADC2*/
 
 
+#define OSC_ANALOG_CHANNEL_B_DMA_STREAM_INTERRUPT_TC_ENABLE_BIT    DMA_IT_TC
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_MODE_CIRCULAR_SET()        do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->CR |=  DMA_Mode_Circular;           }while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_MODE_NORMAL_SET()          do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->CR &= ~DMA_Mode_Circular;           }while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_MEMORY_DEST_SET(dest)      do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->M0AR = ((uint32_t)dest);            }while(0)
@@ -146,7 +149,7 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_INTERRUPT_HANDLER          DMA2_Stream2_IRQHandler
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS                     (DMA_FLAG_DMEIF2 | DMA_FLAG_FEIF2 | DMA_FLAG_HTIF2 |\
                                                                    DMA_FLAG_TCIF2  | DMA_FLAG_TEIF2)
-#define OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS_CLEAR()              do{OSC_ANALOG_CHANNEL_B_DMA->LIFCR &= ~(OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS);}while(0)
+#define OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS_CLEAR()              do{OSC_ANALOG_CHANNEL_B_DMA->LIFCR |= (OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS);}while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_START()                    do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->CR |=  DMA_SxCR_EN;}while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_STOP()                     do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->CR &= ~DMA_SxCR_EN;}while(0)
 
@@ -171,12 +174,12 @@ typedef struct {
 #define OSC_ANALOG_SAMPLE_TIMER_CLK                  RCC_APB2Periph_TIM1
 #define OSC_ANALOG_SAMPLE_TIMER_CLK_ENABLE           RCC_APB2PeriphClockCmd     /*168 MHz base clock*/
 
-#define OSC_ANALOG_SAMPLE_TIMER_PRELOAD              167     /*4MHz clock for the timer*/     //20
-#define OSC_ANALOG_SAMPLE_TIMER_PERIOD               999     /*1MHz -> timer overflow*/   //7
-#define OSC_ANALOG_SAMPLE_TIMER_CLOCK_DIV_0          0
-#define OSC_ANALOG_SAMPLE_TIMER_REPETITION_NO        0
+#define OSC_ANALOG_SAMPLE_TIMER_PRELOAD                3     /*42MHz clock for the timer*/
+#define OSC_ANALOG_SAMPLE_TIMER_PERIOD                41     /*1MHz -> timer overflow*/
+#define OSC_ANALOG_SAMPLE_TIMER_CLOCK_DIV_0            0
+#define OSC_ANALOG_SAMPLE_TIMER_REPETITION_NO          0
 
-#define OSC_ANALOG_SAMPLE_TIMER_COMPARE_PULSE        500     /*1MHz for compare event*/    //3
+#define OSC_ANALOG_SAMPLE_TIMER_COMPARE_PULSE         20     /*1MHz for compare event*/
 
 #define OSC_ANALOG_SAMPLE_TIMER_DEADTIME             0     /*Dummy*/
 

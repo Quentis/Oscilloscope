@@ -1,5 +1,6 @@
 #include "OscilloscopeAnalog.h"
 
+
 void OSC_Analog_Init_DMA(void){
   NVIC_InitTypeDef NVIC_InitStructure = {
       DMA2_Stream0_IRQn,
@@ -93,7 +94,7 @@ void OSC_Analog_Init_ADC(void){
       OSC_ANALOG_ADC_SCAN_DISABLED,
       OSC_ANALOG_ADC_CONTINUOUSMODE_DISABLED,
       ADC_ExternalTrigConvEdge_Rising,
-      ADC_ExternalTrigConv_T8_CC1,
+      ADC_ExternalTrigConv_T1_CC1,
       ADC_DataAlign_Right,
       OSC_ANALOG_ADC_NUM_OF_CONV
   };
@@ -255,9 +256,6 @@ void OSC_Analog_Init(void){
   OSC_Analog_Init_Timer();
   OSC_Analog_Init_1kHzSquareWave();
 
-  ADC_Cmd(OSC_ANALOG_CHANNEL_A_ADC,ENABLE);   /*It should be here in order to avoid invalid conversion starts*/
-  ADC_Cmd(OSC_ANALOG_CHANNEL_B_ADC,ENABLE);
-
   ADC_ITConfig(OSC_ANALOG_CHANNEL_A_ADC,ADC_IT_AWD,ENABLE);
   ADC_ITConfig(OSC_ANALOG_CHANNEL_B_ADC,ADC_IT_AWD,ENABLE);
   NVIC_Init(&NVIC_InitStructure);
@@ -410,12 +408,12 @@ OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
 
   OSC_ANALOG_CHANNEL_A_DMA_STREAM_START();
   OSC_ANALOG_CHANNEL_B_DMA_STREAM_START();
-
   return OSC_Analog_Err_OK;
 }
 
 OSC_Analog_Err_Type OSC_Analog_AnalogWatchdog_Enable(ADC_TypeDef* triggerSourceADC, uint32_t middleThreshold, OSC_Analog_AnalogWatchdog_Range_Type range)
 {
+  ADC_ClearFlag(triggerSourceADC, ADC_FLAG_AWD);
   if(range == OSC_Analog_AnalogWatchdog_Range_Lower){
     ADC_AnalogWatchdogThresholdsConfig(triggerSourceADC,middleThreshold & OSC_ANALOG_ANALOGWATCHDOG_MASK,0);
   } else if(range == OSC_Analog_AnalogWatchdog_Range_Upper){

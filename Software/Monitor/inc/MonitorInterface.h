@@ -32,6 +32,7 @@ typedef enum {
 
 /*================================== BACKGROUND CALLBACKS ===================================*/
 extern void OSC_LCD_Transport(void);
+extern void OSC_DSP_Calculate(void);
 
 /*===================================== EVENT CALLBACKS =====================================*/
 extern void OSC_ClearLEDs(void);

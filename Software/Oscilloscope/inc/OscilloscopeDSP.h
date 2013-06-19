@@ -115,6 +115,7 @@ typedef struct {
 
 void    OSC_DSP_Init(void);
 void    OSC_DSP_Calculate(void);
+void    OSC_DSP_StartDataAcquisition(void);
 void    OSC_DSP_StateMachine_Update(void);
 void    OSC_DSP_WaveformProperties_Update(void);
 int32_t OSC_DSP_Waveform_VerticalAdjust(int32_t rawData);

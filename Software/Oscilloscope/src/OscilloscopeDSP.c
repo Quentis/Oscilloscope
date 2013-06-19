@@ -88,7 +88,7 @@ void OSC_DSP_StartDataAcquisition(void){
   );
 
   OSC_Analog_Conversion_Start(OSC_Analog_ChannelSelect_ChannelBoth);
-  DMA_ITConfig(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER_ITFLAG_TC,ENABLE);
+  DMA_ITConfig(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_TC_ENABLE_BIT,ENABLE);
 }
 
 void OSC_DSP_Calculate(void){
@@ -119,7 +119,7 @@ void OSC_DSP_Calculate(void){
   if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Calculating_WaveformConstructPhase){
 
     calcultaionStatus = OSC_DSP_Waveform_Construct();             /* This function calculates the waveform points and stores them
-                                                 in OSC_DisplayManager_Waveform_Channel_A and B structures*/
+                                                                     in OSC_DisplayManager_Waveform_Channel_A and B structures*/
     if(calcultaionStatus == OSC_DSP_CalculationStatus_Ready){
       OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Calculating_WaveformDisplayPhase;
     }
@@ -131,8 +131,15 @@ void OSC_DSP_Calculate(void){
 
   } else if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Calculating_WaveformDisplayPhase){
 
-    OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_A);   /*These function writes the waveform on the screen*/
-    OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_B);
+    /*These function writes the waveform on the screen*/
+    if(OSC_Settings_Channel_A_Status.status == OSC_CFG_CHANNEL_A_STATUS_ENABLED){
+      OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_A);
+    }
+
+    if(OSC_Settings_Channel_B_Status.status == OSC_CFG_CHANNEL_B_STATUS_ENABLED){
+      OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_B);
+    }
+
     OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Disabled;
   }
 
@@ -414,8 +421,7 @@ void OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER(void){
 
   if(DMA_GetFlagStatus(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER_FLAG_TC)){
 
-    while((OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER & OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER_FLAG_TC) !=
-           OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER_FLAG_TC);
+    while(!(OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER & OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER_FLAG_TC));
 
     switch(OSC_DSP_StateMachine.dataAcquisitionState){
 
@@ -424,7 +430,6 @@ void OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER(void){
               &OSC_Analog_Channel_A_DataAcquisitionConfig_Circular_PreTrigger,
               &OSC_Analog_Channel_B_DataAcquisitionConfig_Circular_PreTrigger
           );
-          OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Sampling_Circular_PreTriggerMemory;
 
           actualValue = OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - 1];
           /*the last converted data is in the end of the array*/
@@ -460,7 +465,8 @@ void OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER(void){
               break;
           }
 
-          DMA_ITConfig(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER_ITFLAG_TC,DISABLE);
+          OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Sampling_Circular_PreTriggerMemory;
+          DMA_ITConfig(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_TC_ENABLE_BIT,DISABLE);
             /* In OSC_DSP_State_Sampling_Circular_PreTriggerMemory state the transfer complete interrupt is not important because
              * the ADC's analog watchdog interrupt will determine the end of the preTrigger data acquisition ( +DMA in circular mode )*/
         break;
@@ -593,7 +599,7 @@ void OSC_ANALOG_ADC_INTERRUPT_HANDLER(void){  /*There is one interrupt for all o
       }   /*END:OSC_DSP_StateMachine.postTriggerMemoryLength <= 1*/
       OSC_DSP_StateMachine.triggerAnalogWatchdogRange = OSC_Analog_AnalogWatchdog_Range_Invalid;
       OSC_DSP_StateMachine.triggerState               = OSC_DSP_TriggerState_Disabled;
-      DMA_ITConfig(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER_ITFLAG_TC,ENABLE);
+      DMA_ITConfig(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_TC_ENABLE_BIT,ENABLE);
       OSC_Analog_AnalogWatchdog_Disable();
     }   /*END:OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Sampling_Circular_PreTriggerMemory*/
   }   /*END:OSC_DSP_StateMachine.triggerState == OSC_DSP_TriggerState_Enabled_Active*/

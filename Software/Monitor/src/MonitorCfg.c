@@ -22,7 +22,8 @@ uint32_t MTR_InitFuncListLength = sizeof(MTR_InitFuncList)/sizeof(MTR_InitFuncLi
  */
 
 MTR_BackgroundFunctionsList_Type MTR_BackgroundFunctionsList = {
-      OSC_LCD_Transport
+      OSC_LCD_Transport,
+      OSC_DSP_Calculate
 };
 
 uint32_t MTR_BackgroundFunctionsListLength = sizeof(MTR_BackgroundFunctionsList)/sizeof(MTR_BackgroundFunctionsList[0]);
