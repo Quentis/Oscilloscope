@@ -4,6 +4,7 @@
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx_dma.h"
 #include "OscilloscopeConfiguration.h"
+#include "OscilloscopeLED.h"
 
 typedef enum {
   OSC_Analog_AnalogWatchdog_Range_Upper,
@@ -107,7 +108,7 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER          DMA2_Stream0_IRQHandler
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS                     (DMA_FLAG_DMEIF0 | DMA_FLAG_FEIF0 | DMA_FLAG_HTIF0 |\
                                                                    DMA_FLAG_TCIF0  | DMA_FLAG_TEIF0)
-#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS_CLEAR()              do{OSC_ANALOG_CHANNEL_A_DMA->LIFCR |= (OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS);}while(0)
+#define OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS_CLEAR()              do{OSC_ANALOG_CHANNEL_A_DMA->LIFCR = (OSC_ANALOG_CHANNEL_A_DMA_STREAM_FLAGS);}while(0)
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_START()                    do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR |=  DMA_SxCR_EN;}while(0)
 #define OSC_ANALOG_CHANNEL_A_DMA_STREAM_STOP()                     do{OSC_ANALOG_CHANNEL_A_DMA_STREAM->CR &= ~DMA_SxCR_EN;}while(0)
 
@@ -119,14 +120,13 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_A_DMA_PERIPH_ADDRESS_INC                DMA_PeripheralInc_Disable
 #define OSC_ANALOG_CHANNEL_A_DMA_MEMORY_ADDRESS_INC                DMA_MemoryInc_Enable
 #define OSC_ANALOG_CHANNEL_A_DMA_PERIPH_DATA_SIZE                  DMA_PeripheralDataSize_Byte
-#define OSC_ANALOG_CHANNEL_A_DMA_MEMORY_DATA_SIZE                  DMA_MemoryDataSize_Word
+#define OSC_ANALOG_CHANNEL_A_DMA_MEMORY_DATA_SIZE                  DMA_MemoryDataSize_Byte
 #define OSC_ANALOG_CHANNEL_A_DMA_MODE                              DMA_Mode_Circular
 #define OSC_ANALOG_CHANNEL_A_DMA_PRIO                              DMA_Priority_High
 #define OSC_ANALOG_CHANNEL_A_DMA_FIFO_MODE                         DMA_FIFOMode_Enable
 #define OSC_ANALOG_CHANNEL_A_DMA_FIFO_THRESHOLD                    DMA_FIFOThreshold_Full
 #define OSC_ANALOG_CHANNEL_A_DMA_MEMORY_BURST                      DMA_MemoryBurst_Single
 #define OSC_ANALOG_CHANNEL_A_DMA_PERIPH_BURST                      DMA_PeripheralBurst_Single
-
 
 /*DMA_CHANNEL_B_DEFINITIONS*/
 #define OSC_ANALOG_CHANNEL_B_DMA                                   DMA2
@@ -149,7 +149,7 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_INTERRUPT_HANDLER          DMA2_Stream2_IRQHandler
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS                     (DMA_FLAG_DMEIF2 | DMA_FLAG_FEIF2 | DMA_FLAG_HTIF2 |\
                                                                    DMA_FLAG_TCIF2  | DMA_FLAG_TEIF2)
-#define OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS_CLEAR()              do{OSC_ANALOG_CHANNEL_B_DMA->LIFCR |= (OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS);}while(0)
+#define OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS_CLEAR()              do{OSC_ANALOG_CHANNEL_B_DMA->LIFCR = (OSC_ANALOG_CHANNEL_B_DMA_STREAM_FLAGS);}while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_START()                    do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->CR |=  DMA_SxCR_EN;}while(0)
 #define OSC_ANALOG_CHANNEL_B_DMA_STREAM_STOP()                     do{OSC_ANALOG_CHANNEL_B_DMA_STREAM->CR &= ~DMA_SxCR_EN;}while(0)
 
@@ -161,7 +161,7 @@ typedef struct {
 #define OSC_ANALOG_CHANNEL_B_DMA_PERIPH_ADDRESS_INC                DMA_PeripheralInc_Disable
 #define OSC_ANALOG_CHANNEL_B_DMA_MEMORY_ADDRESS_INC                DMA_MemoryInc_Enable
 #define OSC_ANALOG_CHANNEL_B_DMA_PERIPH_DATA_SIZE                  DMA_PeripheralDataSize_Byte
-#define OSC_ANALOG_CHANNEL_B_DMA_MEMORY_DATA_SIZE                  DMA_MemoryDataSize_Word
+#define OSC_ANALOG_CHANNEL_B_DMA_MEMORY_DATA_SIZE                  DMA_MemoryDataSize_Byte
 #define OSC_ANALOG_CHANNEL_B_DMA_MODE                              DMA_Mode_Circular
 #define OSC_ANALOG_CHANNEL_B_DMA_PRIO                              DMA_Priority_Medium
 #define OSC_ANALOG_CHANNEL_B_DMA_FIFO_MODE                         DMA_FIFOMode_Enable
@@ -181,7 +181,7 @@ typedef struct {
 
 #define OSC_ANALOG_SAMPLE_TIMER_COMPARE_PULSE         20     /*1MHz for compare event*/
 
-#define OSC_ANALOG_SAMPLE_TIMER_DEADTIME             0     /*Dummy*/
+#define OSC_ANALOG_SAMPLE_TIMER_DEADTIME               0     /*Dummy*/
 
 
 
@@ -192,10 +192,10 @@ typedef struct {
 #define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_OC_CHANNEL_INIT     TIM_OC4Init
 #define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_OC_CHANNEL          TIM_Channel_4
 
-#define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_PRELOAD             83       /*1MHz clock for the timer*/
-#define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_PERIOD              999      /*1kHz -> timer overflow*/
-#define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_CLOCK_DIV_0         0
-#define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_REPETITION_NO       0
+#define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_PRELOAD                 3      /*21MHz clock for the timer*/
+#define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_PERIOD              20999      /*1kHz -> timer overflow*/
+#define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_CLOCK_DIV_0             0
+#define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_REPETITION_NO           0
 
 #define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_COMPARE_PULSE       500      /*1MHz for compare event*/
 

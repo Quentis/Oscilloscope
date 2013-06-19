@@ -1,8 +1,8 @@
 #include "OscilloscopeDSP.h"
 
 /*=================================== DATA ACQUISITION MEMORY DEFINITIONS ===================================*/
-uint8_t OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
-uint8_t OSC_DSP_Channel_B_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
+uint8_t OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE] __attribute__ ((aligned (0x1000)));
+uint8_t OSC_DSP_Channel_B_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE] __attribute__ ((aligned (0x1000)));
 
 /*===================================== DMA MODE STRUCTURE DEFINITIONS ======================================*/
 static const OSC_Analog_Channel_DataAcquisitionConfig_Type OSC_Analog_Channel_A_DataAcquisitionConfig_Normal_PreTrigger = {
@@ -281,7 +281,7 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
       OSC_DisplayManager_Waveform_Channel_B.dataPoints[0][displayIndex] = OSC_DSP_INVALID_DATA_VALUE;
     }
 
-    if(displayIndex < OSC_DSP_WAVEFORM_HORIZONTAL_POINTS_COUNT){
+    if(displayIndex >= (OSC_DSP_WAVEFORM_HORIZONTAL_POINTS_COUNT - 1)){
       return OSC_DSP_CalculationStatus_InProgress;
     } else {
       displayIndex = 0;
@@ -426,6 +426,7 @@ void OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER(void){
     switch(OSC_DSP_StateMachine.dataAcquisitionState){
 
       case OSC_DSP_State_Sampling_Single_PreTriggerMemory:
+
           OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
               &OSC_Analog_Channel_A_DataAcquisitionConfig_Circular_PreTrigger,
               &OSC_Analog_Channel_B_DataAcquisitionConfig_Circular_PreTrigger
@@ -489,6 +490,7 @@ void OSC_ANALOG_CHANNEL_A_DMA_STREAM_INTERRUPT_HANDLER(void){
       default: break;
     } /*END:switch(OSC_DSP_StateMachine.dataAcquisitionState)*/
     DMA_ClearITPendingBit(OSC_ANALOG_CHANNEL_A_DMA_STREAM,OSC_ANALOG_CHANNEL_A_DMA_STATUS_REGISTER_ITFLAG_TC);
+    DMA_ClearITPendingBit(OSC_ANALOG_CHANNEL_B_DMA_STREAM,OSC_ANALOG_CHANNEL_B_DMA_STATUS_REGISTER_ITFLAG_TC);
   } /*END: Transfer completed flag is set*/
 }
 

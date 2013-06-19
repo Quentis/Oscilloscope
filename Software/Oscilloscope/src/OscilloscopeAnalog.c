@@ -398,6 +398,7 @@ OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
   } else {
     return OSC_Analog_Err_InvalidParameter;
   }
+
   OSC_ANALOG_CHANNEL_A_DMA_STREAM_DATA_LENGTH_SET(channel_A_DMA_Configuration->dataLength);
   OSC_ANALOG_CHANNEL_B_DMA_STREAM_DATA_LENGTH_SET(channel_B_DMA_Configuration->dataLength);
   OSC_ANALOG_CHANNEL_A_DMA_STREAM_MEMORY_DEST_SET(channel_A_DMA_Configuration->dataAcquisitionMemory);
@@ -408,6 +409,9 @@ OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
 
   OSC_ANALOG_CHANNEL_A_DMA_STREAM_START();
   OSC_ANALOG_CHANNEL_B_DMA_STREAM_START();
+  if(ADC_GetFlagStatus(ADC1,ADC_FLAG_OVR)) OSC_LED_RANGE_PLUS_SET();
+  if(ADC_GetFlagStatus(ADC2,ADC_FLAG_OVR)) OSC_LED_RANGE_MINUS_SET();
+
   return OSC_Analog_Err_OK;
 }
 
