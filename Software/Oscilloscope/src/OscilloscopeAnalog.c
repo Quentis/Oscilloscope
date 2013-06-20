@@ -361,7 +361,6 @@ OSC_Analog_Err_Type OSC_Analog_Conversion_Stop(OSC_Analog_ChannelSelect_Type   c
     default:
       return OSC_Analog_Err_InvalidParameter;
   }
-
   return OSC_Analog_Err_OK;
 }
 
@@ -465,5 +464,6 @@ OSC_Analog_Err_Type OSC_Analog_AnalogWatchdog_Disable(void)
 {
   ADC_AnalogWatchdogCmd(OSC_ANALOG_CHANNEL_A_ADC,ADC_AnalogWatchdog_None);
   ADC_AnalogWatchdogCmd(OSC_ANALOG_CHANNEL_B_ADC,ADC_AnalogWatchdog_None);
+
   return OSC_Analog_Err_OK;
 }

@@ -200,7 +200,7 @@ typedef struct {
 #define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_CLOCK_DIV_0             0
 #define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_REPETITION_NO           0
 
-#define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_COMPARE_PULSE       500      /*1MHz for compare event*/
+#define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_COMPARE_PULSE       10500      /*1MHz for compare event*/
 
 #define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_GPIO_CLK            RCC_AHB1Periph_GPIOB
 #define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_GPIO_PORT           GPIOB
@@ -214,7 +214,7 @@ typedef struct {
 #define OSC_ANALOG_DATA_COUNTER_TIMER_CLK_ENABLE               RCC_APB1PeriphClockCmd
 #define OSC_ANALOG_DATA_COUNTER_TIMER_IRQ_NUMBER               TIM2_IRQn
 
-#define OSC_ANALOG_DATA_COUNTER_TIMER_PRELOAD                  1000
+#define OSC_ANALOG_DATA_COUNTER_TIMER_PRELOAD                  0
 #define OSC_ANALOG_DATA_COUNTER_TIMER_PERIOD                   500   /*This will be set dynamically*/
 #define OSC_ANALOG_DATA_COUNTER_TIMER_CLOCK_DIV_0              0
 #define OSC_ANALOG_DATA_COUNTER_TIMER_REPETITION_NO            0
