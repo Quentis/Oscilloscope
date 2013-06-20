@@ -84,7 +84,10 @@ typedef struct {
 
 /*=======================================DMA_DEFINITIONS=======================================*/
 /*DMA_CHANNEL_COMMON_DEFINITIONS*/
-#define OSC_ANALOG_DMA_DISABLE_TIMEOUT    20
+#define OSC_ANALOG_DMA_DISABLE_TIMEOUT              20
+#define OSC_ANALOG_DMA_PREEMP_PRIO                  OSC_ANALOG_ADC_PREEMP_PRIO
+#define OSC_ANALOG_DMA_SUBPRIO                      OSC_ANALOG_ADC_SUBPRIO
+
 
 /*DMA_CHANNEL_A_DEFINITIONS*/
 #define OSC_ANALOG_CHANNEL_A_DMA                                   DMA2
@@ -206,6 +209,22 @@ typedef struct {
 #define OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_GPIO_PINSRC         GPIO_PinSource1
 
 
+#define OSC_ANALOG_DATA_COUNTER_TIMER                          TIM2
+#define OSC_ANALOG_DATA_COUNTER_TIMER_CLK                      RCC_APB1Periph_TIM2
+#define OSC_ANALOG_DATA_COUNTER_TIMER_CLK_ENABLE               RCC_APB1PeriphClockCmd
+#define OSC_ANALOG_DATA_COUNTER_TIMER_IRQ_NUMBER               TIM2_IRQn
+
+#define OSC_ANALOG_DATA_COUNTER_TIMER_PRELOAD                  1000
+#define OSC_ANALOG_DATA_COUNTER_TIMER_PERIOD                   500   /*This will be set dynamically*/
+#define OSC_ANALOG_DATA_COUNTER_TIMER_CLOCK_DIV_0              0
+#define OSC_ANALOG_DATA_COUNTER_TIMER_REPETITION_NO            0
+#define OSC_ANALOG_DATA_COUNTER_TIMER_MAX_VALUE                0xFFFFFFFF
+
+#define OSC_ANALOG_DATA_COUNTER_TIMER_PREEMP_PRIO            0x0
+#define OSC_ANALOG_DATA_COUNTER_TIMER_SUBPRIO                0x0
+
+#define OSC_ANALOG_DATA_COUNTER_TIMER_INTERRUPT_HANDLER      TIM2_IRQHandler
+
 /*=======================================DAC_DEFINITIONS=======================================*/
 
 #define OSC_ANALOG_DAC_CLK_ENABLE               RCC_APB1PeriphClockCmd
@@ -244,6 +263,7 @@ void OSC_Analog_Init_ADC(void);
 void OSC_Analog_Init_Timer(void);
 
 void OSC_Analog_Init_1kHzSquareWave(void);
+void OSC_Analog_Init_DataCounterTimer(void);
 void OSC_Analog_Init_DMA(void);
 
 OSC_Analog_Err_Type OSC_Analog_Conversion_Start(OSC_Analog_ChannelSelect_Type channelSelect);

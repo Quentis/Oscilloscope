@@ -40,10 +40,9 @@ typedef enum {
 
 typedef enum {
   OSC_DSP_State_Disabled,
-  OSC_DSP_State_Sampling_Single_PreTriggerMemory,
-  OSC_DSP_State_Sampling_Circular_PreTriggerMemory,
-  OSC_DSP_State_Sampling_Single_PostTriggerMemory_NoOverflow,
-  OSC_DSP_State_Sampling_Single_PostTriggerMemory_Overflow,
+  OSC_DSP_State_Sampling_PreTriggerMemory_FirstTime,
+  OSC_DSP_State_Sampling_WaitingForTrigger,
+  OSC_DSP_State_Sampling_PostTriggerMemory,
   OSC_DSP_State_Calculating_UpdatePhase,
   OSC_DSP_State_Calculating_WaveformConstructPhase,
   OSC_DSP_State_Calculating_WaveformDisplayPhase

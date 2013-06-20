@@ -4,8 +4,8 @@
 void OSC_Analog_Init_DMA(void){
   NVIC_InitTypeDef NVIC_InitStructure = {
       DMA2_Stream0_IRQn,
-      OSC_ANALOG_ADC_PREEMP_PRIO,
-      OSC_ANALOG_ADC_SUBPRIO,
+      OSC_ANALOG_DMA_PREEMP_PRIO,
+      OSC_ANALOG_DMA_SUBPRIO,
       ENABLE
   }; /*DMA Transfer completed interrupt*/
 
@@ -183,6 +183,9 @@ void OSC_Analog_Init_Timer(void){
   TIM_ARRPreloadConfig(OSC_ANALOG_SAMPLE_TIMER,ENABLE);
   TIM_OC1PreloadConfig(OSC_ANALOG_SAMPLE_TIMER,TIM_OCPreload_Enable);
 
+  TIM_SelectOutputTrigger(OSC_ANALOG_SAMPLE_TIMER,TIM_TRGOSource_Update);
+  TIM_SelectMasterSlaveMode(OSC_ANALOG_SAMPLE_TIMER,TIM_MasterSlaveMode_Enable);
+
   TIM_GenerateEvent(OSC_ANALOG_SAMPLE_TIMER,TIM_EventSource_COM);
   TIM_GenerateEvent(OSC_ANALOG_SAMPLE_TIMER,TIM_EventSource_Update);
 
@@ -241,6 +244,36 @@ void OSC_Analog_Init_1kHzSquareWave(void){
   GPIO_Init(OSC_ANALOG_1KHZ_SQUARE_WAVE_TIMER_GPIO_PORT,&GPIO_InitStructure);
 }
 
+void OSC_Analog_Init_DataCounterTimer(void){
+  TIM_TimeBaseInitTypeDef TIM_Base_InitStructure = {
+      OSC_ANALOG_DATA_COUNTER_TIMER_PRELOAD,
+      TIM_CounterMode_Up,
+      OSC_ANALOG_DATA_COUNTER_TIMER_PERIOD,
+      OSC_ANALOG_DATA_COUNTER_TIMER_CLOCK_DIV_0,
+      OSC_ANALOG_DATA_COUNTER_TIMER_REPETITION_NO
+  };
+
+  NVIC_InitTypeDef NVIC_InitStructure = {
+      OSC_ANALOG_DATA_COUNTER_TIMER_IRQ_NUMBER,
+      OSC_ANALOG_DATA_COUNTER_TIMER_PREEMP_PRIO,
+      OSC_ANALOG_DATA_COUNTER_TIMER_SUBPRIO,
+      ENABLE
+  };
+
+  OSC_ANALOG_DATA_COUNTER_TIMER_CLK_ENABLE(OSC_ANALOG_DATA_COUNTER_TIMER_CLK,ENABLE);
+  TIM_TimeBaseInit(OSC_ANALOG_DATA_COUNTER_TIMER,&TIM_Base_InitStructure);
+
+  TIM_ARRPreloadConfig(OSC_ANALOG_DATA_COUNTER_TIMER,DISABLE);
+  TIM_SelectSlaveMode(OSC_ANALOG_DATA_COUNTER_TIMER,TIM_SlaveMode_External1);
+  TIM_SelectInputTrigger(OSC_ANALOG_DATA_COUNTER_TIMER,TIM_TS_ITR0);
+
+  TIM_GenerateEvent(OSC_ANALOG_DATA_COUNTER_TIMER,TIM_EventSource_Update);
+  TIM_ClearFlag(OSC_ANALOG_DATA_COUNTER_TIMER,TIM_FLAG_Update);
+
+  NVIC_Init(&NVIC_InitStructure);
+  TIM_ITConfig(OSC_ANALOG_DATA_COUNTER_TIMER,TIM_IT_Update,ENABLE);
+}
+
 void OSC_Analog_Init(void){
 
   NVIC_InitTypeDef NVIC_InitStructure = {
@@ -254,6 +287,7 @@ void OSC_Analog_Init(void){
   OSC_Analog_Init_DMA();
   OSC_Analog_Init_ADC();
   OSC_Analog_Init_Timer();
+  OSC_Analog_Init_DataCounterTimer();
   OSC_Analog_Init_1kHzSquareWave();
 
   ADC_ITConfig(OSC_ANALOG_CHANNEL_A_ADC,ADC_IT_AWD,ENABLE);
@@ -409,8 +443,6 @@ OSC_Analog_Err_Type OSC_Analog_DMA_ReConfigureBothChannelOnTheFly(
 
   OSC_ANALOG_CHANNEL_A_DMA_STREAM_START();
   OSC_ANALOG_CHANNEL_B_DMA_STREAM_START();
-  if(ADC_GetFlagStatus(ADC1,ADC_FLAG_OVR)) OSC_LED_RANGE_PLUS_SET();
-  if(ADC_GetFlagStatus(ADC2,ADC_FLAG_OVR)) OSC_LED_RANGE_MINUS_SET();
 
   return OSC_Analog_Err_OK;
 }

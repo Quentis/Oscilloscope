@@ -26,8 +26,8 @@ void Oscilloscope(void){
     }
     MTR_Scheduler();
 
-    //if(ADC_GetFlagStatus(ADC1,ADC_FLAG_OVR)) OSC_LED_RANGE_PLUS_SET();
-    //if(ADC_GetFlagStatus(ADC2,ADC_FLAG_OVR)) OSC_LED_RANGE_MINUS_SET();
+    if(ADC_GetFlagStatus(ADC1,ADC_FLAG_OVR)) OSC_LED_RANGE_PLUS_SET();
+    if(ADC_GetFlagStatus(ADC2,ADC_FLAG_OVR)) OSC_LED_RANGE_MINUS_SET();
 
   }
 }
