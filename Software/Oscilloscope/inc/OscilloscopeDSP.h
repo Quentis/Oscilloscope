@@ -20,10 +20,6 @@
 #define OSC_DSP_CORRECTION_OFFSET                                       0
 
 
-#define OSC_DSP_DATA_MEMORY_INDEX_MAPPER(index) \
-    ((index + (OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - OSC_DSP_StateMachine.firstDataPosition)) % (OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE))
-
-
 #define OSC_DSP_DATA_RANGE                                             256
 #define OSC_DSP_MAX_DATA_VALUE                                         255
 #define OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE                         40960     /*40kByte*/

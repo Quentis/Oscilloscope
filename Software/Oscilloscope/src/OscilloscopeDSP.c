@@ -194,30 +194,44 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
   static int32_t displayIndex = 0;
   int32_t dataMemoryStartIndex;
   int32_t dataMemoryEndIndex;   /*The first index which is NOT part of the block*/
-  int32_t dataLength;
-  int32_t dataValue;
+  int32_t dataLength, dataValue;
+  int32_t dataMemoryStartIndexLogical, dataMemoryEndIndexLogical;
+  /* These variables are created from mapping of the similar named variables
+   * The mapping follows the principle: first data is at the 0 index and
+   * the last data is at the data length minus one index*/
 
+  //TODO: Ezt itt nagyon at kellene gondolni
   dataMemoryStartIndex = OSC_DSP_StateMachine.triggerPosition +
                    (displayIndex - OSC_DSP_WaveformProperties.triggerPositionOnDisplay) *
                     OSC_DSP_WaveformProperties.samplePerPixel;
 
+  dataMemoryStartIndexLogical = dataMemoryStartIndex - OSC_DSP_StateMachine.firstDataPosition;
+  if(dataMemoryStartIndexLogical < 0) dataMemoryStartIndexLogical += OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
+
   dataMemoryEndIndex = dataMemoryStartIndex + OSC_DSP_WaveformProperties.samplePerPixel;
 
-  if((OSC_DSP_DATA_MEMORY_INDEX_MAPPER(dataMemoryStartIndex) <  OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE) &&
-     (OSC_DSP_DATA_MEMORY_INDEX_MAPPER(dataMemoryEndIndex)   >  0))
+  dataMemoryEndIndexLogical = dataMemoryEndIndex - OSC_DSP_StateMachine.firstDataPosition;
+  if(dataMemoryEndIndexLogical < 0) dataMemoryEndIndexLogical += OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
+
+  if((dataMemoryStartIndexLogical <  OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE) &&
+     (dataMemoryEndIndexLogical   >  0))
   {
     /*In this branch there are enough sample to process them*/
 
     dataLength = OSC_DSP_WaveformProperties.samplePerPixel;
 
-    if(OSC_DSP_DATA_MEMORY_INDEX_MAPPER(dataMemoryEndIndex) >= OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
-      dataMemoryEndIndex = OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
-      dataLength = dataMemoryEndIndex - dataMemoryStartIndex;
+    if(dataMemoryEndIndexLogical > OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
+      dataMemoryEndIndex = ((OSC_DSP_StateMachine.firstDataPosition - 1) >= 0) ?
+                            (OSC_DSP_StateMachine.firstDataPosition - 1) :
+                             OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
+      dataMemoryEndIndexLogical = OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
+      dataLength = dataMemoryEndIndexLogical - dataMemoryStartIndexLogical;
     }
 
-    if(OSC_DSP_DATA_MEMORY_INDEX_MAPPER(dataMemoryStartIndex) < 0){
-      dataMemoryStartIndex = 0;
-      dataLength = dataMemoryEndIndex - dataMemoryStartIndex;
+    if(dataMemoryStartIndexLogical < 0){
+      dataMemoryStartIndex = OSC_DSP_StateMachine.firstDataPosition;
+      dataMemoryStartIndexLogical = 0;
+      dataLength = dataMemoryEndIndexLogical - dataMemoryStartIndexLogical;
     }
 
     dataValue = OSC_DSP_Waveform_CalculateSampleValue(
