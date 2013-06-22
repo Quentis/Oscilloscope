@@ -242,14 +242,12 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
         OSC_DSP_WaveformProperties.dataProcessingMode
     );
 
-    dataValue = OSC_DSP_Waveform_VerticalAdjust(dataValue);
-
     if(OSC_DSP_WaveformProperties.dataProcessingMode == OSC_DSP_DataProcessingMode_Peak){
-      OSC_DisplayManager_Waveform_Channel_A.dataPoints[0][displayIndex] = (dataValue >> 16) & 0xFFFF;
-      OSC_DisplayManager_Waveform_Channel_A.dataPoints[1][displayIndex] = dataValue & 0xFFFF;
+      OSC_DisplayManager_Waveform_Channel_A.dataPoints[0][displayIndex] = OSC_DSP_Waveform_VerticalAdjust((dataValue >> 16) & 0xFFFF);
+      OSC_DisplayManager_Waveform_Channel_A.dataPoints[1][displayIndex] = OSC_DSP_Waveform_VerticalAdjust(dataValue & 0xFFFF);
       OSC_DisplayManager_Waveform_Channel_A.dataType = OSC_DisplayManager_Waveform_DataType_MinMax;
     } else {  /*OSC_DSP_WaveformProperties.dataProcessingMode can be OSC_DSP_DataProcessingMode_Normal and OSC_DSP_DataProcessingMode_Average*/
-      OSC_DisplayManager_Waveform_Channel_A.dataPoints[0][displayIndex] = dataValue;
+      OSC_DisplayManager_Waveform_Channel_A.dataPoints[0][displayIndex] = OSC_DSP_Waveform_VerticalAdjust(dataValue);
       OSC_DisplayManager_Waveform_Channel_A.dataType = OSC_DisplayManager_Waveform_DataType_Normal;
     }
 
@@ -263,11 +261,11 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
     dataValue = OSC_DSP_Waveform_VerticalAdjust(dataValue);
 
     if(OSC_DSP_WaveformProperties.dataProcessingMode == OSC_DSP_DataProcessingMode_Peak){
-      OSC_DisplayManager_Waveform_Channel_B.dataPoints[0][displayIndex] = (dataValue >> 16) & 0xFFFF;
-      OSC_DisplayManager_Waveform_Channel_B.dataPoints[1][displayIndex] = dataValue & 0xFFFF;
+      OSC_DisplayManager_Waveform_Channel_B.dataPoints[0][displayIndex] = OSC_DSP_Waveform_VerticalAdjust((dataValue >> 16) & 0xFFFF);
+      OSC_DisplayManager_Waveform_Channel_B.dataPoints[1][displayIndex] = OSC_DSP_Waveform_VerticalAdjust(dataValue & 0xFFFF);
       OSC_DisplayManager_Waveform_Channel_B.dataType = OSC_DisplayManager_Waveform_DataType_MinMax;
     } else {  /*OSC_DSP_WaveformProperties.dataProcessingMode can be OSC_DSP_DataProcessingMode_Normal and OSC_DSP_DataProcessingMode_Average*/
-      OSC_DisplayManager_Waveform_Channel_B.dataPoints[0][displayIndex] = dataValue;
+      OSC_DisplayManager_Waveform_Channel_B.dataPoints[0][displayIndex] = OSC_DSP_Waveform_VerticalAdjust(dataValue);
       OSC_DisplayManager_Waveform_Channel_B.dataType = OSC_DisplayManager_Waveform_DataType_Normal;
     }
   } else {    /*OSC_DSP_DATA_MEMORY_INDEX_MAPPER(index) >= OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE*/
