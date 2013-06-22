@@ -19,6 +19,8 @@
 #define OSC_DSP_CORRECTION_SCALE_DENOMINATOR                            1
 #define OSC_DSP_CORRECTION_OFFSET                                       0
 
+#define OSC_DSP_RAW_DATA_ZERO_VALUE                                   127
+#define OSC_DSP_ZERO_DATA_VERTICAL_PIXEL_COUNT                        (OSC_DSP_WAVEFORM_VERTICAL_POINTS_COUNT / 2)
 
 #define OSC_DSP_DATA_RANGE                                             256
 #define OSC_DSP_MAX_DATA_VALUE                                         255

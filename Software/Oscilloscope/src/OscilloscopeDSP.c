@@ -200,7 +200,6 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
    * The mapping follows the principle: first data is at the 0 index and
    * the last data is at the data length minus one index*/
 
-  //TODO: Ezt itt nagyon at kellene gondolni
   dataMemoryStartIndex = OSC_DSP_StateMachine.triggerPosition +
                    (displayIndex - OSC_DSP_WaveformProperties.triggerPositionOnDisplay) *
                     OSC_DSP_WaveformProperties.samplePerPixel;
@@ -217,11 +216,13 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
      (dataMemoryEndIndexLogical   >  0))
   {
     /*In this branch there are enough sample to process them*/
+    if(dataMemoryStartIndex < 0) dataMemoryStartIndex += OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
+    if(dataMemoryEndIndex   < 0) dataMemoryEndIndex   += OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
 
     dataLength = OSC_DSP_WaveformProperties.samplePerPixel;
 
     if(dataMemoryEndIndexLogical > OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
-      dataMemoryEndIndex = ((OSC_DSP_StateMachine.firstDataPosition - 1) >= 0) ?
+      dataMemoryEndIndex = ((OSC_DSP_StateMachine.firstDataPosition - 1) > 0) ?
                             (OSC_DSP_StateMachine.firstDataPosition - 1) :
                              OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
       dataMemoryEndIndexLogical = OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE;
@@ -286,8 +287,8 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
 
 int32_t OSC_DSP_Waveform_VerticalAdjust(int32_t rawData){
   int32_t data;
-  data = ((OSC_DSP_WaveformProperties.verticalScaleFactorNumerator * rawData) / OSC_DSP_WaveformProperties.verticalScaleFactorDenominator) +
-           OSC_DSP_WaveformProperties.verticalOffsetInPixel;
+  data = ((OSC_DSP_WaveformProperties.verticalScaleFactorNumerator * (rawData - OSC_DSP_RAW_DATA_ZERO_VALUE)) / OSC_DSP_WaveformProperties.verticalScaleFactorDenominator) +
+           OSC_DSP_WaveformProperties.verticalOffsetInPixel + OSC_DSP_ZERO_DATA_VERTICAL_PIXEL_COUNT;
   if(data < 0){
     data = 0;
   } else if(data >= OSC_DSP_WAVEFORM_VERTICAL_POINTS_COUNT){
