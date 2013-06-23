@@ -5,36 +5,35 @@ static uint32_t OSC_Menu_OnScreenStringList_FirstElement = 1;
 static OSC_Menu_ElementIndex_Type OSC_Menu_Element_Selected = 0;
 static OSC_Menu_ElementIndex_Type OSC_Menu_Element_FirstOnScreen = 0;
 
-static OSC_Menu_Err_Type  OSC_Menu_StringBuilder(OSC_Menu_Element_Type menuElement,uint32_t position){
+static OSC_Menu_Err_Type  OSC_Menu_StringBuilder(OSC_Menu_Element_Type* menuElement,char* strDest){
   char strTemp[OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE];
   const char menuTextFormat[] = "%-13s%8s";
 
-  if(position >= OSC_MENU_SCREEN_LINE_COUNT) return OSC_Menu_Err_InvalidLineNumber;
-  switch(menuElement.typeInfo){
+  switch(menuElement->typeInfo){
     case OSC_Menu_Element_TypeInfo_IntegerContinuous:
       snprintf(strTemp,OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE,"%d%s",
-              (int)((OSC_Settings_IntegerContinuous_Type*)menuElement.menuElementContentPtr)->value,
-              (char*)((OSC_Settings_IntegerContinuous_Type*)menuElement.menuElementContentPtr)->unitName);
-      snprintf(OSC_Menu_OnScreenStringList[position],OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
-             (char*)((OSC_Settings_IntegerContinuous_Type*)menuElement.menuElementContentPtr)->name, strTemp);
+              (int)((OSC_Settings_IntegerContinuous_Type*)menuElement->menuElementContentPtr)->value,
+              (char*)((OSC_Settings_IntegerContinuous_Type*)menuElement->menuElementContentPtr)->unitName);
+      snprintf(strDest,OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
+             (char*)((OSC_Settings_IntegerContinuous_Type*)menuElement->menuElementContentPtr)->name, strTemp);
       break;
     case OSC_Menu_Element_TypeInfo_IntegerDiscrete:
-      snprintf(OSC_Menu_OnScreenStringList[position],OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
-             (char*)((OSC_Settings_IntegerDiscrete_Type*)menuElement.menuElementContentPtr)->name,
-             (char*)((OSC_Settings_IntegerDiscrete_Type*)menuElement.menuElementContentPtr)->nameOfValues
-             [((OSC_Settings_IntegerDiscrete_Type*)menuElement.menuElementContentPtr)->currentIndex]);
+      snprintf(strDest,OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
+             (char*)((OSC_Settings_IntegerDiscrete_Type*)menuElement->menuElementContentPtr)->name,
+             (char*)((OSC_Settings_IntegerDiscrete_Type*)menuElement->menuElementContentPtr)->nameOfValues
+             [((OSC_Settings_IntegerDiscrete_Type*)menuElement->menuElementContentPtr)->currentIndex]);
       break;
     case OSC_Menu_Element_TypeInfo_OnOff:
-      snprintf(OSC_Menu_OnScreenStringList[position],OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
-              (char*)((OSC_Settings_OnOff_Type*)menuElement.menuElementContentPtr)->name,
-              (char*)((OSC_Settings_OnOff_Type*)menuElement.menuElementContentPtr)->statusNames
-              [((OSC_Settings_OnOff_Type*)menuElement.menuElementContentPtr)->status]);
+      snprintf(strDest,OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
+              (char*)((OSC_Settings_OnOff_Type*)menuElement->menuElementContentPtr)->name,
+              (char*)((OSC_Settings_OnOff_Type*)menuElement->menuElementContentPtr)->statusNames
+              [((OSC_Settings_OnOff_Type*)menuElement->menuElementContentPtr)->status]);
       break;
     case OSC_Menu_Element_TypeInfo_Option:
-      snprintf(OSC_Menu_OnScreenStringList[position],OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
-              (char*)((OSC_Settings_Option_Type*)menuElement.menuElementContentPtr)->name,
-              (char*)((OSC_Settings_Option_Type*)menuElement.menuElementContentPtr)->nameOfOptions
-              [((OSC_Settings_Option_Type*)menuElement.menuElementContentPtr)->optionID]);
+      snprintf(strDest,OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
+              (char*)((OSC_Settings_Option_Type*)menuElement->menuElementContentPtr)->name,
+              (char*)((OSC_Settings_Option_Type*)menuElement->menuElementContentPtr)->nameOfOptions
+              [((OSC_Settings_Option_Type*)menuElement->menuElementContentPtr)->optionID]);
       break;
     default: return OSC_Menu_Err_InvalidType;
       break;
@@ -42,44 +41,44 @@ static OSC_Menu_Err_Type  OSC_Menu_StringBuilder(OSC_Menu_Element_Type menuEleme
   return OSC_Menu_Err_OK;
 }
 
-static OSC_Menu_Err_Type  OSC_Menu_Element_Modify(OSC_Menu_Element_Type menuElement, OSC_Menu_Event_Type menuEvent){
-  switch(menuElement.typeInfo){
+static OSC_Menu_Err_Type  OSC_Menu_Element_Modify(OSC_Menu_Element_Type* menuElement, OSC_Menu_Event_Type menuEvent){
+  switch(menuElement->typeInfo){
     case OSC_Menu_Element_TypeInfo_IntegerContinuous:
-      if( ((OSC_Settings_IntegerContinuous_Type*)menuElement.menuElementContentPtr)->callback == NULL){
-        OSC_Settings_IntegerContinuousCallback_Default((OSC_Settings_IntegerContinuous_Type*)menuElement.menuElementContentPtr,menuEvent);
+      if( ((OSC_Settings_IntegerContinuous_Type*)menuElement->menuElementContentPtr)->callback == NULL){
+        OSC_Settings_IntegerContinuousCallback_Default((OSC_Settings_IntegerContinuous_Type*)menuElement->menuElementContentPtr,menuEvent);
       } else {
-        ((OSC_Settings_IntegerContinuous_Type*)menuElement.menuElementContentPtr)->callback(
-            (OSC_Settings_IntegerContinuous_Type*)menuElement.menuElementContentPtr,
+        ((OSC_Settings_IntegerContinuous_Type*)menuElement->menuElementContentPtr)->callback(
+            (OSC_Settings_IntegerContinuous_Type*)menuElement->menuElementContentPtr,
              menuEvent
         );
       }
       break;
     case OSC_Menu_Element_TypeInfo_IntegerDiscrete:
-      if( ((OSC_Settings_IntegerDiscrete_Type*)menuElement.menuElementContentPtr)->callback == NULL){
-        OSC_Settings_IntegerDiscreteCallback_Default((OSC_Settings_IntegerDiscrete_Type*)menuElement.menuElementContentPtr,menuEvent);
+      if( ((OSC_Settings_IntegerDiscrete_Type*)menuElement->menuElementContentPtr)->callback == NULL){
+        OSC_Settings_IntegerDiscreteCallback_Default((OSC_Settings_IntegerDiscrete_Type*)menuElement->menuElementContentPtr,menuEvent);
       } else {
-        ((OSC_Settings_IntegerDiscrete_Type*)menuElement.menuElementContentPtr)->callback(
-            (OSC_Settings_IntegerDiscrete_Type*)menuElement.menuElementContentPtr,
+        ((OSC_Settings_IntegerDiscrete_Type*)menuElement->menuElementContentPtr)->callback(
+            (OSC_Settings_IntegerDiscrete_Type*)menuElement->menuElementContentPtr,
              menuEvent
         );
       }
       break;
     case OSC_Menu_Element_TypeInfo_OnOff:
-      if( ((OSC_Settings_OnOff_Type*)menuElement.menuElementContentPtr)->callback == NULL){
-        OSC_Settings_OnOffCallback_Default((OSC_Settings_OnOff_Type*)menuElement.menuElementContentPtr,menuEvent);
+      if( ((OSC_Settings_OnOff_Type*)menuElement->menuElementContentPtr)->callback == NULL){
+        OSC_Settings_OnOffCallback_Default((OSC_Settings_OnOff_Type*)menuElement->menuElementContentPtr,menuEvent);
       } else {
-        ((OSC_Settings_OnOff_Type*)menuElement.menuElementContentPtr)->callback(
-            (OSC_Settings_OnOff_Type*)menuElement.menuElementContentPtr,
+        ((OSC_Settings_OnOff_Type*)menuElement->menuElementContentPtr)->callback(
+            (OSC_Settings_OnOff_Type*)menuElement->menuElementContentPtr,
              menuEvent
         );
       }
       break;
     case OSC_Menu_Element_TypeInfo_Option:
-      if( ((OSC_Settings_Option_Type*)menuElement.menuElementContentPtr)->callback == NULL){
-        OSC_Settings_OptionCallback_Default((OSC_Settings_Option_Type*)menuElement.menuElementContentPtr,menuEvent);
+      if( ((OSC_Settings_Option_Type*)menuElement->menuElementContentPtr)->callback == NULL){
+        OSC_Settings_OptionCallback_Default((OSC_Settings_Option_Type*)menuElement->menuElementContentPtr,menuEvent);
       } else {
-        ((OSC_Settings_Option_Type*)menuElement.menuElementContentPtr)->callback(
-            (OSC_Settings_Option_Type*)menuElement.menuElementContentPtr,
+        ((OSC_Settings_Option_Type*)menuElement->menuElementContentPtr)->callback(
+            (OSC_Settings_Option_Type*)menuElement->menuElementContentPtr,
              menuEvent
         );
       }
@@ -92,6 +91,7 @@ static OSC_Menu_Err_Type  OSC_Menu_Element_Modify(OSC_Menu_Element_Type menuElem
 static OSC_Menu_Err_Type  OSC_Menu_AssembleStringList(OSC_Menu_Name_Type menuName){
   OSC_Menu_ElementIndex_Type index;
   OSC_Menu_OnScreenStringList_FirstElement = 1;
+  uint32_t position;
   /*This variable determines what is in the first menu element line on the display*/
 
   strncpy(OSC_Menu_OnScreenStringList[OSC_MENU_NAME_LINE],OSC_MenuList[menuName]->name,OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE);
@@ -103,7 +103,9 @@ static OSC_Menu_Err_Type  OSC_Menu_AssembleStringList(OSC_Menu_Name_Type menuNam
       /* "- OSC_MENU_ELEMENT_LINE_OFFSET_ON_DISPLAY" because the first line is the menu name*/
       ++index)
   {
-    OSC_Menu_StringBuilder(OSC_MenuList[menuName]->menuElementList[index],index + OSC_MENU_ELEMENT_LINE_OFFSET_ON_DISPLAY);
+    position = index + OSC_MENU_ELEMENT_LINE_OFFSET_ON_DISPLAY;
+    OSC_Menu_StringBuilder(OSC_MenuList[menuName]->menuElementList[index],
+                           OSC_Menu_OnScreenStringList[position]);
     /* "+ OSC_MENU_ELEMENT_LINE_OFFSET_ON_DISPLAY" because the first line is the menu name*/
   }
 
@@ -159,6 +161,7 @@ static OSC_Menu_Err_Type  OSC_Menu_PrintLine(OSC_DisplayManager_LineNumber_Type 
 }
 
 OSC_Menu_Err_Type  OSC_Menu_Display(OSC_Menu_Name_Type menuName,OSC_Menu_Event_Type menuEvent){
+  uint32_t position;
 
   switch(menuEvent){
     case OSC_Menu_Event_Menu_Open:
@@ -176,7 +179,9 @@ OSC_Menu_Err_Type  OSC_Menu_Display(OSC_Menu_Name_Type menuName,OSC_Menu_Event_T
         } else {
           OSC_Menu_Element_Selected++;
           OSC_Menu_Element_FirstOnScreen++;
-          OSC_Menu_StringBuilder(OSC_MenuList[menuName]->menuElementList[OSC_Menu_Element_Selected],OSC_Menu_OnScreenStringList_FirstElement);
+
+          position = OSC_Menu_OnScreenStringList_FirstElement;
+          OSC_Menu_StringBuilder(OSC_MenuList[menuName]->menuElementList[OSC_Menu_Element_Selected],OSC_Menu_OnScreenStringList[position]);
           OSC_Menu_OnScreenStringList_FirstElement = ( (OSC_Menu_OnScreenStringList_FirstElement + 1) == OSC_MENU_SCREEN_LINE_COUNT) ?
                                                        (OSC_MENU_ELEMENT_FIRST_LINE) :
                                                        (OSC_Menu_OnScreenStringList_FirstElement + 1);
@@ -196,7 +201,9 @@ OSC_Menu_Err_Type  OSC_Menu_Display(OSC_Menu_Name_Type menuName,OSC_Menu_Event_T
           OSC_Menu_OnScreenStringList_FirstElement = (OSC_Menu_OnScreenStringList_FirstElement == OSC_MENU_ELEMENT_FIRST_LINE) ?
                                                      (OSC_MENU_SCREEN_LINE_COUNT - 1) :
                                                      (OSC_Menu_OnScreenStringList_FirstElement - 1);
-          OSC_Menu_StringBuilder(OSC_MenuList[menuName]->menuElementList[OSC_Menu_Element_Selected],OSC_Menu_OnScreenStringList_FirstElement);
+
+          position = OSC_Menu_OnScreenStringList_FirstElement;
+          OSC_Menu_StringBuilder(OSC_MenuList[menuName]->menuElementList[OSC_Menu_Element_Selected],OSC_Menu_OnScreenStringList[position]);
           OSC_Menu_PrintAll(OSC_MENU_PRINT_MENU_NAME_FALSE);
         }
       }
@@ -206,12 +213,12 @@ OSC_Menu_Err_Type  OSC_Menu_Display(OSC_Menu_Name_Type menuName,OSC_Menu_Event_T
     case OSC_Menu_Event_MenuElement_StepDownSingle:
     case OSC_Menu_Event_MenuElement_StepDownMultiple:
       OSC_Menu_Element_Modify(OSC_MenuList[menuName]->menuElementList[OSC_Menu_Element_Selected],menuEvent);
-      OSC_Menu_StringBuilder(
-          OSC_MenuList[menuName]->menuElementList[OSC_Menu_Element_Selected],
-          ((OSC_Menu_OnScreenStringList_FirstElement + OSC_Menu_Element_Selected - OSC_Menu_Element_FirstOnScreen) >= OSC_MENU_SCREEN_LINE_COUNT) ?
-           (OSC_Menu_Element_Selected - OSC_Menu_Element_FirstOnScreen) - (OSC_MENU_SCREEN_LINE_COUNT - OSC_Menu_OnScreenStringList_FirstElement) +
-            OSC_MENU_ELEMENT_LINE_OFFSET_ON_DISPLAY :
-            OSC_Menu_OnScreenStringList_FirstElement + OSC_Menu_Element_Selected - OSC_Menu_Element_FirstOnScreen);
+
+      position = ((OSC_Menu_OnScreenStringList_FirstElement + OSC_Menu_Element_Selected - OSC_Menu_Element_FirstOnScreen) >= OSC_MENU_SCREEN_LINE_COUNT) ?
+                  (OSC_Menu_Element_Selected - OSC_Menu_Element_FirstOnScreen) - (OSC_MENU_SCREEN_LINE_COUNT - OSC_Menu_OnScreenStringList_FirstElement) +
+                   OSC_MENU_ELEMENT_LINE_OFFSET_ON_DISPLAY :
+                   OSC_Menu_OnScreenStringList_FirstElement + OSC_Menu_Element_Selected - OSC_Menu_Element_FirstOnScreen;
+      OSC_Menu_StringBuilder(OSC_MenuList[menuName]->menuElementList[OSC_Menu_Element_Selected],OSC_Menu_OnScreenStringList[position]);
       OSC_Menu_PrintLine(OSC_Menu_Element_Selected - OSC_Menu_Element_FirstOnScreen + OSC_MENU_ELEMENT_LINE_OFFSET_ON_DISPLAY);
       break;
 

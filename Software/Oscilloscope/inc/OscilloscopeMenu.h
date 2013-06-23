@@ -60,7 +60,7 @@ typedef struct {
   void* const                            menuElementContentPtr;
 } OSC_Menu_Element_Type;
 
-typedef OSC_Menu_Element_Type*     OSC_Menu_ElementList_Type;
+typedef OSC_Menu_Element_Type**    OSC_Menu_ElementList_Type;
 typedef uint32_t                   OSC_Menu_ElementIndex_Type;
 
 typedef struct {

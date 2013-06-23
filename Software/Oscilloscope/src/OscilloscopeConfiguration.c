@@ -16,6 +16,11 @@
         "%"                   /*unitName*/
     };
 
+    OSC_Menu_Element_Type OSC_Menu_Element_TriggerPosition = {
+        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        (void*)&OSC_Settings_TriggerPosition
+    };
+
 /*======================================= HORIZONTAL RESOLUTION =======================================*/
     OSC_Settings_IntegerDiscreteValue_Type OSC_Settings_HorizontalResolution_valueSet[] = {20,40,100,500,1000};   /*us/div*/
     char* OSC_Settings_HorizontalResolution_nameOfValues[] = {"20us","40us","100us","500us","1ms"};
@@ -31,6 +36,11 @@
         "HorizontalRes"                                     /*name*/
     };
 
+    OSC_Menu_Element_Type OSC_Menu_Element_HorizontalResolution = {
+        OSC_Menu_Element_TypeInfo_IntegerDiscrete,
+        (void*)&OSC_Settings_HorizontalResolution
+    };
+
 /*========================================= HORIZONTAL OFFSET =========================================*/
     OSC_Settings_IntegerContinuous_Type OSC_Settings_HorizontalOffset = {
         0,                    /*value*/
@@ -43,13 +53,18 @@
         "p"                   /*unitName*/
     };
 
+    OSC_Menu_Element_Type OSC_Menu_Element_HorizontalOffset = {
+        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        (void*)&OSC_Settings_HorizontalOffset
+    };
+
 
 /*########################################## HORIIZONTAL MENU #########################################*/
 
-    OSC_Menu_Element_Type OSC_Menu_ElementList_HorizontalMenu[] = {
-        {OSC_Menu_Element_TypeInfo_IntegerContinuous, (void*)&OSC_Settings_TriggerPosition       },
-        {OSC_Menu_Element_TypeInfo_IntegerDiscrete,   (void*)&OSC_Settings_HorizontalResolution  },
-        {OSC_Menu_Element_TypeInfo_IntegerContinuous, (void*)&OSC_Settings_HorizontalOffset      }
+    OSC_Menu_Element_Type* OSC_Menu_ElementList_HorizontalMenu[] = {
+        &OSC_Menu_Element_TriggerPosition,
+        &OSC_Menu_Element_HorizontalResolution,
+        &OSC_Menu_Element_HorizontalOffset
     };
 
     OSC_Menu_Type OSC_Menu_Horizontal = {
@@ -74,6 +89,11 @@
         "mV"                                      /*unitName*/
     };
 
+    OSC_Menu_Element_Type OSC_Menu_Element_TriggerLevel = {
+        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        (void*)&OSC_Settings_TriggerLevel
+    };
+
 /*============================================ TRIGGER SLOPE ==========================================*/
     char* OSC_Settings_TriggerSlope_statusNames[] = {OSC_FONT_CODE_EDGE_RISING,OSC_FONT_CODE_EDGE_FALLING};
 
@@ -83,6 +103,11 @@
         (char** const)
         OSC_Settings_TriggerSlope_statusNames,              /*statusNames*/
         "TriggerSlope"                                      /*name*/
+    };
+
+    OSC_Menu_Element_Type OSC_Menu_Element_TriggerSlope = {
+        OSC_Menu_Element_TypeInfo_OnOff,
+        (void*)&OSC_Settings_TriggerSlope
     };
 
 /*======================================== VERTICAL RESOLUTION ========================================*/
@@ -100,6 +125,11 @@
         "VerticalRes"                                       /*name*/
     };
 
+    OSC_Menu_Element_Type OSC_Menu_Element_VerticalResolution = {
+        OSC_Menu_Element_TypeInfo_IntegerDiscrete,
+        (void*)&OSC_Settings_VerticalResolution
+    };
+
 /*=========================================== VERTICAL OFFSET =========================================*/
     OSC_Settings_IntegerContinuous_Type OSC_Settings_VerticalOffset = {
         0,                    /*value*/
@@ -112,13 +142,18 @@
         "p"                   /*unitName*/
     };
 
+    OSC_Menu_Element_Type OSC_Menu_Element_VerticalOffset = {
+        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        (void*)&OSC_Settings_VerticalOffset
+    };
+
 /*########################################## VERTICAL MENU ############################################*/
 
-    OSC_Menu_Element_Type OSC_Menu_ElementList_VerticalMenu[] = {
-        {OSC_Menu_Element_TypeInfo_IntegerContinuous, (void*)&OSC_Settings_TriggerLevel       },
-        {OSC_Menu_Element_TypeInfo_OnOff,             (void*)&OSC_Settings_TriggerSlope       },
-        {OSC_Menu_Element_TypeInfo_IntegerDiscrete,   (void*)&OSC_Settings_VerticalResolution },
-        {OSC_Menu_Element_TypeInfo_IntegerContinuous, (void*)&OSC_Settings_VerticalOffset     }
+    OSC_Menu_Element_Type* OSC_Menu_ElementList_VerticalMenu[] = {
+        &OSC_Menu_Element_TriggerLevel,
+        &OSC_Menu_Element_TriggerSlope,
+        &OSC_Menu_Element_VerticalResolution,
+        &OSC_Menu_Element_VerticalOffset
     };
 
     OSC_Menu_Type OSC_Menu_Vertical = {
@@ -142,6 +177,11 @@
         "ChnSelect"                                        /*name*/
     };
 
+    OSC_Menu_Element_Type OSC_Menu_Element_ChannelSelect = {
+        OSC_Menu_Element_TypeInfo_OnOff,
+        (void*)&OSC_Settings_ChannelSelect
+    };
+
 /*=========================================== TRIGGER SOURCE ==========================================*/
     char* OSC_Settings_TriggerSource_statusNames[] = {"CHN_A","CHN_B"};
 
@@ -151,6 +191,11 @@
         (char** const)
         OSC_Settings_TriggerSource_statusNames,            /*statusNames*/
         "TriggerSrc"                                       /*name*/
+    };
+
+    OSC_Menu_Element_Type OSC_Menu_Element_TriggerSource = {
+        OSC_Menu_Element_TypeInfo_OnOff,
+        (void*)&OSC_Settings_TriggerSource
     };
 
 /*========================================== CHANNEL A STATUS =========================================*/
@@ -164,6 +209,11 @@
         "Chn A Status"                                     /*name*/
     };
 
+    OSC_Menu_Element_Type OSC_Menu_Element_Channel_A_Status = {
+        OSC_Menu_Element_TypeInfo_OnOff,
+        (void*)&OSC_Settings_Channel_A_Status
+    };
+
 /*========================================== CHANNEL B STATUS =========================================*/
     char* OSC_Settings_Channel_B_Status_statusNames[] = {OSC_FONT_CODE_RADIOBUTTON_OFF,OSC_FONT_CODE_RADIOBUTTON_ON};
 
@@ -174,6 +224,12 @@
         OSC_Settings_Channel_B_Status_statusNames,         /*statusNames*/
         "Chn B Status"                                     /*name*/
     };
+
+    OSC_Menu_Element_Type OSC_Menu_Element_Channel_B_Status = {
+        OSC_Menu_Element_TypeInfo_OnOff,
+        (void*)&OSC_Settings_Channel_B_Status
+    };
+
 /*========================================= DATA ACQUISITION MODE =====================================*/
     char* OSC_Settings_DataAcquisitionMode_statusNames[] = {"Single","Repet"};
 
@@ -183,6 +239,11 @@
         (char** const)
         OSC_Settings_DataAcquisitionMode_statusNames,      /*statusNames*/
         "DataAcqMode"                                      /*name*/
+    };
+
+    OSC_Menu_Element_Type OSC_Menu_Element_DataAcquisitionMode = {
+        OSC_Menu_Element_TypeInfo_OnOff,
+        (void*)&OSC_Settings_DataAcquisitionMode
     };
 
 /*========================================== DATA PROCESSING MODE =====================================*/
@@ -197,15 +258,20 @@
         "DataProcMode"                                /*name*/
     };
 
+    OSC_Menu_Element_Type OSC_Menu_Element_DataProcessingMode = {
+        OSC_Menu_Element_TypeInfo_Option,
+        (void*)&OSC_Settings_DataProcessingMode
+    };
+
 /*############################################ MODE MENU ##############################################*/
 
-    OSC_Menu_Element_Type OSC_Menu_ElementList_ModeMenu[] = {
-        {OSC_Menu_Element_TypeInfo_OnOff,  (void*)&OSC_Settings_ChannelSelect       },
-        {OSC_Menu_Element_TypeInfo_OnOff,  (void*)&OSC_Settings_TriggerSource       },
-        {OSC_Menu_Element_TypeInfo_OnOff,  (void*)&OSC_Settings_Channel_A_Status    },
-        {OSC_Menu_Element_TypeInfo_OnOff,  (void*)&OSC_Settings_Channel_B_Status    },
-        {OSC_Menu_Element_TypeInfo_OnOff,  (void*)&OSC_Settings_DataAcquisitionMode },
-        {OSC_Menu_Element_TypeInfo_Option, (void*)&OSC_Settings_DataProcessingMode  }
+    OSC_Menu_Element_Type* OSC_Menu_ElementList_ModeMenu[] = {
+        &OSC_Menu_Element_ChannelSelect,
+        &OSC_Menu_Element_TriggerSource,
+        &OSC_Menu_Element_Channel_A_Status,
+        &OSC_Menu_Element_Channel_B_Status,
+        &OSC_Menu_Element_DataAcquisitionMode,
+        &OSC_Menu_Element_DataProcessingMode
     };
 
     OSC_Menu_Type OSC_Menu_Mode = {
@@ -231,6 +297,11 @@
         "%"                                                     /*unitName*/
     };
 
+    OSC_Menu_Element_Type OSC_Menu_Element_BacklightIntensity = {
+        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        (void*)&OSC_Settings_BacklightIntensity
+    };
+
 /*=========================================== VOLTAGE PER LSB =========================================*/
 
     OSC_Settings_IntegerContinuous_Type OSC_Settings_VoltagePerLSB = {
@@ -242,6 +313,11 @@
         NULL,                                                   /*callback*/
         "Voltage/LSB",                                          /*name*/
         "mV"                                                    /*unitName*/
+    };
+
+    OSC_Menu_Element_Type OSC_Menu_Element_VoltagePerLSB = {
+        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        (void*)&OSC_Settings_VoltagePerLSB
     };
 
 /*============================================= SAMPLE RATE ===========================================*/
@@ -259,12 +335,17 @@
         "SampleRate"                                        /*name*/
     };
 
+    OSC_Menu_Element_Type OSC_Menu_Element_SampleRate = {
+        OSC_Menu_Element_TypeInfo_IntegerDiscrete,
+        (void*)&OSC_Settings_SampleRate
+    };
+
 /*########################################## HARDWARE MENU ############################################*/
 
-    OSC_Menu_Element_Type OSC_Menu_ElementList_HardwareMenu[] = {
-        {OSC_Menu_Element_TypeInfo_IntegerContinuous, (void*)&OSC_Settings_BacklightIntensity },
-        {OSC_Menu_Element_TypeInfo_IntegerContinuous, (void*)&OSC_Settings_VoltagePerLSB      },
-        {OSC_Menu_Element_TypeInfo_IntegerDiscrete,   (void*)&OSC_Settings_SampleRate         }
+    OSC_Menu_Element_Type* OSC_Menu_ElementList_HardwareMenu[] = {
+        &OSC_Menu_Element_BacklightIntensity,
+        &OSC_Menu_Element_VoltagePerLSB,
+        &OSC_Menu_Element_SampleRate
     };
 
     OSC_Menu_Type OSC_Menu_Hardware = {
