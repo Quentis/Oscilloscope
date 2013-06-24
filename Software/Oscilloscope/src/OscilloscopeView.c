@@ -29,7 +29,8 @@ OSC_View_Event_Type   OSC_View_Event_GetEvent(void){
   }
 }
 
-static void OSC_View_OpenMenu(OSC_View_Event_Type event){
+static void OSC_View_MenuOpen(OSC_View_Event_Type event){
+  OSC_View_State.displayController = OSC_View_DisplayController_Menu;
   switch(event){
     case OSC_View_Event_HorizontalLeftClickDouble:
       OSC_Menu_Display(OSC_Menu_Name_HorizontalMenu,OSC_Menu_Event_Menu_Open);
@@ -52,29 +53,15 @@ static void OSC_View_OpenMenu(OSC_View_Event_Type event){
   }
 }
 
-static void OSC_View_DrawDivLines(void){
-  const OSC_DisplayManager_Graphics_Line_Type divLines[] = {
-      {{ 3,61},{124,61}},
-      {{ 3,51},{124,51}},
-      {{ 3,41},{124,41}},
-      {{ 3,31},{124,31}},
-      {{ 3,21},{124,21}},
-      {{ 3,11},{124,11}},
-      {{ 3, 1},{124, 1}},
-      {{123,1},{123,61}},
-      {{103,1},{103,61}},
-      {{ 83,1},{ 83,61}},
-      {{ 63,1},{ 63,61}},
-      {{ 43,1},{ 43,61}},
-      {{ 23,1},{ 23,61}},
-      {{  3,1},{  3,61}},
-  };
-  const uint32_t divLinesCount = sizeof(divLines)/sizeof(divLines[0]);
-  uint32_t i;
+static void OSC_View_WaveformOpen(OSC_View_Event_Type event){
+  OSC_View_State.displayController = OSC_View_DisplayController_Waveform;
+  OSC_DisplayManager_ClearScreen();
+  OSC_Waveform_DrawDivLines();
+}
 
-  for (i = 0; i < divLinesCount; ++i) {
-    OSC_DisplayManager_Graphics_DrawLine(&divLines[i]);
-  }
+static void OSC_View_NotificationOpen(OSC_View_Event_Type event){
+  OSC_View_State.displayController = OSC_View_DisplayController_Notification;
+  OSC_Notification_PrintAll();
 }
 
 static void OSC_View_MenuStateMachine(OSC_View_Event_Type event){
@@ -103,10 +90,8 @@ static void OSC_View_MenuStateMachine(OSC_View_Event_Type event){
     case OSC_View_Event_HorizontalMiddleClickDouble:
     case OSC_View_Event_VerticalMiddleClickSingle:
     case OSC_View_Event_VerticalMiddleClickDouble:
-      OSC_View_State.displayController = OSC_View_DisplayController_Waveform;
       OSC_View_State.activeMenuName    = OSC_Menu_Name_None;
-      OSC_DisplayManager_ClearScreen();
-      OSC_View_DrawDivLines();
+      OSC_View_WaveformOpen(event);
       break;
     default: return;
   }
@@ -114,12 +99,15 @@ static void OSC_View_MenuStateMachine(OSC_View_Event_Type event){
 
 static void OSC_View_WaveformStateMachine(OSC_View_Event_Type event){
   switch(event){
+    case OSC_View_Event_HorizontalMiddleClickDouble:
+    case OSC_View_Event_VerticalMiddleClickDouble:
+      OSC_View_NotificationOpen(event);
+      break;
     case OSC_View_Event_VerticalUpClickDouble:
     case OSC_View_Event_VerticalDownClickDouble:
     case OSC_View_Event_HorizontalLeftClickDouble:
     case OSC_View_Event_HorizontalRightClickDouble:
-      OSC_View_State.displayController = OSC_View_DisplayController_Menu;
-      OSC_View_OpenMenu(event);
+      OSC_View_MenuOpen(event);
       break;
     default:
       return;
@@ -128,12 +116,15 @@ static void OSC_View_WaveformStateMachine(OSC_View_Event_Type event){
 
 static void OSC_View_NotificationStateMachine(OSC_View_Event_Type event){
   switch(event){
+    case OSC_View_Event_HorizontalMiddleClickDouble:
+    case OSC_View_Event_VerticalMiddleClickDouble:
+      OSC_View_WaveformOpen(event);
+      break;
     case OSC_View_Event_VerticalUpClickDouble:
     case OSC_View_Event_VerticalDownClickDouble:
     case OSC_View_Event_HorizontalLeftClickDouble:
     case OSC_View_Event_HorizontalRightClickDouble:
-      OSC_View_State.displayController = OSC_View_DisplayController_Menu;
-      OSC_View_OpenMenu(event);
+      OSC_View_MenuOpen(event);
       break;
     default: return;
   }

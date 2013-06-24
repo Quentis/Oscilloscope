@@ -3,6 +3,8 @@
 
 #include "stdint.h"
 #include "OscilloscopeMenu.h"
+#include "OscilloscopeWaveform.h"
+#include "OscilloscopeNotification.h"
 
 #define   OSC_VIEW_EVENTFIFO_SIZE         64
 

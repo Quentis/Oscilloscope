@@ -43,6 +43,10 @@ OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous
   extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_HorizontalResolution;
   extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_HorizontalOffset;
 
+  extern OSC_Menu_Element_Type OSC_Menu_Element_TriggerPosition;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_HorizontalResolution;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_HorizontalOffset;
+
 /*######################################### HORIIZONTAL MENU ##########################################*/
 
   extern OSC_Menu_Type OSC_Menu_Horizontal;
@@ -55,6 +59,11 @@ OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous
   extern OSC_Settings_OnOff_Type               OSC_Settings_TriggerSlope;
   extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_VerticalResolution;
   extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_VerticalOffset;
+
+  extern OSC_Menu_Element_Type OSC_Menu_Element_TriggerLevel;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_TriggerSlope;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_VerticalResolution;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_VerticalOffset;
 
 /*########################################## VERTICAL MENU ############################################*/
 
@@ -71,6 +80,13 @@ OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous
   extern OSC_Settings_OnOff_Type   OSC_Settings_DataAcquisitionMode;
   extern OSC_Settings_Option_Type  OSC_Settings_DataProcessingMode;
 
+  extern OSC_Menu_Element_Type OSC_Menu_Element_ChannelSelect;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_TriggerSource;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_Channel_A_Status;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_Channel_B_Status;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_DataAcquisitionMode;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_DataProcessingMode;
+
 /*############################################ MODE MENU ##############################################*/
 
   extern OSC_Menu_Type OSC_Menu_Mode;
@@ -82,6 +98,10 @@ OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous
   extern OSC_Settings_IntegerContinuous_Type OSC_Settings_BacklightIntensity;
   extern OSC_Settings_IntegerContinuous_Type OSC_Settings_VoltagePerLSB;
   extern OSC_Settings_IntegerDiscrete_Type   OSC_Settings_SampleRate;
+
+  extern OSC_Menu_Element_Type OSC_Menu_Element_BacklightIntensity;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_VoltagePerLSB;
+  extern OSC_Menu_Element_Type OSC_Menu_Element_SampleRate;
 
 /*########################################## HARDWARE MENU ############################################*/
 
