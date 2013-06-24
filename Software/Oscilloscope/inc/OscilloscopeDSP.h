@@ -37,7 +37,7 @@ typedef enum {
 } OSC_DSP_Channel_Type;
 
 typedef enum {
-  OSC_DSP_State_Disabled,
+  OSC_DSP_State_Idle,
   OSC_DSP_State_Sampling_PreTriggerMemory_FirstTime,
   OSC_DSP_State_Sampling_WaitingForTrigger,
   OSC_DSP_State_Sampling_PostTriggerMemory,
@@ -85,6 +85,11 @@ typedef enum {
   OSC_DSP_DataProcessingMode_Peak     =  OSC_CFG_DATA_PROCESSING_MODE_PEAK
 } OSC_DSP_DataProcessingMode_Type;
 
+typedef enum{
+  OSC_DSP_DataAcquisitionMode_Single,
+  OSC_DSP_DataAcquisitionMode_Repetitive
+} OSC_DSP_DataAcquisitionMode_Type;
+
 typedef struct {
   OSC_DSP_State_Type                      dataAcquisitionState;
   int32_t                                 firstDataPosition;
@@ -108,10 +113,14 @@ typedef struct {
   int32_t                              verticalOffsetInPixel;
   int32_t                              verticalOffsetIn_mV;
   OSC_DSP_DataProcessingMode_Type      dataProcessingMode;
+  uint8_t                              waveformMemoryIndex;
 } OSC_DSP_WaveformProperties_Type;
 
 void    OSC_DSP_Init(void);
+
+OSC_DSP_DataAcquisitionMode_Type OSC_DSP_GetDataAcquisitionMode(void);
 void    OSC_DSP_Calculate(void);
+void    OSC_DSP_ReCalculate(void);
 void    OSC_DSP_StartDataAcquisition(void);
 void    OSC_DSP_StateMachine_Update(void);
 void    OSC_DSP_WaveformProperties_Update(void);

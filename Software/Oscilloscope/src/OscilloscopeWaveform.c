@@ -24,3 +24,7 @@ void OSC_Waveform_DrawDivLines(void){
     OSC_DisplayManager_Graphics_DrawLine(&divLines[i]);
   }
 }
+
+void OSC_Waveform_Display(void){
+
+}

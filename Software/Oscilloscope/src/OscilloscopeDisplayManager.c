@@ -18,8 +18,10 @@ void OSC_DisplayManager_Init(void){
     }
   }
 
-  OSC_DisplayManager_Waveform_Channel_A.dataType = OSC_DisplayManager_Waveform_DataType_Normal;
-  OSC_DisplayManager_Waveform_Channel_B.dataType = OSC_DisplayManager_Waveform_DataType_Normal;
+  OSC_DisplayManager_Waveform_Channel_A[0].dataType = OSC_DisplayManager_Waveform_DataType_Normal;
+  OSC_DisplayManager_Waveform_Channel_B[0].dataType = OSC_DisplayManager_Waveform_DataType_Normal;
+  OSC_DisplayManager_Waveform_Channel_A[1].dataType = OSC_DisplayManager_Waveform_DataType_Normal;
+  OSC_DisplayManager_Waveform_Channel_B[1].dataType = OSC_DisplayManager_Waveform_DataType_Normal;
 }
 
 OSC_DisplayManager_Err_Type OSC_DisplayManager_ClearScreen(void){

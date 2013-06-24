@@ -69,8 +69,8 @@ typedef struct {
   OSC_DisplayManager_Waveform_DataType_Type   dataType;
 } OSC_DisplayManager_Waveform_Type;
 
-OSC_DisplayManager_Waveform_Type OSC_DisplayManager_Waveform_Channel_A;
-OSC_DisplayManager_Waveform_Type OSC_DisplayManager_Waveform_Channel_B;
+OSC_DisplayManager_Waveform_Type OSC_DisplayManager_Waveform_Channel_A[2];
+OSC_DisplayManager_Waveform_Type OSC_DisplayManager_Waveform_Channel_B[2];
 
 /*=========================================ERROR DEFINITIONS========================================*/
 
