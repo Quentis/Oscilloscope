@@ -69,6 +69,7 @@ typedef struct {
   char * const                      name;
 } OSC_Menu_Type;
 
+OSC_Menu_Err_Type  OSC_Menu_StringBuilder(OSC_Menu_Element_Type* menuElement,char* strDest);
 OSC_Menu_Err_Type  OSC_Menu_Display(OSC_Menu_Name_Type menuName,OSC_Menu_Event_Type menuEvent);
 
 extern OSC_Menu_Type* OSC_MenuList[OSC_Menu_Name_Count];

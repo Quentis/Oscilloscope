@@ -5,7 +5,7 @@ static uint32_t OSC_Menu_OnScreenStringList_FirstElement = 1;
 static OSC_Menu_ElementIndex_Type OSC_Menu_Element_Selected = 0;
 static OSC_Menu_ElementIndex_Type OSC_Menu_Element_FirstOnScreen = 0;
 
-static OSC_Menu_Err_Type  OSC_Menu_StringBuilder(OSC_Menu_Element_Type* menuElement,char* strDest){
+OSC_Menu_Err_Type  OSC_Menu_StringBuilder(OSC_Menu_Element_Type* menuElement,char* strDest){
   char strTemp[OSC_MENU_TEXT_CHARACTER_BUFFER_SIZE];
   const char menuTextFormat[] = "%-13s%8s";
 
