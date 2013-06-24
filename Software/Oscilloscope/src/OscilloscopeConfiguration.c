@@ -17,7 +17,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_TriggerPosition = {
-        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        OSC_Settings_TypeInfo_IntegerContinuous,
         (void*)&OSC_Settings_TriggerPosition
     };
 
@@ -37,7 +37,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_HorizontalResolution = {
-        OSC_Menu_Element_TypeInfo_IntegerDiscrete,
+        OSC_settings_TypeInfo_IntegerDiscrete,
         (void*)&OSC_Settings_HorizontalResolution
     };
 
@@ -54,7 +54,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_HorizontalOffset = {
-        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        OSC_Settings_TypeInfo_IntegerContinuous,
         (void*)&OSC_Settings_HorizontalOffset
     };
 
@@ -90,7 +90,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_TriggerLevel = {
-        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        OSC_Settings_TypeInfo_IntegerContinuous,
         (void*)&OSC_Settings_TriggerLevel
     };
 
@@ -106,7 +106,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_TriggerSlope = {
-        OSC_Menu_Element_TypeInfo_OnOff,
+        OSC_Settings_TypeInfo_OnOff,
         (void*)&OSC_Settings_TriggerSlope
     };
 
@@ -126,7 +126,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_VerticalResolution = {
-        OSC_Menu_Element_TypeInfo_IntegerDiscrete,
+        OSC_settings_TypeInfo_IntegerDiscrete,
         (void*)&OSC_Settings_VerticalResolution
     };
 
@@ -143,7 +143,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_VerticalOffset = {
-        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        OSC_Settings_TypeInfo_IntegerContinuous,
         (void*)&OSC_Settings_VerticalOffset
     };
 
@@ -178,7 +178,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_ChannelSelect = {
-        OSC_Menu_Element_TypeInfo_OnOff,
+        OSC_Settings_TypeInfo_OnOff,
         (void*)&OSC_Settings_ChannelSelect
     };
 
@@ -194,7 +194,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_TriggerSource = {
-        OSC_Menu_Element_TypeInfo_OnOff,
+        OSC_Settings_TypeInfo_OnOff,
         (void*)&OSC_Settings_TriggerSource
     };
 
@@ -210,7 +210,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_Channel_A_Status = {
-        OSC_Menu_Element_TypeInfo_OnOff,
+        OSC_Settings_TypeInfo_OnOff,
         (void*)&OSC_Settings_Channel_A_Status
     };
 
@@ -226,7 +226,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_Channel_B_Status = {
-        OSC_Menu_Element_TypeInfo_OnOff,
+        OSC_Settings_TypeInfo_OnOff,
         (void*)&OSC_Settings_Channel_B_Status
     };
 
@@ -242,7 +242,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_DataAcquisitionMode = {
-        OSC_Menu_Element_TypeInfo_OnOff,
+        OSC_Settings_TypeInfo_OnOff,
         (void*)&OSC_Settings_DataAcquisitionMode
     };
 
@@ -259,7 +259,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_DataProcessingMode = {
-        OSC_Menu_Element_TypeInfo_Option,
+        OSC_Settings_TypeInfo_Option,
         (void*)&OSC_Settings_DataProcessingMode
     };
 
@@ -298,7 +298,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_BacklightIntensity = {
-        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        OSC_Settings_TypeInfo_IntegerContinuous,
         (void*)&OSC_Settings_BacklightIntensity
     };
 
@@ -316,7 +316,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_VoltagePerLSB = {
-        OSC_Menu_Element_TypeInfo_IntegerContinuous,
+        OSC_Settings_TypeInfo_IntegerContinuous,
         (void*)&OSC_Settings_VoltagePerLSB
     };
 
@@ -336,7 +336,7 @@
     };
 
     OSC_Menu_Element_Type OSC_Menu_Element_SampleRate = {
-        OSC_Menu_Element_TypeInfo_IntegerDiscrete,
+        OSC_settings_TypeInfo_IntegerDiscrete,
         (void*)&OSC_Settings_SampleRate
     };
 

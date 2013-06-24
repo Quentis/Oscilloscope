@@ -33,19 +33,19 @@ static void OSC_View_MenuOpen(OSC_View_Event_Type event){
   OSC_View_State.displayController = OSC_View_DisplayController_Menu;
   switch(event){
     case OSC_View_Event_HorizontalLeftClickDouble:
-      OSC_Menu_Display(OSC_Menu_Name_HorizontalMenu,OSC_Menu_Event_Menu_Open);
+      OSC_Menu_Display(OSC_Menu_Name_HorizontalMenu,OSC_Settings_Event_Open);
       OSC_View_State.activeMenuName = OSC_Menu_Name_HorizontalMenu;
       break;
     case OSC_View_Event_VerticalUpClickDouble:
-      OSC_Menu_Display(OSC_Menu_Name_VerticalMenu,OSC_Menu_Event_Menu_Open);
+      OSC_Menu_Display(OSC_Menu_Name_VerticalMenu,OSC_Settings_Event_Open);
       OSC_View_State.activeMenuName = OSC_Menu_Name_VerticalMenu;
       break;
     case OSC_View_Event_HorizontalRightClickDouble:
-      OSC_Menu_Display(OSC_Menu_Name_ModeMenu,OSC_Menu_Event_Menu_Open);
+      OSC_Menu_Display(OSC_Menu_Name_ModeMenu,OSC_Settings_Event_Open);
       OSC_View_State.activeMenuName = OSC_Menu_Name_ModeMenu;
       break;
     case OSC_View_Event_VerticalDownClickDouble:
-      OSC_Menu_Display(OSC_Menu_Name_HardwareMenu,OSC_Menu_Event_Menu_Open);
+      OSC_Menu_Display(OSC_Menu_Name_HardwareMenu,OSC_Settings_Event_Open);
       OSC_View_State.activeMenuName = OSC_Menu_Name_HardwareMenu;
       break;
     default:
@@ -67,24 +67,24 @@ static void OSC_View_NotificationOpen(OSC_View_Event_Type event){
 static void OSC_View_MenuStateMachine(OSC_View_Event_Type event){
   switch(event){
     case OSC_View_Event_HorizontalLeftClickSingle:
-      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Menu_Event_MenuElement_StepDownSingle);
+      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Settings_Event_StepDownSingle);
       break;
     case OSC_View_Event_HorizontalLeftClickDouble:
-      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Menu_Event_MenuElement_StepDownMultiple);
+      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Settings_Event_StepDownMultiple);
       break;
     case OSC_View_Event_HorizontalRightClickSingle:
-      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Menu_Event_MenuElement_StepUpSingle);
+      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Settings_Event_StepUpSingle);
       break;
     case OSC_View_Event_HorizontalRightClickDouble:
-      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Menu_Event_MenuElement_StepUpMultiple);
+      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Settings_Event_StepUpMultiple);
       break;
     case OSC_View_Event_VerticalUpClickSingle:
     case OSC_View_Event_VerticalUpClickDouble:
-      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Menu_Event_MenuElement_Previous);
+      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Settings_Event_Previous);
       break;
     case OSC_View_Event_VerticalDownClickSingle:
     case OSC_View_Event_VerticalDownClickDouble:
-      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Menu_Event_MenuElement_Next);
+      OSC_Menu_Display(OSC_View_State.activeMenuName,OSC_Settings_Event_Next);
       break;
     case OSC_View_Event_HorizontalMiddleClickSingle:
     case OSC_View_Event_HorizontalMiddleClickDouble:

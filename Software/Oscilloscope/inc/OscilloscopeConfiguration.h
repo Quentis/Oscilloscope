@@ -33,7 +33,7 @@
 /*=================================== CALLBACK FUNCTION REFERENCES ====================================*/
 extern OSC_Settings_IntegerContinuousValue_Type
 OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous_Type*  this,
-                                                  OSC_Menu_Event_Type                   menuEvent);
+                                                  OSC_Settings_Event_Type                   menuEvent);
 
 /*=====================================================================================================*/
 /*                                      HORIIZONTAL MENU ELEMENTS                                      */

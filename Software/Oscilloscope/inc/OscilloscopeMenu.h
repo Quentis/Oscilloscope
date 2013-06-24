@@ -35,13 +35,6 @@ typedef enum {
 } OSC_Menu_Err_Type;
 
 typedef enum {
-  OSC_Menu_Element_TypeInfo_IntegerContinuous,
-  OSC_Menu_Element_TypeInfo_IntegerDiscrete,
-  OSC_Menu_Element_TypeInfo_OnOff,
-  OSC_Menu_Element_TypeInfo_Option,
-} OSC_Menu_Element_TypeInfo_Type;
-
-typedef enum {
   OSC_Menu_Name_HorizontalMenu,
   OSC_Menu_Name_VerticalMenu,
   OSC_Menu_Name_ModeMenu,
@@ -55,10 +48,7 @@ typedef enum {
  * Be extremely careful when you set the typeInfo because the wrong settings can
  * lead to invalid memory accesses
  */
-typedef struct {
-  const OSC_Menu_Element_TypeInfo_Type   typeInfo;
-  void* const                            menuElementContentPtr;
-} OSC_Menu_Element_Type;
+typedef OSC_Settings_Type OSC_Menu_Element_Type;
 
 typedef OSC_Menu_Element_Type**    OSC_Menu_ElementList_Type;
 typedef uint32_t                   OSC_Menu_ElementIndex_Type;
@@ -69,8 +59,7 @@ typedef struct {
   char * const                      name;
 } OSC_Menu_Type;
 
-OSC_Menu_Err_Type  OSC_Menu_StringBuilder(OSC_Menu_Element_Type* menuElement,char* strDest);
-OSC_Menu_Err_Type  OSC_Menu_Display(OSC_Menu_Name_Type menuName,OSC_Menu_Event_Type menuEvent);
+OSC_Menu_Err_Type  OSC_Menu_Display(OSC_Menu_Name_Type menuName,OSC_Settings_Event_Type menuEvent);
 
 extern OSC_Menu_Type* OSC_MenuList[OSC_Menu_Name_Count];
 

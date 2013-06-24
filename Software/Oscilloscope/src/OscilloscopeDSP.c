@@ -123,11 +123,11 @@ void OSC_DSP_Calculate(void){
 
     /*These function writes the waveform on the screen*/
     if(OSC_Settings_Channel_A_Status.status == OSC_CFG_CHANNEL_A_STATUS_ENABLED){
-      OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_A);
+      OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_A[0]);
     }
 
     if(OSC_Settings_Channel_B_Status.status == OSC_CFG_CHANNEL_B_STATUS_ENABLED){
-      OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_B);
+      OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_B[0]);
     }
 
     OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Idle;
