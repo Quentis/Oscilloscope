@@ -5,53 +5,6 @@ static uint32_t OSC_Menu_OnScreenStringList_FirstElement = 1;
 static OSC_Menu_ElementIndex_Type OSC_Menu_Element_Selected = 0;
 static OSC_Menu_ElementIndex_Type OSC_Menu_Element_FirstOnScreen = 0;
 
-static OSC_Menu_Err_Type  OSC_Settings_Modify(OSC_Settings_Type* menuElement, OSC_Settings_Event_Type settingsEvent){
-  switch(menuElement->typeInfo){
-    case OSC_Settings_TypeInfo_IntegerContinuous:
-      if( ((OSC_Settings_IntegerContinuous_Type*)menuElement->settingsDataPtr)->callback == NULL){
-        OSC_Settings_IntegerContinuousCallback_Default((OSC_Settings_IntegerContinuous_Type*)menuElement->settingsDataPtr,settingsEvent);
-      } else {
-        ((OSC_Settings_IntegerContinuous_Type*)menuElement->settingsDataPtr)->callback(
-            (OSC_Settings_IntegerContinuous_Type*)menuElement->settingsDataPtr,
-            settingsEvent
-        );
-      }
-      break;
-    case OSC_settings_TypeInfo_IntegerDiscrete:
-      if( ((OSC_Settings_IntegerDiscrete_Type*)menuElement->settingsDataPtr)->callback == NULL){
-        OSC_Settings_IntegerDiscreteCallback_Default((OSC_Settings_IntegerDiscrete_Type*)menuElement->settingsDataPtr,settingsEvent);
-      } else {
-        ((OSC_Settings_IntegerDiscrete_Type*)menuElement->settingsDataPtr)->callback(
-            (OSC_Settings_IntegerDiscrete_Type*)menuElement->settingsDataPtr,
-            settingsEvent
-        );
-      }
-      break;
-    case OSC_Settings_TypeInfo_OnOff:
-      if( ((OSC_Settings_OnOff_Type*)menuElement->settingsDataPtr)->callback == NULL){
-        OSC_Settings_OnOffCallback_Default((OSC_Settings_OnOff_Type*)menuElement->settingsDataPtr,settingsEvent);
-      } else {
-        ((OSC_Settings_OnOff_Type*)menuElement->settingsDataPtr)->callback(
-            (OSC_Settings_OnOff_Type*)menuElement->settingsDataPtr,
-            settingsEvent
-        );
-      }
-      break;
-    case OSC_Settings_TypeInfo_Option:
-      if( ((OSC_Settings_Option_Type*)menuElement->settingsDataPtr)->callback == NULL){
-        OSC_Settings_OptionCallback_Default((OSC_Settings_Option_Type*)menuElement->settingsDataPtr,settingsEvent);
-      } else {
-        ((OSC_Settings_Option_Type*)menuElement->settingsDataPtr)->callback(
-            (OSC_Settings_Option_Type*)menuElement->settingsDataPtr,
-            settingsEvent
-        );
-      }
-      break;
-    default:return OSC_Menu_Err_InvalidType;
-  }
-  return OSC_Menu_Err_OK;
-}
-
 static OSC_Menu_Err_Type  OSC_Menu_AssembleStringList(OSC_Menu_Name_Type menuName){
   OSC_Menu_ElementIndex_Type index;
   OSC_Menu_OnScreenStringList_FirstElement = 1;

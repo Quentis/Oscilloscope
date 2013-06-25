@@ -7,6 +7,8 @@
 #include "OscilloscopeAnalog.h"
 #include "stdint.h"
 
+/*============================================== DEFINITIONS ==========================================*/
+
 #define OSC_DSP_WAVEFORM_HORIZONTAL_POINTS_COUNT                                OSC_DM_MATRIX_COLUMN_COUNT
 #define OSC_DSP_WAVEFORM_VERTICAL_POINTS_COUNT                                 (OSC_DM_MATRIX_ROW_COUNT * OSC_DM_MATRIX_ROW_PIXEL_COUNT)
 #define OSC_DSP_WAVEFORM_PIXEL_PER_HORIZONTAL_DIVISION                          20
@@ -28,8 +30,7 @@
 #define OSC_DSP_INVALID_DATA_VALUE                                     (~0)
 #define OSC_DSP_SAMPLE_RATE                                        1000000
 
-extern uint8_t OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
-extern uint8_t OSC_DSP_Channel_B_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
+/*============================================ TYPE DEFINITIONS =======================================*/
 
 typedef enum {
   OSC_DSP_Channel_A,
@@ -102,6 +103,7 @@ typedef struct {
   OSC_DSP_TriggerSource_Type              triggerSource;
   OSC_DSP_TriggerState_Type               triggerState;
   OSC_DSP_SampleRate_Type                 sampleRate;       /*Number of samples per second -> 1Msample/s -> 1000000*/
+  OSC_DSP_DataAcquisitionMode_Type        dataAcquisitionMode;
 } OSC_DSP_StateMachine_Type;
 
 typedef struct {
@@ -116,24 +118,32 @@ typedef struct {
   uint8_t                              waveformMemoryIndex;
 } OSC_DSP_WaveformProperties_Type;
 
-void    OSC_DSP_Init(void);
+/*==================================== EXTERNAL VARIABLE DECLARATIONS =================================*/
 
-OSC_DSP_DataAcquisitionMode_Type OSC_DSP_GetDataAcquisitionMode(void);
-void    OSC_DSP_Calculate(void);
-void    OSC_DSP_ReCalculate(void);
-void    OSC_DSP_StartDataAcquisition(void);
-void    OSC_DSP_StateMachine_Update(void);
-void    OSC_DSP_WaveformProperties_Update(void);
-int32_t OSC_DSP_Waveform_VerticalAdjust(int32_t rawData);
+extern uint8_t OSC_DSP_Channel_A_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
+extern uint8_t OSC_DSP_Channel_B_DataAcquisitionMemory[OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE];
 
-uint32_t OSC_DSP_Waveform_CalculateSampleValue(
-    OSC_DSP_Channel_Type              channel,
-    int32_t                           startIndex,
-    int32_t                           dataLength,
-    OSC_DSP_DataProcessingMode_Type   dataProcMode
+extern OSC_DSP_StateMachine_Type OSC_DSP_StateMachine;
+extern OSC_DSP_WaveformProperties_Type OSC_DSP_WaveformProperties;
+
+/*========================================= FUNCTION DECLARATIONS =====================================*/
+
+void      OSC_DSP_Init(void);
+void      OSC_DSP_Calculate(void);
+void      OSC_DSP_ReCalculate(void);
+void      OSC_DSP_StartDataAcquisition(void);
+void      OSC_DSP_StateMachine_Update(void);
+void      OSC_DSP_WaveformProperties_Update(void);
+void      OSC_DSP_StateMachine_Update(void);
+int32_t   OSC_DSP_Waveform_VerticalAdjust(int32_t rawData);
+uint32_t  OSC_DSP_Waveform_CalculateSampleValue(
+            OSC_DSP_Channel_Type              channel,
+            int32_t                           startIndex,
+            int32_t                           dataLength,
+            OSC_DSP_DataProcessingMode_Type   dataProcMode
 );
+OSC_DSP_DataAcquisitionMode_Type  OSC_DSP_GetDataAcquisitionMode(void);
+OSC_DSP_CalculationStatus_Type    OSC_DSP_Waveform_Construct(void);
 
-OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void);
-void OSC_DSP_StateMachine_Update(void);
 
 #endif /* OSCILLOSCOPEDSP_H_ */

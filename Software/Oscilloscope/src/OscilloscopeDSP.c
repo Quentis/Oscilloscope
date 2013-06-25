@@ -19,7 +19,7 @@ static const OSC_Analog_Channel_DataAcquisitionConfig_Type OSC_Analog_Channel_B_
 
 /*======================================== STATE MACHINE DEFINITIONS ========================================*/
 OSC_DSP_StateMachine_Type  OSC_DSP_StateMachine = {
-    OSC_DSP_State_Idle,                         /*dataAcquisitionState*/              /*COMPUTED*/
+    OSC_DSP_State_Idle,                             /*dataAcquisitionState*/              /*COMPUTED*/
     0,                                              /*firstDataPosition*/                 /*COMPUTED*/
     0,                                              /*preTriggerMemoryLength*/            /*UPDATE-FROM-CONFIG*/
     0,                                              /*postTriggerMemoryLength*/           /*UPDATE-FROM-CONFIG*/
@@ -29,7 +29,8 @@ OSC_DSP_StateMachine_Type  OSC_DSP_StateMachine = {
     OSC_DSP_TriggerSlope_RisingEdge,                /*triggerSlope*/                      /*UPDATE-FROM-CONFIG*/
     OSC_DSP_TriggerSource_Channel_A,                /*triggerSource*/                     /*UPDATE-FROM-CONFIG*/
     OSC_DSP_TriggerState_Disabled,                  /*triggerState*/                      /*COMPUTED*/
-    OSC_DSP_SAMPLE_RATE                             /*sampleRate*/                        /*UPDATE-FROM-CONFIG*/
+    OSC_DSP_SAMPLE_RATE,                            /*sampleRate*/                        /*UPDATE-FROM-CONFIG*/
+    OSC_DSP_DataAcquisitionMode_Repetitive          /*dataAcquisitionMode*/               /*UPDATE-FROM-CONFIG*/
     /*FIXME: It is not used in version 1.0 --> The timer should be adjusted according to this*/
 };
 
@@ -78,8 +79,11 @@ void OSC_DSP_StartDataAcquisition(void){
 void OSC_DSP_ReCalculate(void){
   if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Idle){
     OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Calculating_UpdatePhase;
+    /* OSC_DSP_Calculate(...) is a polling function and it will handle everything it will update the
+     * OSC_DSP_WaveformProperties and it will recalculate the waveform and it will display it*/
   }
 }
+
 
 void OSC_DSP_Calculate(void){
   OSC_DSP_CalculationStatus_Type calcultaionStatus;
@@ -425,6 +429,11 @@ void OSC_DSP_StateMachine_Update(void){    /*Updates the DSP state machine confi
 
   OSC_DSP_StateMachine.triggerState  = OSC_DSP_TriggerState_Disabled;
 
+  if(OSC_Settings_DataProcessingMode.optionID == OSC_CFG_DATA_ACQUISITION_MODE_REPETITIVE){
+    OSC_DSP_StateMachine.dataAcquisitionMode = OSC_DSP_DataAcquisitionMode_Repetitive;
+  } else {  /*OSC_Settings_DataProcessingMode.optionID == OSC_CFG_DATA_ACQUISITION_MODE_SINGLE*/
+    OSC_DSP_StateMachine.dataAcquisitionMode = OSC_DSP_DataAcquisitionMode_Single;
+  }
 }
 
 /*

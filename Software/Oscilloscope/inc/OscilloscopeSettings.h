@@ -39,7 +39,7 @@ typedef struct OSC_Settings_IntegerContinuous_Type{
   OSC_Settings_IntegerContinuousValue_Type    incrementStepSingle;
   OSC_Settings_IntegerContinuousValue_Type    incrementStepMultiple;
   OSC_Settings_IntegerContinuousValue_Type (*callback)(struct OSC_Settings_IntegerContinuous_Type*    this,
-                                                       OSC_Settings_Event_Type                            menuEvent);
+                                                       OSC_Settings_Event_Type                        settingsEvent);
   char* const name;
   char* const unitName;
 } OSC_Settings_IntegerContinuous_Type;
@@ -50,7 +50,7 @@ typedef struct OSC_Settings_IntegerDiscrete_Type {
   OSC_Settings_IntegerDiscreteIndex_Type    currentIndex;
   OSC_Settings_IntegerDiscreteValue_Type    length;
   OSC_Settings_IntegerDiscreteIndex_Type    (*callback)(struct OSC_Settings_IntegerDiscrete_Type*      this,
-                                                        OSC_Settings_Event_Type                            menuEvent);
+                                                        OSC_Settings_Event_Type                        settingsEvent);
   char** const  nameOfValues;
   char*  const   name;
 } OSC_Settings_IntegerDiscrete_Type;
@@ -59,7 +59,7 @@ typedef struct OSC_Settings_IntegerDiscrete_Type {
 typedef struct OSC_Settings_OnOff_Type {
   OSC_Settings_OnOffValue_Type   status;
   OSC_Settings_OnOffValue_Type   (*callback)(struct OSC_Settings_OnOff_Type*                 this,
-                                             OSC_Settings_Event_Type                             menuEvent);
+                                             OSC_Settings_Event_Type                         settingsEvent);
   char** const                   statusNames;
   char*  const                   name;
 } OSC_Settings_OnOff_Type;
@@ -69,7 +69,7 @@ typedef struct OSC_Settings_Option_Type {
   OSC_Settings_OptionValue_Type    optionID;
   OSC_Settings_OptionValue_Type    optionCount;
   OSC_Settings_OptionValue_Type    (*callback)(struct OSC_Settings_Option_Type*               this,
-                                               OSC_Settings_Event_Type                            menuEvent);
+                                               OSC_Settings_Event_Type                        settingsEvent);
   char** const   nameOfOptions;
   char*  const   name;
 } OSC_Settings_Option_Type;
@@ -79,29 +79,30 @@ typedef struct OSC_Settings_Option_Type {
 
 /*It must return the current value of the selected settings value*/
 typedef OSC_Settings_IntegerContinuousValue_Type  (*OSC_Settings_IntegerContinuousCallback_Type)(OSC_Settings_IntegerContinuous_Type*  this,
-                                                                                                 OSC_Settings_Event_Type                   menuEvent);
+                                                                                                 OSC_Settings_Event_Type               settingsEvent);
 
 /*It must return the index of the selected settings value*/
 typedef OSC_Settings_IntegerDiscreteIndex_Type (*OSC_Settings_IntegerDiscreteCallback_Type)(OSC_Settings_IntegerDiscrete_Type*         this,
-                                                                                            OSC_Settings_Event_Type                        menuEvent);
+                                                                                            OSC_Settings_Event_Type                    settingsEvent);
 
 /*It must return the status of the selected settings*/
 typedef OSC_Settings_OnOffValue_Type        (*OSC_Settings_OnOffCallback_Type)(OSC_Settings_OnOff_Type*                                this,
-                                                                               OSC_Settings_Event_Type                                     menuEvent);
+                                                                               OSC_Settings_Event_Type                                 settingsEvent);
 
 /*It must return the status of the selected settings option*/
 typedef OSC_Settings_OptionValue_Type       (*OSC_Settings_OptionCallback_Type)(OSC_Settings_Option_Type*                              this,
-                                                                                OSC_Settings_Event_Type                                    menuEvent);
+                                                                                OSC_Settings_Event_Type                                settingsEvent);
 
 /*========================================= SETTINGS DEFAULT CALLBACKS =======================================*/
 OSC_Settings_IntegerContinuousValue_Type   OSC_Settings_IntegerContinuousCallback_Default(OSC_Settings_IntegerContinuous_Type*  this,
-                                                                                          OSC_Settings_Event_Type                   menuEvent);
+                                                                                          OSC_Settings_Event_Type               settingsEvent);
 OSC_Settings_IntegerDiscreteIndex_Type     OSC_Settings_IntegerDiscreteCallback_Default(OSC_Settings_IntegerDiscrete_Type*      this,
-                                                                                        OSC_Settings_Event_Type                     menuEvent);
+                                                                                        OSC_Settings_Event_Type                 settingsEvent);
 OSC_Settings_OnOffValue_Type               OSC_Settings_OnOffCallback_Default(OSC_Settings_OnOff_Type*                          this,
-                                                                              OSC_Settings_Event_Type                               menuEvent);
+                                                                              OSC_Settings_Event_Type                           settingsEvent);
 OSC_Settings_OptionValue_Type              OSC_Settings_OptionCallback_Default(OSC_Settings_Option_Type*                        this,
-                                                                               OSC_Settings_Event_Type                              menuEvent);
-void  OSC_Settings_StringBuilder(OSC_Settings_Type* menuElement,char* strDest);
+                                                                               OSC_Settings_Event_Type                          settingsEvent);
+void  OSC_Settings_StringBuilder(OSC_Settings_Type* settingsObject,char* strDest);
+void  OSC_Settings_Modify(OSC_Settings_Type* settingsObject, OSC_Settings_Event_Type settingsEvent);
 
 #endif /* OSCILLOSCOPESETTINGS_H_ */

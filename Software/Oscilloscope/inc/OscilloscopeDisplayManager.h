@@ -93,5 +93,6 @@ OSC_DisplayManager_Err_Type OSC_DisplayManager_Text_PrintLine(char*             
                                                               OSC_DisplayManager_LineNumber_Type    line,
                                                               OSC_DisplayManager_PrintMode_Type     printMode);
 void OSC_DisplayManager_ScreenUpdater(void);
+void OSC_DisplayManager_Graphics_DrawDivLines(void);
 
 #endif /* OSCILLOSCOPEDISPLAYMANAGER_H_ */

@@ -99,35 +99,80 @@ OSC_Settings_OptionValue_Type              OSC_Settings_OptionCallback_Default(O
   return this->optionID;
 }
 
-void  OSC_Settings_StringBuilder(OSC_Settings_Type* menuElement,char* strDest){
+void  OSC_Settings_StringBuilder(OSC_Settings_Type* settingsObject,char* strDest){
   char strTemp[OSC_SETTINGS_TEXT_CHARACTER_BUFFER_SIZE];
   const char menuTextFormat[] = "%-13s%8s";
 
-  switch(menuElement->typeInfo){
+  switch(settingsObject->typeInfo){
     case OSC_Settings_TypeInfo_IntegerContinuous:
       snprintf(strTemp,OSC_SETTINGS_TEXT_CHARACTER_BUFFER_SIZE,"%d%s",
-              (int)((OSC_Settings_IntegerContinuous_Type*)menuElement->settingsDataPtr)->value,
-              (char*)((OSC_Settings_IntegerContinuous_Type*)menuElement->settingsDataPtr)->unitName);
+              (int)((OSC_Settings_IntegerContinuous_Type*)settingsObject->settingsDataPtr)->value,
+              (char*)((OSC_Settings_IntegerContinuous_Type*)settingsObject->settingsDataPtr)->unitName);
       snprintf(strDest,OSC_SETTINGS_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
-             (char*)((OSC_Settings_IntegerContinuous_Type*)menuElement->settingsDataPtr)->name, strTemp);
+             (char*)((OSC_Settings_IntegerContinuous_Type*)settingsObject->settingsDataPtr)->name, strTemp);
       break;
     case OSC_settings_TypeInfo_IntegerDiscrete:
       snprintf(strDest,OSC_SETTINGS_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
-             (char*)((OSC_Settings_IntegerDiscrete_Type*)menuElement->settingsDataPtr)->name,
-             (char*)((OSC_Settings_IntegerDiscrete_Type*)menuElement->settingsDataPtr)->nameOfValues
-             [((OSC_Settings_IntegerDiscrete_Type*)menuElement->settingsDataPtr)->currentIndex]);
+             (char*)((OSC_Settings_IntegerDiscrete_Type*)settingsObject->settingsDataPtr)->name,
+             (char*)((OSC_Settings_IntegerDiscrete_Type*)settingsObject->settingsDataPtr)->nameOfValues
+             [((OSC_Settings_IntegerDiscrete_Type*)settingsObject->settingsDataPtr)->currentIndex]);
       break;
     case OSC_Settings_TypeInfo_OnOff:
       snprintf(strDest,OSC_SETTINGS_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
-              (char*)((OSC_Settings_OnOff_Type*)menuElement->settingsDataPtr)->name,
-              (char*)((OSC_Settings_OnOff_Type*)menuElement->settingsDataPtr)->statusNames
-              [((OSC_Settings_OnOff_Type*)menuElement->settingsDataPtr)->status]);
+              (char*)((OSC_Settings_OnOff_Type*)settingsObject->settingsDataPtr)->name,
+              (char*)((OSC_Settings_OnOff_Type*)settingsObject->settingsDataPtr)->statusNames
+              [((OSC_Settings_OnOff_Type*)settingsObject->settingsDataPtr)->status]);
       break;
     case OSC_Settings_TypeInfo_Option:
       snprintf(strDest,OSC_SETTINGS_TEXT_CHARACTER_BUFFER_SIZE,menuTextFormat,
-              (char*)((OSC_Settings_Option_Type*)menuElement->settingsDataPtr)->name,
-              (char*)((OSC_Settings_Option_Type*)menuElement->settingsDataPtr)->nameOfOptions
-              [((OSC_Settings_Option_Type*)menuElement->settingsDataPtr)->optionID]);
+              (char*)((OSC_Settings_Option_Type*)settingsObject->settingsDataPtr)->name,
+              (char*)((OSC_Settings_Option_Type*)settingsObject->settingsDataPtr)->nameOfOptions
+              [((OSC_Settings_Option_Type*)settingsObject->settingsDataPtr)->optionID]);
+      break;
+  }
+}
+
+void  OSC_Settings_Modify(OSC_Settings_Type* settingsObject, OSC_Settings_Event_Type settingsEvent){
+  switch(settingsObject->typeInfo){
+    case OSC_Settings_TypeInfo_IntegerContinuous:
+      if( ((OSC_Settings_IntegerContinuous_Type*)settingsObject->settingsDataPtr)->callback == NULL){
+        OSC_Settings_IntegerContinuousCallback_Default((OSC_Settings_IntegerContinuous_Type*)settingsObject->settingsDataPtr,settingsEvent);
+      } else {
+        ((OSC_Settings_IntegerContinuous_Type*)settingsObject->settingsDataPtr)->callback(
+            (OSC_Settings_IntegerContinuous_Type*)settingsObject->settingsDataPtr,
+            settingsEvent
+        );
+      }
+      break;
+    case OSC_settings_TypeInfo_IntegerDiscrete:
+      if( ((OSC_Settings_IntegerDiscrete_Type*)settingsObject->settingsDataPtr)->callback == NULL){
+        OSC_Settings_IntegerDiscreteCallback_Default((OSC_Settings_IntegerDiscrete_Type*)settingsObject->settingsDataPtr,settingsEvent);
+      } else {
+        ((OSC_Settings_IntegerDiscrete_Type*)settingsObject->settingsDataPtr)->callback(
+            (OSC_Settings_IntegerDiscrete_Type*)settingsObject->settingsDataPtr,
+            settingsEvent
+        );
+      }
+      break;
+    case OSC_Settings_TypeInfo_OnOff:
+      if( ((OSC_Settings_OnOff_Type*)settingsObject->settingsDataPtr)->callback == NULL){
+        OSC_Settings_OnOffCallback_Default((OSC_Settings_OnOff_Type*)settingsObject->settingsDataPtr,settingsEvent);
+      } else {
+        ((OSC_Settings_OnOff_Type*)settingsObject->settingsDataPtr)->callback(
+            (OSC_Settings_OnOff_Type*)settingsObject->settingsDataPtr,
+            settingsEvent
+        );
+      }
+      break;
+    case OSC_Settings_TypeInfo_Option:
+      if( ((OSC_Settings_Option_Type*)settingsObject->settingsDataPtr)->callback == NULL){
+        OSC_Settings_OptionCallback_Default((OSC_Settings_Option_Type*)settingsObject->settingsDataPtr,settingsEvent);
+      } else {
+        ((OSC_Settings_Option_Type*)settingsObject->settingsDataPtr)->callback(
+            (OSC_Settings_Option_Type*)settingsObject->settingsDataPtr,
+            settingsEvent
+        );
+      }
       break;
   }
 }
