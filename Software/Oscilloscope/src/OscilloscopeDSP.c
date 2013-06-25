@@ -84,7 +84,6 @@ void OSC_DSP_ReCalculate(void){
   }
 }
 
-
 void OSC_DSP_Calculate(void){
   OSC_DSP_CalculationStatus_Type calcultaionStatus;
   #ifdef OSC_DSP_CORRECTION

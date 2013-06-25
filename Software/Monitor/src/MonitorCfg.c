@@ -62,7 +62,8 @@ static MTR_Alarm MTR_AlarmList[] = {
       {MTR_ALARM_STATUS_DISABLE, MTR_ALARM_EVENTMASK_NOMASK,   10,  0, OSC_Button_Read,                   ~0},
       {MTR_ALARM_STATUS_DISABLE, MTR_ALARM_EVENTMASK_NOMASK,   10,  0, OSC_DisplayManager_ScreenUpdater,  ~0},
       {MTR_ALARM_STATUS_DISABLE, MTR_ALARM_EVENTMASK_NOMASK,   10,  0, OSC_Button_StateMachine,           ~0},
-      {MTR_ALARM_STATUS_DISABLE, MTR_ALARM_EVENTMASK_NOMASK,   25,  0, OSC_View_EventManager,             ~0}
+      {MTR_ALARM_STATUS_DISABLE, MTR_ALARM_EVENTMASK_NOMASK,   25,  0, OSC_View_EventManager,             ~0},
+      {MTR_ALARM_STATUS_DISABLE, MTR_ALARM_EVENTMASK_NOMASK,   10,  0, OSC_Waveform_DisplayUpdate,        ~0}
 };
 static MTR_AlarmPtr MTR_AlarmPtrList[] = {
       MTR_AlarmList,
@@ -73,6 +74,7 @@ static MTR_AlarmPtr MTR_AlarmPtrList[] = {
       MTR_AlarmList + 5,
       MTR_AlarmList + 6,
       MTR_AlarmList + 7,
+      MTR_AlarmList + 8
 };
 
 MTR_AlarmStructType MTR_AlarmStruct = {

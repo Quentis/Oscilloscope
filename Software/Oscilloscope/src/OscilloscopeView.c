@@ -99,7 +99,39 @@ static void OSC_View_MenuStateMachine(OSC_View_Event_Type event){
 
 static void OSC_View_WaveformStateMachine(OSC_View_Event_Type event){
   switch(event){
+    case OSC_View_Event_HorizontalLeftClickSingle:
+      OSC_Waveform_Display(OSC_Waveform_Event_HorizontalDecrease);
+      break;
+    case OSC_View_Event_HorizontalMiddleClickSingle:
+      OSC_Waveform_Display(OSC_Waveform_Event_HorizontalModeSwitch);
+      break;
+    case OSC_View_Event_HorizontalRightClickSingle:
+      OSC_Waveform_Display(OSC_Waveform_Event_HorizontalIncrease);
+      break;
+    case OSC_View_Event_VerticalUpClickSingle:
+      OSC_Waveform_Display(OSC_Waveform_Event_VerticalIncrease);
+      break;
+    case OSC_View_Event_VerticalMiddleClickSingle:
+      OSC_Waveform_Display(OSC_Waveform_Event_VerticalModeSwitch);
+      break;
+    case OSC_View_Event_VerticalDownClickSingle:
+      OSC_Waveform_Display(OSC_Waveform_Event_VerticalDecrease);
+      break;
+    case OSC_View_Event_TriggerUpClickSingle:
+      OSC_Waveform_Display(OSC_Waveform_Event_TriggerLevelIncrease);
+      break;
+    case OSC_View_Event_TriggerUpClickDouble:
+      OSC_Waveform_Display(OSC_Waveform_Event_Channel_B_Switch);
+      break;
+    case OSC_View_Event_TriggerDownClickSingle:
+      OSC_Waveform_Display(OSC_Waveform_Event_TriggerLevelDecrease);
+      break;
+    case OSC_View_Event_TriggerDownClickDouble:
+      OSC_Waveform_Display(OSC_Waveform_Event_Channel_A_Switch);
+      break;
     case OSC_View_Event_HorizontalMiddleClickDouble:
+      OSC_Waveform_Display(OSC_Waveform_Event_SingleDataAcquisitionStart);
+      break;
     case OSC_View_Event_VerticalMiddleClickDouble:
       OSC_View_NotificationOpen(event);
       break;

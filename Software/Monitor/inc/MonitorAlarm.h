@@ -11,6 +11,8 @@
 #define  MTR_ALARM_STATUS_ENABLE        (!MTR_ALARM_STATUS_DISABLE)
 #define  MTR_ALARM_PERIOD_SINGLE_EVENT  0
 
+#define NULL 0
+
 extern uint32_t MTR_systemTime;
 extern const uint32_t MTR_systemTimeMax;
 extern MTR_AlarmStructType MTR_AlarmStruct;

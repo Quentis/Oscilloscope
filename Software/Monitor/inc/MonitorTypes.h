@@ -3,8 +3,6 @@
 
 #include "stdint.h"
 
-#define NULL 0
-
 /*======================================ERROR_TYPES======================================*/
 
 typedef   enum{

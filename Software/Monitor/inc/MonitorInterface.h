@@ -2,7 +2,6 @@
 #define MONITORINTERFACE_H_
 
 #include "MonitorTypes.h"
-#include "MonitorCfg.h"
 
 /*================================= INITIALIZER CALLBACKS ===================================*/
 extern void OSC_Accelerometer_Init(void);
@@ -27,7 +26,8 @@ typedef enum {
   MTR_ALARM_NAME_BUTTON_READ,
   MTR_ALARM_NAME_DISPLAY_MANAGER,
   MTR_ALARM_NAME_BUTTON_STATE_MACHINE,
-  MTR_ALARM_NAME_VIEW_EVENT_MANAGER
+  MTR_ALARM_NAME_VIEW_EVENT_MANAGER,
+  MTR_ALARM_NAME_WAVEFORM_DISPLAY_UPDATE
 } MTR_Alarm_Name_Type;
 
 /*================================== BACKGROUND CALLBACKS ===================================*/
@@ -47,6 +47,7 @@ extern void OSC_Button_Read(void);
 extern void OSC_DisplayManager_ScreenUpdater(void);
 extern void OSC_Button_StateMachine(void);
 extern void OSC_View_EventManager(void);
+extern void OSC_Waveform_DisplayUpdate(void);
 
 /*================================== MONITOR INIT CALLBACK ==================================*/
 extern void MTR_Init(void);
@@ -60,5 +61,7 @@ extern  MTR_Err         MTR_Event_Clear(MTR_EventMask mask);
 extern  MTR_Err         MTR_Alarm_Configure(MTR_AlarmIndex targetAlarm,MTR_AlarmConfiguration* alarmConfig);
 extern  MTR_Err         MTR_Alarm_Enable(MTR_AlarmIndex targetAlarmIndex);
 extern  MTR_Err         MTR_Alarm_Disable(MTR_AlarmIndex targetAlarmIndex);
+
+extern  void            MTR_Scheduler(void);
 
 #endif /* MONITORINTERFACE_H_ */

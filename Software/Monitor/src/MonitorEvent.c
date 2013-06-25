@@ -1,5 +1,7 @@
 #include "MonitorEvent.h"
 
+#define NULL 0
+
 static MTR_EventStatus MonitorEventStatus = 0;
 
 MTR_Err MTR_Event_Set(MTR_EventMask mask)
