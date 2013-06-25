@@ -54,7 +54,7 @@ void OSC_DSP_Init(void){
 }
 
 OSC_DSP_DataAcquisitionMode_Type OSC_DSP_GetDataAcquisitionMode(void){
-  if(OSC_Settings_DataProcessingMode.optionID == OSC_CFG_DATA_ACQUISITION_MODE_REPETITIVE){
+  if(OSC_Settings_DataProcessingMode_Object.optionID == OSC_CFG_DATA_ACQUISITION_MODE_REPETITIVE){
     return OSC_DSP_DataAcquisitionMode_Repetitive;
   } else {  /*OSC_Settings_DataProcessingMode.optionID == OSC_CFG_DATA_ACQUISITION_MODE_SINGLE*/
     return OSC_DSP_DataAcquisitionMode_Single;
@@ -125,11 +125,11 @@ void OSC_DSP_Calculate(void){
   } else if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Calculating_WaveformDisplayPhase){
 
     /*These function writes the waveform on the screen*/
-    if(OSC_Settings_Channel_A_Status.status == OSC_CFG_CHANNEL_A_STATUS_ENABLED){
+    if(OSC_Settings_Channel_A_Status_Object.status == OSC_CFG_CHANNEL_A_STATUS_ENABLED){
       OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_A[0]);
     }
 
-    if(OSC_Settings_Channel_B_Status.status == OSC_CFG_CHANNEL_B_STATUS_ENABLED){
+    if(OSC_Settings_Channel_B_Status_Object.status == OSC_CFG_CHANNEL_B_STATUS_ENABLED){
       OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_B[0]);
     }
 
@@ -159,14 +159,14 @@ void OSC_DSP_WaveformProperties_Update(void){
   int32_t   voltagePerLSB;
   int32_t   voltagePerDivision;
 
-  sampleRate       = OSC_Settings_SampleRate.valueSet[OSC_Settings_SampleRate.currentIndex];                      /*sample/ms*/
-  timePerDivision  = OSC_Settings_HorizontalResolution.valueSet[OSC_Settings_HorizontalResolution.currentIndex];  /*us/div*/
+  sampleRate       = OSC_Settings_SampleRate_Object.valueSet[OSC_Settings_SampleRate_Object.currentIndex];                      /*sample/ms*/
+  timePerDivision  = OSC_Settings_HorizontalResolution_Object.valueSet[OSC_Settings_HorizontalResolution_Object.currentIndex];  /*us/div*/
 
   OSC_DSP_WaveformProperties.samplePerPixel = (sampleRate * timePerDivision) / (1000 * OSC_DSP_WAVEFORM_PIXEL_PER_HORIZONTAL_DIVISION);
   /*division by 1000 is because of the different units (ms and us)*/
 
-  if(OSC_Settings_DataAcquisitionMode.status == OSC_CFG_DATA_ACQUISITION_MODE_SINGLE){
-    horizontalOffsetInPixel = OSC_Settings_HorizontalOffset.value;
+  if(OSC_Settings_DataAcquisitionMode_Object.status == OSC_CFG_DATA_ACQUISITION_MODE_SINGLE){
+    horizontalOffsetInPixel = OSC_Settings_HorizontalOffset_Object.value;
 
     OSC_DSP_WaveformProperties.virtualTriggerPositionInData =
         OSC_DSP_StateMachine.triggerPosition + (OSC_DSP_WaveformProperties.samplePerPixel * horizontalOffsetInPixel);
@@ -181,19 +181,19 @@ void OSC_DSP_WaveformProperties_Update(void){
     OSC_DSP_WaveformProperties.virtualTriggerPositionInData = OSC_DSP_StateMachine.triggerPosition;
   }
 
-  OSC_DSP_WaveformProperties.triggerPositionOnDisplay = (OSC_Settings_TriggerPosition.value * OSC_DSP_WAVEFORM_HORIZONTAL_POINTS_COUNT) /
-        (OSC_Settings_TriggerPosition.upperBound - OSC_Settings_TriggerPosition.lowerBound);
+  OSC_DSP_WaveformProperties.triggerPositionOnDisplay = (OSC_Settings_TriggerPosition_Object.value * OSC_DSP_WAVEFORM_HORIZONTAL_POINTS_COUNT) /
+        (OSC_Settings_TriggerPosition_Object.upperBound - OSC_Settings_TriggerPosition_Object.lowerBound);
 
-  voltagePerLSB      = OSC_Settings_VoltagePerLSB.value;
-  voltagePerDivision = OSC_Settings_VerticalResolution.valueSet[OSC_Settings_VerticalResolution.currentIndex];
+  voltagePerLSB      = OSC_Settings_VoltagePerLSB_Object.value;
+  voltagePerDivision = OSC_Settings_VerticalResolution_Object.valueSet[OSC_Settings_VerticalResolution_Object.currentIndex];
 
-  OSC_DSP_WaveformProperties.verticalOffsetInPixel = OSC_Settings_VerticalOffset.value;
+  OSC_DSP_WaveformProperties.verticalOffsetInPixel = OSC_Settings_VerticalOffset_Object.value;
 
   OSC_DSP_WaveformProperties.verticalScaleFactorNumerator   = voltagePerLSB * OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
   OSC_DSP_WaveformProperties.verticalScaleFactorDenominator = voltagePerDivision;
   OSC_DSP_WaveformProperties.verticalOffsetIn_mV            = (OSC_DSP_WaveformProperties.verticalOffsetIn_mV * voltagePerDivision) / OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
 
-  switch(OSC_Settings_DataProcessingMode.optionID){
+  switch(OSC_Settings_DataProcessingMode_Object.optionID){
     case OSC_CFG_DATA_PROCESSING_MODE_NORMAL:
       OSC_DSP_WaveformProperties.dataProcessingMode = OSC_DSP_DataProcessingMode_Normal;
       break;
@@ -408,27 +408,27 @@ void OSC_DSP_StateMachine_Update(void){    /*Updates the DSP state machine confi
   OSC_DSP_StateMachine.dataAcquisitionState           = OSC_DSP_State_Idle;
 
   OSC_DSP_StateMachine.preTriggerMemoryLength =
-        (OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE * OSC_Settings_TriggerPosition.value) /
-         (OSC_Settings_TriggerPosition.upperBound - OSC_Settings_TriggerPosition.lowerBound);
+        (OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE * OSC_Settings_TriggerPosition_Object.value) /
+         (OSC_Settings_TriggerPosition_Object.upperBound - OSC_Settings_TriggerPosition_Object.lowerBound);
 
   OSC_DSP_StateMachine.postTriggerMemoryLength = OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE - OSC_DSP_StateMachine.preTriggerMemoryLength;
 
   OSC_DSP_StateMachine.triggerLevel = (uint8_t)(
-          ( ((OSC_Settings_TriggerLevel.value - OSC_CFG_TRIGGER_LEVEL_LOWER_BOUND)) * OSC_DSP_MAX_DATA_VALUE) /
+          ( ((OSC_Settings_TriggerLevel_Object.value - OSC_CFG_TRIGGER_LEVEL_LOWER_BOUND)) * OSC_DSP_MAX_DATA_VALUE) /
           (OSC_CFG_TRIGGER_LEVEL_UPPER_BOUND - OSC_CFG_TRIGGER_LEVEL_LOWER_BOUND));
                                         /*Shift is needed for precision*/
 
-  OSC_DSP_StateMachine.triggerSlope =   (OSC_Settings_TriggerSlope.status == OSC_CFG_TRIGGER_SLOPE_RISING) ?
+  OSC_DSP_StateMachine.triggerSlope =   (OSC_Settings_TriggerSlope_Object.status == OSC_CFG_TRIGGER_SLOPE_RISING) ?
                                          OSC_DSP_TriggerSlope_RisingEdge :
                                          OSC_DSP_TriggerSlope_FallingEdge;
 
-  OSC_DSP_StateMachine.triggerSource =  (OSC_Settings_TriggerSource.status == OSC_CFG_CHANNEL_SELECT_CHANNEL_A_SELECTED) ?
+  OSC_DSP_StateMachine.triggerSource =  (OSC_Settings_TriggerSource_Object.status == OSC_CFG_CHANNEL_SELECT_CHANNEL_A_SELECTED) ?
                                          OSC_DSP_TriggerSource_Channel_A :
                                          OSC_DSP_TriggerSource_Channel_B;
 
   OSC_DSP_StateMachine.triggerState  = OSC_DSP_TriggerState_Disabled;
 
-  if(OSC_Settings_DataProcessingMode.optionID == OSC_CFG_DATA_ACQUISITION_MODE_REPETITIVE){
+  if(OSC_Settings_DataProcessingMode_Object.optionID == OSC_CFG_DATA_ACQUISITION_MODE_REPETITIVE){
     OSC_DSP_StateMachine.dataAcquisitionMode = OSC_DSP_DataAcquisitionMode_Repetitive;
   } else {  /*OSC_Settings_DataProcessingMode.optionID == OSC_CFG_DATA_ACQUISITION_MODE_SINGLE*/
     OSC_DSP_StateMachine.dataAcquisitionMode = OSC_DSP_DataAcquisitionMode_Single;

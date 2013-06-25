@@ -39,13 +39,13 @@ OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous
 /*                                      HORIIZONTAL MENU ELEMENTS                                      */
 /*=====================================================================================================*/
 
-  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_TriggerPosition;
-  extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_HorizontalResolution;
-  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_HorizontalOffset;
+  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_TriggerPosition_Object;
+  extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_HorizontalResolution_Object;
+  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_HorizontalOffset_Object;
 
-  extern OSC_Menu_Element_Type OSC_Menu_Element_TriggerPosition;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_HorizontalResolution;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_HorizontalOffset;
+  extern OSC_Menu_Element_Type OSC_Settings_TriggerPosition;
+  extern OSC_Menu_Element_Type OSC_Settings_HorizontalResolution;
+  extern OSC_Menu_Element_Type OSC_Settings_HorizontalOffset;
 
 /*######################################### HORIIZONTAL MENU ##########################################*/
 
@@ -55,15 +55,15 @@ OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous
 /*                                        VERTICAL MENU ELEMENTS                                       */
 /*=====================================================================================================*/
 
-  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_TriggerLevel;
-  extern OSC_Settings_OnOff_Type               OSC_Settings_TriggerSlope;
-  extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_VerticalResolution;
-  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_VerticalOffset;
+  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_TriggerLevel_Object;
+  extern OSC_Settings_OnOff_Type               OSC_Settings_TriggerSlope_Object;
+  extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_VerticalResolution_Object;
+  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_VerticalOffset_Object;
 
-  extern OSC_Menu_Element_Type OSC_Menu_Element_TriggerLevel;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_TriggerSlope;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_VerticalResolution;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_VerticalOffset;
+  extern OSC_Menu_Element_Type OSC_Settings_TriggerLevel;
+  extern OSC_Menu_Element_Type OSC_Settings_TriggerSlope;
+  extern OSC_Menu_Element_Type OSC_Settings_VerticalResolution;
+  extern OSC_Menu_Element_Type OSC_Settings_VerticalOffset;
 
 /*########################################## VERTICAL MENU ############################################*/
 
@@ -73,19 +73,19 @@ OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous
 /*                                          MODE MENU ELEMENTS                                         */
 /*=====================================================================================================*/
 
-  extern OSC_Settings_OnOff_Type   OSC_Settings_ChannelSelect;
-  extern OSC_Settings_OnOff_Type   OSC_Settings_TriggerSource;
-  extern OSC_Settings_OnOff_Type   OSC_Settings_Channel_A_Status;
-  extern OSC_Settings_OnOff_Type   OSC_Settings_Channel_B_Status;
-  extern OSC_Settings_OnOff_Type   OSC_Settings_DataAcquisitionMode;
-  extern OSC_Settings_Option_Type  OSC_Settings_DataProcessingMode;
+  extern OSC_Settings_OnOff_Type   OSC_Settings_ChannelSelect_Object;
+  extern OSC_Settings_OnOff_Type   OSC_Settings_TriggerSource_Object;
+  extern OSC_Settings_OnOff_Type   OSC_Settings_Channel_A_Status_Object;
+  extern OSC_Settings_OnOff_Type   OSC_Settings_Channel_B_Status_Object;
+  extern OSC_Settings_OnOff_Type   OSC_Settings_DataAcquisitionMode_Object;
+  extern OSC_Settings_Option_Type  OSC_Settings_DataProcessingMode_Object;
 
-  extern OSC_Menu_Element_Type OSC_Menu_Element_ChannelSelect;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_TriggerSource;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_Channel_A_Status;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_Channel_B_Status;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_DataAcquisitionMode;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_DataProcessingMode;
+  extern OSC_Menu_Element_Type OSC_Settings_ChannelSelect;
+  extern OSC_Menu_Element_Type OSC_Settings_TriggerSource;
+  extern OSC_Menu_Element_Type OSC_Settings_Channel_A_Status;
+  extern OSC_Menu_Element_Type OSC_Settings_Channel_B_Status;
+  extern OSC_Menu_Element_Type OSC_Settings_DataAcquisitionMode;
+  extern OSC_Menu_Element_Type OSC_Settings_DataProcessingMode;
 
 /*############################################ MODE MENU ##############################################*/
 
@@ -95,13 +95,13 @@ OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous
 /*                                         HARDWARE MENU ELEMENTS                                      */
 /*=====================================================================================================*/
 
-  extern OSC_Settings_IntegerContinuous_Type OSC_Settings_BacklightIntensity;
-  extern OSC_Settings_IntegerContinuous_Type OSC_Settings_VoltagePerLSB;
-  extern OSC_Settings_IntegerDiscrete_Type   OSC_Settings_SampleRate;
+  extern OSC_Settings_IntegerContinuous_Type OSC_Settings_BacklightIntensity_Object;
+  extern OSC_Settings_IntegerContinuous_Type OSC_Settings_VoltagePerLSB_Object;
+  extern OSC_Settings_IntegerDiscrete_Type   OSC_Settings_SampleRate_Object;
 
-  extern OSC_Menu_Element_Type OSC_Menu_Element_BacklightIntensity;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_VoltagePerLSB;
-  extern OSC_Menu_Element_Type OSC_Menu_Element_SampleRate;
+  extern OSC_Menu_Element_Type OSC_Settings_BacklightIntensity;
+  extern OSC_Menu_Element_Type OSC_Settings_VoltagePerLSB;
+  extern OSC_Menu_Element_Type OSC_Settings_SampleRate;
 
 /*########################################## HARDWARE MENU ############################################*/
 
