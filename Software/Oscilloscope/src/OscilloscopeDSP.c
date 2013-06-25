@@ -53,11 +53,30 @@ void OSC_DSP_Init(void){
 }
 
 OSC_DSP_DataAcquisitionMode_Type OSC_DSP_GetDataAcquisitionMode(void){
-  if(OSC_Settings_DataProcessingMode_Object.optionID == OSC_CFG_DATA_ACQUISITION_MODE_REPETITIVE){
+  if(OSC_Settings_DataAcquisitionMode_Object.status == OSC_CFG_DATA_ACQUISITION_MODE_REPETITIVE){
     return OSC_DSP_DataAcquisitionMode_Repetitive;
   } else {  /*OSC_Settings_DataProcessingMode.optionID == OSC_CFG_DATA_ACQUISITION_MODE_SINGLE*/
     return OSC_DSP_DataAcquisitionMode_Single;
   }
+}
+
+OSC_DSP_DataProcessingStatus_Type OSC_DSP_GetDataProcessingStatus(void){
+  if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Idle){
+    return OSC_DSP_DataProcessingStatus_Ready;
+  } else {
+    return OSC_DSP_DataProcessingStatus_Busy;
+  }
+}
+
+uint8_t OSC_DSP_Waveform_GetLastUpdatedMemoryIndex(void){
+  uint8_t waveformMemoryIndex = 0;
+
+  if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Idle){
+    waveformMemoryIndex = OSC_DSP_WaveformProperties.waveformMemoryIndex; /*OSC_DSP_StartDataAcquisition() will switch so this is the right index*/
+  } else {    /*OSC_DSP_StateMachine.dataAcquisitionMode != OSC_DSP_State_Idle*/
+      waveformMemoryIndex = (OSC_DSP_WaveformProperties.waveformMemoryIndex == 0) ? 1 : 0;
+  }
+  return waveformMemoryIndex;
 }
 
 void OSC_DSP_StartDataAcquisition(void){
@@ -113,7 +132,7 @@ void OSC_DSP_Calculate(void){
     calcultaionStatus = OSC_DSP_Waveform_Construct();             /* This function calculates the waveform points and stores them
                                                                      in OSC_DisplayManager_Waveform_Channel_A and B structures*/
     if(calcultaionStatus == OSC_DSP_CalculationStatus_Ready){
-      OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Calculating_WaveformDisplayPhase;
+      OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Idle;
     }
 
   } else if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Calculating_UpdatePhase){
@@ -121,20 +140,7 @@ void OSC_DSP_Calculate(void){
     OSC_DSP_WaveformProperties_Update();      /* This updates the OSC_DSP_WaveformProperties in accordance with the actual configuration*/
     OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Calculating_WaveformConstructPhase;
 
-  } else if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Calculating_WaveformDisplayPhase){
-
-    /*These function writes the waveform on the screen*/
-    if(OSC_Settings_Channel_A_Status_Object.status == OSC_CFG_CHANNEL_A_STATUS_ENABLED){
-      OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_A[0]);
-    }
-
-    if(OSC_Settings_Channel_B_Status_Object.status == OSC_CFG_CHANNEL_B_STATUS_ENABLED){
-      OSC_DisplayManager_Graphics_UpdateWaveform(&OSC_DisplayManager_Waveform_Channel_B[0]);
-    }
-
-    OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Idle;
   }
-
 }
 
 /*
@@ -357,7 +363,7 @@ uint32_t OSC_DSP_Waveform_CalculateSampleValue(
       endIndex = startIndex + dataLength - 1;
 
       if(endIndex < OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
-        for (index = startIndex; index < endIndex; ++index) {
+        for (index = startIndex; index <= endIndex; ++index) {
           processedDataValue += data[index];
         }
       } else {
@@ -378,7 +384,7 @@ uint32_t OSC_DSP_Waveform_CalculateSampleValue(
       endIndex = startIndex + dataLength - 1;
 
       if(endIndex < OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE){
-        for (index = startIndex; index < endIndex; ++index) {
+        for (index = startIndex; index <= endIndex; ++index) {
           if(data[index] > maxValue) maxValue = data[index];
           if(data[index] < minValue) minValue = data[index];
         }

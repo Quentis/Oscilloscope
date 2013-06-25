@@ -1,5 +1,27 @@
 #include "MonitorAlarm.h"
 
+static uint32_t MTR_Alarm_isExpired(MTR_Alarm* alarm){
+  if(alarm->status == MTR_ALARM_STATUS_ENABLE){
+    if(MTR_systemTime < MTR_ALARM_MAX_LAG_TIME){
+      if(alarm->triggerTime <= MTR_systemTime){
+        return TRUE;
+      } else if((MTR_systemTimeMax - (MTR_ALARM_MAX_LAG_TIME - MTR_systemTime)) <= alarm->triggerTime){
+        return TRUE;
+      } else {
+        return FALSE;
+      }
+    } else {    /*MTR_systemTime >= MTR_ALARM_MAX_LAG_TIME*/
+      if(((MTR_systemTime - MTR_ALARM_MAX_LAG_TIME) <= alarm->triggerTime) && (alarm->triggerTime <= MTR_systemTime)){
+        return TRUE;
+      } else {
+        return FALSE;
+      }
+    }
+  } else {
+    return FALSE;
+  }
+}
+
 MTR_Err MTR_Alarm_QueueSort(void){
   uint32_t i,j,min,min_pos,timeLeft;
   MTR_Alarm* temp;
@@ -10,6 +32,11 @@ MTR_Err MTR_Alarm_QueueSort(void){
       min_pos = i;
 
       for(j = i; j < MTR_AlarmStruct.length ; j++){
+        if(MTR_Alarm_isExpired(ptrList[j]) == TRUE){
+          min_pos = j;
+          break;
+        }
+
         timeLeft = ((ptrList[j]->triggerTime < MTR_systemTime)?
                    (MTR_systemTimeMax - MTR_systemTime + ptrList[j]->triggerTime):
                    (ptrList[j]->triggerTime - MTR_systemTime));
@@ -29,25 +56,6 @@ MTR_Err MTR_Alarm_QueueSort(void){
   return MTR_Err_OK;
 }
 
-static uint32_t MTR_Alarm_isExpired(MTR_Alarm* alarm){
-  if(MTR_systemTime < MTR_ALARM_MAX_LAG_TIME){
-    if(alarm->triggerTime <= MTR_systemTime){
-      return TRUE;
-    } else if((MTR_systemTimeMax - (MTR_ALARM_MAX_LAG_TIME - MTR_systemTime)) <= alarm->triggerTime){
-      return TRUE;
-    } else {
-      return FALSE;
-    }
-  } else {    /*MTR_systemTime >= MTR_ALARM_MAX_LAG_TIME*/
-    if(((MTR_systemTime - MTR_ALARM_MAX_LAG_TIME) <= alarm->triggerTime) && (alarm->triggerTime <= MTR_systemTime)){
-      return TRUE;
-    } else {
-      return FALSE;
-    }
-  }
-}
-
-
 MTR_Err MTR_Alarm_Evaluate(void){
   uint32_t i;
   MTR_AlarmPtr* ptrList = MTR_AlarmStruct.ptrList;
@@ -62,6 +70,7 @@ MTR_Err MTR_Alarm_Evaluate(void){
         ptrList[i]->triggerTime = (ptrList[i]->triggerTime + ptrList[i]->period) % MTR_systemTimeMax;
       } else {
         ptrList[i]->status = MTR_ALARM_STATUS_DISABLE;
+        ptrList[i]->triggerTime = MTR_ALARM_INVALID_TRIGGER_TIME;
       }
     }
   }
@@ -103,6 +112,10 @@ MTR_Err MTR_Alarm_Disable(MTR_AlarmIndex targetAlarmIndex){
   if(targetAlarm->status == MTR_ALARM_STATUS_ENABLE){
     targetAlarm->status = MTR_ALARM_STATUS_DISABLE;
     targetAlarm->triggerTime = MTR_ALARM_INVALID_TRIGGER_TIME;
+    if(MTR_Scheduler_State == MTR_Scheduler_State_Inactive){
+      MTR_Alarm_QueueSort();    /* It is not needed otherwise because at the end of the scheduling the queue is sorted however
+                                 * if an alarm is enabled during scheduling it would corrupt the alarm queue by a queue sort */
+    }
     return MTR_Err_OK;
   } else {
     return MTR_Err_ReStop;

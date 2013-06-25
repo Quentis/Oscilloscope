@@ -91,6 +91,11 @@ typedef enum{
   OSC_DSP_DataAcquisitionMode_Repetitive
 } OSC_DSP_DataAcquisitionMode_Type;
 
+typedef enum {
+  OSC_DSP_DataProcessingStatus_Ready,
+  OSC_DSP_DataProcessingStatus_Busy
+} OSC_DSP_DataProcessingStatus_Type;
+
 typedef struct {
   OSC_DSP_State_Type                      dataAcquisitionState;
   int32_t                                 firstDataPosition;
@@ -134,6 +139,7 @@ void      OSC_DSP_StartDataAcquisition(void);
 void      OSC_DSP_StateMachine_Update(void);
 void      OSC_DSP_WaveformProperties_Update(void);
 void      OSC_DSP_StateMachine_Update(void);
+uint8_t   OSC_DSP_Waveform_GetLastUpdatedMemoryIndex(void);
 int32_t   OSC_DSP_Waveform_VerticalAdjust(int32_t rawData);
 uint32_t  OSC_DSP_Waveform_CalculateSampleValue(
             OSC_DSP_Channel_Type              channel,
@@ -141,6 +147,7 @@ uint32_t  OSC_DSP_Waveform_CalculateSampleValue(
             int32_t                           dataLength,
             OSC_DSP_DataProcessingMode_Type   dataProcMode
 );
+OSC_DSP_DataProcessingStatus_Type OSC_DSP_GetDataProcessingStatus(void);
 OSC_DSP_DataAcquisitionMode_Type  OSC_DSP_GetDataAcquisitionMode(void);
 OSC_DSP_CalculationStatus_Type    OSC_DSP_Waveform_Construct(void);
 

@@ -85,15 +85,14 @@ void OSC_Waveform_DisplayUpdate(void){
   OSC_DisplayManager_ClearScreen();
   OSC_DisplayManager_Graphics_DrawDivLines(); /*The division lines will have lower intensity*/
 
-  if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Idle){
-    waveformMemoryIndex = OSC_DSP_WaveformProperties.waveformMemoryIndex; /*OSC_DSP_StartDataAcquisition() will switch so this is the right index*/
+  waveformMemoryIndex = OSC_DSP_Waveform_GetLastUpdatedMemoryIndex();
+
+  if(OSC_DSP_GetDataProcessingStatus() == OSC_DSP_DataProcessingStatus_Ready){
     if(OSC_DSP_GetDataAcquisitionMode() == OSC_DSP_DataAcquisitionMode_Repetitive){
       OSC_DSP_StartDataAcquisition();
     } else {
       OSC_DSP_ReCalculate();
     }
-  } else {    /*OSC_DSP_StateMachine.dataAcquisitionMode != OSC_DSP_State_Idle*/
-      waveformMemoryIndex = (OSC_DSP_WaveformProperties.waveformMemoryIndex == 0) ? 1 : 0;
   }
 
   if(OSC_Settings_Channel_A_Status_Object.status == OSC_CFG_CHANNEL_A_STATUS_ENABLED){
