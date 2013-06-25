@@ -80,15 +80,14 @@ void OSC_Waveform_Display(OSC_Waveform_Event_Type waveformEvent){
 }
 
 void OSC_Waveform_DisplayUpdate(void){
-  static uint32_t divLinesFaint = 0;
   uint8_t waveformMemoryIndex;
 
   OSC_DisplayManager_ClearScreen();
-  if(divLinesFaint++ & 0x1) OSC_DisplayManager_Graphics_DrawDivLines(); /*The division lines will have lower intensity*/
+  OSC_DisplayManager_Graphics_DrawDivLines(); /*The division lines will have lower intensity*/
 
   if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Idle){
     waveformMemoryIndex = OSC_DSP_WaveformProperties.waveformMemoryIndex; /*OSC_DSP_StartDataAcquisition() will switch so this is the right index*/
-    if(OSC_DSP_StateMachine.dataAcquisitionMode == OSC_DSP_DataAcquisitionMode_Repetitive){
+    if(OSC_DSP_GetDataAcquisitionMode() == OSC_DSP_DataAcquisitionMode_Repetitive){
       OSC_DSP_StartDataAcquisition();
     } else {
       OSC_DSP_ReCalculate();

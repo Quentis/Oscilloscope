@@ -103,7 +103,6 @@ typedef struct {
   OSC_DSP_TriggerSource_Type              triggerSource;
   OSC_DSP_TriggerState_Type               triggerState;
   OSC_DSP_SampleRate_Type                 sampleRate;       /*Number of samples per second -> 1Msample/s -> 1000000*/
-  OSC_DSP_DataAcquisitionMode_Type        dataAcquisitionMode;
 } OSC_DSP_StateMachine_Type;
 
 typedef struct {

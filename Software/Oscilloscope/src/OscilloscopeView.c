@@ -55,8 +55,7 @@ static void OSC_View_MenuOpen(OSC_View_Event_Type event){
 
 static void OSC_View_WaveformOpen(OSC_View_Event_Type event){
   OSC_View_State.displayController = OSC_View_DisplayController_Waveform;
-  OSC_DisplayManager_ClearScreen();
-  OSC_DisplayManager_Graphics_DrawDivLines();
+  OSC_Waveform_Display(OSC_Waveform_Event_Open);
 }
 
 static void OSC_View_NotificationOpen(OSC_View_Event_Type event){
@@ -139,6 +138,7 @@ static void OSC_View_WaveformStateMachine(OSC_View_Event_Type event){
     case OSC_View_Event_VerticalDownClickDouble:
     case OSC_View_Event_HorizontalLeftClickDouble:
     case OSC_View_Event_HorizontalRightClickDouble:
+      OSC_Waveform_Display(OSC_Waveform_Event_Close);
       OSC_View_MenuOpen(event);
       break;
     default:

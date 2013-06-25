@@ -98,7 +98,10 @@ OSC_DisplayManager_Err_Type OSC_DisplayManager_Text_PrintLine(char*             
   return OSC_DisplayManager_Err_OK;
 }
 
-OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_DrawLine(const OSC_DisplayManager_Graphics_Line_Type* lineCoords){
+OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_DrawLine(
+    const OSC_DisplayManager_Graphics_Line_Type* lineCoords,
+    OSC_DisplayManager_Graphics_LineEffect_Type  lineEffect
+){
   int32_t x1,x2,dx,y1,y2,dy,gradient;
   if( ((lineCoords->pointFirst.x == lineCoords->pointSecond.x) && (lineCoords->pointFirst.y == lineCoords->pointSecond.y)) ||
        (lineCoords->pointFirst.x  <  0) || (lineCoords->pointSecond.x <   0) || (lineCoords->pointFirst.y  <   0) ||
@@ -127,7 +130,13 @@ OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_DrawLine(const OSC_Displ
     gradient = (dy << 16)/dx;
     for(dx = 0; x1 + dx < x2; dx++){
       int32_t pixel_y = ((gradient * dx) >> 16) + y1;
-      OSC_DM_MATRIX_SET_PIXEL(x1 + dx,pixel_y);
+      if(lineEffect == OSC_DisplayManager_Graphics_LineEffect_Normal){
+        OSC_DM_MATRIX_SET_PIXEL(x1 + dx,pixel_y);
+      } else {  /*lineEffect == OSC_DisplayManager_Graphics_LineEffect_Dashed*/
+        if(((dx & 0x3) == 0x1) || ((dx & 0x3) == 0x3)){
+          OSC_DM_MATRIX_SET_PIXEL(x1 + dx,pixel_y);
+        }
+      }
     }
   } else {
     if(lineCoords->pointFirst.y < lineCoords->pointSecond.y) {
@@ -146,7 +155,13 @@ OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_DrawLine(const OSC_Displ
     gradient = (dx << 16)/dy;
     for(dy = 0; y1 + dy < y2; dy++){
       int32_t pixel_x = (((gradient * dy) >> 16) + x1);
-      OSC_DM_MATRIX_SET_PIXEL(pixel_x,y1 + dy);
+      if(lineEffect == OSC_DisplayManager_Graphics_LineEffect_Normal){
+        OSC_DM_MATRIX_SET_PIXEL(pixel_x,y1 + dy);
+      } else {  /*lineEffect == OSC_DisplayManager_Graphics_LineEffect_Dashed*/
+        if(((dy & 0x3) == 0x1) || ((dy & 0x3) == 0x3)){
+          OSC_DM_MATRIX_SET_PIXEL(pixel_x,y1 + dy);
+        }
+      }
     }
   }
   return OSC_DisplayManager_Err_OK;
@@ -173,7 +188,7 @@ void OSC_DisplayManager_Graphics_DrawDivLines(void){
   uint32_t i;
 
   for (i = 0; i < divLinesCount; ++i) {
-    OSC_DisplayManager_Graphics_DrawLine(&divLines[i]);
+    OSC_DisplayManager_Graphics_DrawLine(&divLines[i],OSC_DisplayManager_Graphics_LineEffect_Dashed);
   }
 }
 

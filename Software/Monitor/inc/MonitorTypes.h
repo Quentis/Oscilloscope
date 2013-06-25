@@ -75,6 +75,13 @@ typedef struct{
   const uint32_t           length;
 } MTR_AlarmStructType;
 
+/*====================================SCHEDULER_TYPES====================================*/
+
+typedef enum {
+  MTR_Scheduler_State_Inactive,
+  MTR_Scheduler_State_Active
+} MTR_Scheduler_State_Type;
+
 /*========================================IO_TYPES=======================================*/
 
 typedef struct{

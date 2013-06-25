@@ -2,6 +2,7 @@
 
 uint32_t MTR_systemTime = 0;
 uint8_t  MTR_systemTimeUpdated = MTR_SYS_TIME_UPDATED;
+MTR_Scheduler_State_Type MTR_Scheduler_State = MTR_Scheduler_State_Inactive;
 
 void MTR_SysTimeHandler(void)
 {
@@ -11,6 +12,8 @@ void MTR_SysTimeHandler(void)
 
 void MTR_Scheduler(void){
   static uint32_t BackgroundFunctionIndex = 0;
+  MTR_Scheduler_State = MTR_Scheduler_State_Active;
+
   for(; BackgroundFunctionIndex < MTR_BackgroundFunctionsListLength;BackgroundFunctionIndex++){
 
     (*MTR_BackgroundFunctionsList[BackgroundFunctionIndex])();
@@ -33,4 +36,5 @@ void MTR_Scheduler(void){
     }
   }
   BackgroundFunctionIndex = 0;
+  MTR_Scheduler_State = MTR_Scheduler_State_Inactive;
 }

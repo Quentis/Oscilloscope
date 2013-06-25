@@ -139,8 +139,6 @@ OSC_Menu_Err_Type  OSC_Menu_Display(OSC_Menu_Name_Type menuName,OSC_Settings_Eve
       OSC_Menu_PrintLine(OSC_Menu_Element_Selected - OSC_Menu_Element_FirstOnScreen + OSC_MENU_ELEMENT_LINE_OFFSET_ON_DISPLAY);
       break;
 
-
-
   }
   return OSC_Menu_Err_OK;
 }

@@ -29,8 +29,7 @@ OSC_DSP_StateMachine_Type  OSC_DSP_StateMachine = {
     OSC_DSP_TriggerSlope_RisingEdge,                /*triggerSlope*/                      /*UPDATE-FROM-CONFIG*/
     OSC_DSP_TriggerSource_Channel_A,                /*triggerSource*/                     /*UPDATE-FROM-CONFIG*/
     OSC_DSP_TriggerState_Disabled,                  /*triggerState*/                      /*COMPUTED*/
-    OSC_DSP_SAMPLE_RATE,                            /*sampleRate*/                        /*UPDATE-FROM-CONFIG*/
-    OSC_DSP_DataAcquisitionMode_Repetitive          /*dataAcquisitionMode*/               /*UPDATE-FROM-CONFIG*/
+    OSC_DSP_SAMPLE_RATE                            /*sampleRate*/                        /*UPDATE-FROM-CONFIG*/
     /*FIXME: It is not used in version 1.0 --> The timer should be adjusted according to this*/
 };
 
@@ -427,12 +426,6 @@ void OSC_DSP_StateMachine_Update(void){    /*Updates the DSP state machine confi
                                          OSC_DSP_TriggerSource_Channel_B;
 
   OSC_DSP_StateMachine.triggerState  = OSC_DSP_TriggerState_Disabled;
-
-  if(OSC_Settings_DataProcessingMode_Object.optionID == OSC_CFG_DATA_ACQUISITION_MODE_REPETITIVE){
-    OSC_DSP_StateMachine.dataAcquisitionMode = OSC_DSP_DataAcquisitionMode_Repetitive;
-  } else {  /*OSC_Settings_DataProcessingMode.optionID == OSC_CFG_DATA_ACQUISITION_MODE_SINGLE*/
-    OSC_DSP_StateMachine.dataAcquisitionMode = OSC_DSP_DataAcquisitionMode_Single;
-  }
 }
 
 /*

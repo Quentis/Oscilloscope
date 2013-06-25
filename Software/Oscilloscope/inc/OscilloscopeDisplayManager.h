@@ -45,6 +45,11 @@ typedef uint8_t OSC_DisplayManager_LineNumber_Type;
 typedef uint8_t OSC_DisplayManager_CharPosition_Type;
 
 typedef enum {
+  OSC_DisplayManager_Graphics_LineEffect_Normal,
+  OSC_DisplayManager_Graphics_LineEffect_Dashed
+} OSC_DisplayManager_Graphics_LineEffect_Type;
+
+typedef enum {
   OSC_DisplayManager_Waveform_DataType_Normal,
   OSC_DisplayManager_Waveform_DataType_MinMax
 } OSC_DisplayManager_Waveform_DataType_Type;
@@ -84,7 +89,8 @@ typedef enum {
 
 void OSC_DisplayManager_Init(void);
 OSC_DisplayManager_Err_Type OSC_DisplayManager_ClearScreen(void);
-OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_DrawLine(const OSC_DisplayManager_Graphics_Line_Type* lineCoords);
+OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_DrawLine(const OSC_DisplayManager_Graphics_Line_Type* lineCoords,
+                                                                 OSC_DisplayManager_Graphics_LineEffect_Type  lineEffect);
 OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_UpdateWaveform(OSC_DisplayManager_Waveform_Type* waveform);
 OSC_DisplayManager_Err_Type OSC_DisplayManager_Text_PrintChar(char                                    ch,
                                                               OSC_DisplayManager_LineNumber_Type      line,
