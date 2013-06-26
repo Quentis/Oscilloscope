@@ -300,8 +300,6 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
           OSC_DSP_WaveformProperties.dataProcessingMode
       );
 
-      dataValue = OSC_DSP_Waveform_VerticalAdjust(dataValue);
-
       if(OSC_DSP_WaveformProperties.dataProcessingMode == OSC_DSP_DataProcessingMode_Peak){
         OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
                            OSC_DSP_Waveform_VerticalAdjust((dataValue >> 16) & 0xFFFF);
