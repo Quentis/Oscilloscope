@@ -3,6 +3,8 @@
 
 #include "stm32f4xx_conf.h"
 
+#define OSC_LED_INDICATION_ACTIVE
+
 #define OSC_LED_TRIGGER_GPIO_PORT       GPIOC
 #define OSC_LED_TRIGGER_GPIO_PIN        GPIO_Pin_6
 #define OSC_LED_TRIGGER_GPIO_CLK        RCC_AHB1Periph_GPIOC

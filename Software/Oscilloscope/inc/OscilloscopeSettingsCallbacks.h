@@ -3,5 +3,7 @@
 
 #include "OscilloscopeSettings.h"
 #include "OscilloscopeLCD.h"
+#include "OscilloscopeLED.h"
+#include "OscilloscopeConfiguration.h"
 
 #endif /* OSCILLOSCOPESETTINGSCALLBACKS_H_ */

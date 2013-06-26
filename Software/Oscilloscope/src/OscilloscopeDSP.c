@@ -133,6 +133,9 @@ void OSC_DSP_Calculate(void){
                                                                      in OSC_DisplayManager_Waveform_Channel_A and B structures*/
     if(calcultaionStatus == OSC_DSP_CalculationStatus_Ready){
       OSC_DSP_StateMachine.dataAcquisitionState = OSC_DSP_State_Idle;
+      #ifdef OSC_LED_INDICATION_ACTIVE
+        OSC_LED_TRIGGER_CLEAR();
+      #endif
     }
 
   } else if(OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Calculating_UpdatePhase){
@@ -225,6 +228,13 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
    * The mapping follows the principle: first data is at the 0 index and
    * the last data is at the data length minus one index*/
 
+  #ifdef OSC_LED_INDICATION_ACTIVE
+  if(displayIndex == 0){
+    OSC_LED_RANGE_MINUS_CLEAR();
+    OSC_LED_RANGE_PLUS_CLEAR();
+  }
+  #endif
+
   dataMemoryStartIndex = OSC_DSP_StateMachine.triggerPosition +
                    (displayIndex - OSC_DSP_WaveformProperties.triggerPositionOnDisplay) *
                     OSC_DSP_WaveformProperties.samplePerPixel;
@@ -260,47 +270,52 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
       dataLength = dataMemoryEndIndexLogical - dataMemoryStartIndexLogical;
     }
 
-    dataValue = OSC_DSP_Waveform_CalculateSampleValue(
-        OSC_DSP_Channel_A,
-        dataMemoryStartIndex % OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE,
-        dataLength,
-        OSC_DSP_WaveformProperties.dataProcessingMode
-    );
+    if(OSC_Settings_Channel_A_Status_Object.status == OSC_CFG_CHANNEL_A_STATUS_ENABLED){
+      dataValue = OSC_DSP_Waveform_CalculateSampleValue(
+          OSC_DSP_Channel_A,
+          dataMemoryStartIndex % OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE,
+          dataLength,
+          OSC_DSP_WaveformProperties.dataProcessingMode
+      );
 
-    if(OSC_DSP_WaveformProperties.dataProcessingMode == OSC_DSP_DataProcessingMode_Peak){
-      OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
-                         OSC_DSP_Waveform_VerticalAdjust((dataValue >> 16) & 0xFFFF);
-      OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[1][displayIndex] =
-                         OSC_DSP_Waveform_VerticalAdjust(dataValue & 0xFFFF);
-      OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType = OSC_DisplayManager_Waveform_DataType_MinMax;
-    } else {  /*OSC_DSP_WaveformProperties.dataProcessingMode can be OSC_DSP_DataProcessingMode_Normal and OSC_DSP_DataProcessingMode_Average*/
-      OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
-                         OSC_DSP_Waveform_VerticalAdjust(dataValue);
-      OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType =
-                         OSC_DisplayManager_Waveform_DataType_Normal;
+      if(OSC_DSP_WaveformProperties.dataProcessingMode == OSC_DSP_DataProcessingMode_Peak){
+        OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
+                           OSC_DSP_Waveform_VerticalAdjust((dataValue >> 16) & 0xFFFF);
+        OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[1][displayIndex] =
+                           OSC_DSP_Waveform_VerticalAdjust(dataValue & 0xFFFF);
+        OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType = OSC_DisplayManager_Waveform_DataType_MinMax;
+      } else {  /*OSC_DSP_WaveformProperties.dataProcessingMode can be OSC_DSP_DataProcessingMode_Normal and OSC_DSP_DataProcessingMode_Average*/
+        OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
+                           OSC_DSP_Waveform_VerticalAdjust(dataValue);
+        OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType =
+                           OSC_DisplayManager_Waveform_DataType_Normal;
+      }
     }
 
-    dataValue = OSC_DSP_Waveform_CalculateSampleValue(
-        OSC_DSP_Channel_B,
-        dataMemoryStartIndex % OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE,
-        dataLength,
-        OSC_DSP_WaveformProperties.dataProcessingMode
-    );
+    if(OSC_Settings_Channel_B_Status_Object.status == OSC_CFG_CHANNEL_B_STATUS_ENABLED){
+      dataValue = OSC_DSP_Waveform_CalculateSampleValue(
+          OSC_DSP_Channel_B,
+          dataMemoryStartIndex % OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE,
+          dataLength,
+          OSC_DSP_WaveformProperties.dataProcessingMode
+      );
 
-    dataValue = OSC_DSP_Waveform_VerticalAdjust(dataValue);
+      dataValue = OSC_DSP_Waveform_VerticalAdjust(dataValue);
 
-    if(OSC_DSP_WaveformProperties.dataProcessingMode == OSC_DSP_DataProcessingMode_Peak){
-      OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
-                         OSC_DSP_Waveform_VerticalAdjust((dataValue >> 16) & 0xFFFF);
-      OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[1][displayIndex] =
-                         OSC_DSP_Waveform_VerticalAdjust(dataValue & 0xFFFF);
-      OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType = OSC_DisplayManager_Waveform_DataType_MinMax;
-    } else {  /*OSC_DSP_WaveformProperties.dataProcessingMode can be OSC_DSP_DataProcessingMode_Normal and OSC_DSP_DataProcessingMode_Average*/
-      OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
-                         OSC_DSP_Waveform_VerticalAdjust(dataValue);
-      OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType =
-                         OSC_DisplayManager_Waveform_DataType_Normal;
+      if(OSC_DSP_WaveformProperties.dataProcessingMode == OSC_DSP_DataProcessingMode_Peak){
+        OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
+                           OSC_DSP_Waveform_VerticalAdjust((dataValue >> 16) & 0xFFFF);
+        OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[1][displayIndex] =
+                           OSC_DSP_Waveform_VerticalAdjust(dataValue & 0xFFFF);
+        OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType = OSC_DisplayManager_Waveform_DataType_MinMax;
+      } else {  /*OSC_DSP_WaveformProperties.dataProcessingMode can be OSC_DSP_DataProcessingMode_Normal and OSC_DSP_DataProcessingMode_Average*/
+        OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
+                           OSC_DSP_Waveform_VerticalAdjust(dataValue);
+        OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType =
+                           OSC_DisplayManager_Waveform_DataType_Normal;
+      }
     }
+
   } else {    /*OSC_DSP_DATA_MEMORY_INDEX_MAPPER(index) >= OSC_DSP_DATA_ACQUISITION_MEMORY_SIZE*/
     /*In this branch there are not enough sample to process them*/
     OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
@@ -324,8 +339,14 @@ int32_t OSC_DSP_Waveform_VerticalAdjust(int32_t rawData){
            OSC_DSP_WaveformProperties.verticalOffsetInPixel + OSC_DSP_ZERO_DATA_VERTICAL_PIXEL_COUNT;
   if(data < 0){
     data = 0;
+    #ifdef OSC_LED_INDICATION_ACTIVE
+      OSC_LED_RANGE_MINUS_SET();
+    #endif
   } else if(data >= OSC_DSP_WAVEFORM_VERTICAL_POINTS_COUNT){
     data = OSC_DSP_WAVEFORM_VERTICAL_POINTS_COUNT - 1;
+    #ifdef OSC_LED_INDICATION_ACTIVE
+      OSC_LED_RANGE_PLUS_SET();
+    #endif
   }
   return data;
 }
@@ -563,6 +584,9 @@ void OSC_ANALOG_ADC_INTERRUPT_HANDLER(void){  /*There is one interrupt for all o
 
       OSC_Analog_AnalogWatchdog_Disable();
 
+    #ifdef OSC_LED_INDICATION_ACTIVE
+      OSC_LED_TRIGGER_SET();
+    #endif
     }   /*END:OSC_DSP_StateMachine.dataAcquisitionState == OSC_DSP_State_Sampling_Circular_PreTriggerMemory*/
   }   /*END:OSC_DSP_StateMachine.triggerState == OSC_DSP_State_Sampling_WaitingForTrigger*/
 

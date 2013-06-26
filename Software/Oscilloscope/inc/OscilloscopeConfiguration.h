@@ -25,6 +25,9 @@
 #define OSC_CFG_DATA_ACQUISITION_MODE_SINGLE             0
 #define OSC_CFG_DATA_ACQUISITION_MODE_REPETITIVE         1
 
+#define OSC_CFG_WAVEFORM_MODE_NORMAL                     0
+#define OSC_CFG_WAVEFORM_MODE_SMOOTH                     1
+
 #define OSC_CFG_DATA_PROCESSING_MODE_NORMAL              0
 #define OSC_CFG_DATA_PROCESSING_MODE_AVERAGE             1
 #define OSC_CFG_DATA_PROCESSING_MODE_PEAK                2
@@ -32,8 +35,16 @@
 
 /*=================================== CALLBACK FUNCTION REFERENCES ====================================*/
 extern OSC_Settings_IntegerContinuousValue_Type
-OSC_Settings_IntegerContinuous_BacklightIntensity(OSC_Settings_IntegerContinuous_Type*  this,
-                                                  OSC_Settings_Event_Type               settingsEvent);
+OSC_Settings_IntegerContinuousCallback_BacklightIntensity(OSC_Settings_IntegerContinuous_Type*    this,
+                                                          OSC_Settings_Event_Type                 settingsEvent);
+
+extern OSC_Settings_OnOffValue_Type
+OSC_Settings_OnOffCallback_Channel_A_Status(OSC_Settings_OnOff_Type*                              this,
+                                            OSC_Settings_Event_Type                               settingsEvent);
+
+extern OSC_Settings_OnOffValue_Type
+OSC_Settings_OnOffCallback_Channel_B_Status(OSC_Settings_OnOff_Type*                              this,
+                                            OSC_Settings_Event_Type                               settingsEvent);
 
 /*=====================================================================================================*/
 /*                                      HORIIZONTAL MENU ELEMENTS                                      */

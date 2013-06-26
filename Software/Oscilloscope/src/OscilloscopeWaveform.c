@@ -64,16 +64,16 @@ void OSC_Waveform_Display(OSC_Waveform_Event_Type waveformEvent){
       break;
     case OSC_Waveform_Event_Channel_A_Switch:
       if(OSC_Settings_Channel_A_Status_Object.status == OSC_CFG_CHANNEL_A_STATUS_ENABLED){
-        OSC_Settings_Channel_A_Status_Object.status = OSC_CFG_CHANNEL_A_STATUS_DISABLED;
+        OSC_Settings_Modify(&OSC_Settings_Channel_A_Status,OSC_Settings_Event_StepUpSingle);
       } else {    /*OSC_Settings_Channel_A_Status.status == OSC_CFG_CHANNEL_A_STATUS_DISABLED*/
-        OSC_Settings_Channel_A_Status_Object.status = OSC_CFG_CHANNEL_A_STATUS_ENABLED;
+        OSC_Settings_Modify(&OSC_Settings_Channel_A_Status,OSC_Settings_Event_StepDownSingle);
       }
       break;
     case OSC_Waveform_Event_Channel_B_Switch:
       if(OSC_Settings_Channel_B_Status_Object.status == OSC_CFG_CHANNEL_B_STATUS_ENABLED){
-        OSC_Settings_Channel_B_Status_Object.status = OSC_CFG_CHANNEL_B_STATUS_DISABLED;
+        OSC_Settings_Modify(&OSC_Settings_Channel_B_Status,OSC_Settings_Event_StepUpSingle);
       } else {    /*OSC_Settings_Channel_B_Status.status == OSC_CFG_CHANNEL_B_STATUS_DISABLED*/
-        OSC_Settings_Channel_B_Status_Object.status = OSC_CFG_CHANNEL_B_STATUS_ENABLED;
+        OSC_Settings_Modify(&OSC_Settings_Channel_B_Status,OSC_Settings_Event_StepDownSingle);
       }
       break;
   }

@@ -66,7 +66,7 @@ OSC_Settings_OnOffValue_Type               OSC_Settings_OnOffCallback_Default(OS
     case OSC_Settings_Event_StepUpMultiple:
     case OSC_Settings_Event_StepDownSingle:
     case OSC_Settings_Event_StepDownMultiple:
-      this->status = !this->status;
+      this->status = (this->status == 0) ? 1 : 0;
       break;
     default: return ~0;
   }

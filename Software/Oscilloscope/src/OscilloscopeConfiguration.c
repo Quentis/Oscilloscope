@@ -203,7 +203,7 @@
 
     OSC_Settings_OnOff_Type OSC_Settings_Channel_A_Status_Object = {
         OSC_CFG_CHANNEL_A_STATUS_DISABLED,                 /*status*/
-        NULL,                                              /*callback*/
+        OSC_Settings_OnOffCallback_Channel_A_Status,       /*callback*/
         (char** const)
         OSC_Settings_Channel_A_Status_statusNames,         /*statusNames*/
         "Chn A Status"                                     /*name*/
@@ -219,7 +219,7 @@
 
     OSC_Settings_OnOff_Type OSC_Settings_Channel_B_Status_Object = {
         OSC_CFG_CHANNEL_B_STATUS_DISABLED,                 /*status*/
-        NULL,                                              /*callback*/
+        OSC_Settings_OnOffCallback_Channel_B_Status,       /*callback*/
         (char** const)
         OSC_Settings_Channel_B_Status_statusNames,         /*statusNames*/
         "Chn B Status"                                     /*name*/
@@ -263,6 +263,22 @@
         (void*)&OSC_Settings_DataProcessingMode_Object
     };
 
+/*============================================== WAVEFORM MODE ========================================*/
+    char* OSC_Settings_WaveformMode_statusNames[] = {"Normal","Smooth"};
+
+    OSC_Settings_OnOff_Type OSC_Settings_WaveformMode_Object = {
+        OSC_CFG_WAVEFORM_MODE_NORMAL,                      /*status*/
+        NULL,                                              /*callback*/
+        (char** const)
+        OSC_Settings_WaveformMode_statusNames,              /*statusNames*/
+        "WaveformMode"                                      /*name*/
+    };
+
+    OSC_Settings_Type OSC_Settings_WaveformMode = {
+        OSC_Settings_TypeInfo_OnOff,
+        (void*)&OSC_Settings_WaveformMode_Object
+    };
+
 /*############################################ MODE MENU ##############################################*/
 
     OSC_Menu_Element_Type* OSC_Menu_ElementList_ModeMenu[] = {
@@ -271,7 +287,8 @@
         &OSC_Settings_Channel_A_Status,
         &OSC_Settings_Channel_B_Status,
         &OSC_Settings_DataAcquisitionMode,
-        &OSC_Settings_DataProcessingMode
+        &OSC_Settings_DataProcessingMode,
+        &OSC_Settings_WaveformMode
     };
 
     OSC_Menu_Type OSC_Menu_Mode = {
@@ -287,14 +304,14 @@
 /*========================================= BACKLIGHT INTENSITY =======================================*/
 
     OSC_Settings_IntegerContinuous_Type OSC_Settings_BacklightIntensity_Object = {
-        100,                                                    /*value*/
-        0,                                                      /*lowerBound*/
-        100,                                                    /*upperBound*/
-        1,                                                      /*incrementStepSingle*/
-        10,                                                     /*incrementStepMultiple*/
-        OSC_Settings_IntegerContinuous_BacklightIntensity,      /*callback*/
-        "BacklightInt",                                         /*name*/
-        "%"                                                     /*unitName*/
+        100,                                                        /*value*/
+        0,                                                          /*lowerBound*/
+        100,                                                        /*upperBound*/
+        1,                                                          /*incrementStepSingle*/
+        10,                                                         /*incrementStepMultiple*/
+        OSC_Settings_IntegerContinuousCallback_BacklightIntensity,  /*callback*/
+        "BacklightInt",                                             /*name*/
+        "%"                                                         /*unitName*/
     };
 
     OSC_Settings_Type OSC_Settings_BacklightIntensity = {
