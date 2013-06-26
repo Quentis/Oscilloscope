@@ -1,5 +1,5 @@
 #include "OscilloscopeConfiguration.h"
-#include "OscilloscopeFont.h"
+
 /*=====================================================================================================*/
 /*                                      HORIIZONTAL MENU ELEMENTS                                      */
 /*=====================================================================================================*/
@@ -267,8 +267,8 @@
     char* OSC_Settings_WaveformMode_statusNames[] = {"Normal","Smooth"};
 
     OSC_Settings_OnOff_Type OSC_Settings_WaveformMode_Object = {
-        OSC_CFG_WAVEFORM_MODE_NORMAL,                      /*status*/
-        NULL,                                              /*callback*/
+        OSC_CFG_WAVEFORM_MODE_NORMAL,                       /*status*/
+        OSC_Settings_OnOffCallback_WaveformMode,            /*callback*/
         (char** const)
         OSC_Settings_WaveformMode_statusNames,              /*statusNames*/
         "WaveformMode"                                      /*name*/

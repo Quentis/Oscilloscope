@@ -3,6 +3,7 @@
 
 #include "OscilloscopeSettings.h"
 #include "OscilloscopeMenu.h"
+#include "OscilloscopeFont.h"
 
 #define OSC_CFG_TRIGGER_LEVEL_LOWER_BOUND           (-7500)
 #define OSC_CFG_TRIGGER_LEVEL_UPPER_BOUND            (7500)
@@ -46,6 +47,10 @@ extern OSC_Settings_OnOffValue_Type
 OSC_Settings_OnOffCallback_Channel_B_Status(OSC_Settings_OnOff_Type*                              this,
                                             OSC_Settings_Event_Type                               settingsEvent);
 
+extern OSC_Settings_OnOffValue_Type
+OSC_Settings_OnOffCallback_WaveformMode(OSC_Settings_OnOff_Type*                                  this,
+                                        OSC_Settings_Event_Type                                   settingsEvent);
+
 /*=====================================================================================================*/
 /*                                      HORIIZONTAL MENU ELEMENTS                                      */
 /*=====================================================================================================*/
@@ -54,9 +59,9 @@ OSC_Settings_OnOffCallback_Channel_B_Status(OSC_Settings_OnOff_Type*            
   extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_HorizontalResolution_Object;
   extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_HorizontalOffset_Object;
 
-  extern OSC_Menu_Element_Type OSC_Settings_TriggerPosition;
-  extern OSC_Menu_Element_Type OSC_Settings_HorizontalResolution;
-  extern OSC_Menu_Element_Type OSC_Settings_HorizontalOffset;
+  extern OSC_Settings_Type OSC_Settings_TriggerPosition;
+  extern OSC_Settings_Type OSC_Settings_HorizontalResolution;
+  extern OSC_Settings_Type OSC_Settings_HorizontalOffset;
 
 /*######################################### HORIIZONTAL MENU ##########################################*/
 
@@ -71,10 +76,10 @@ OSC_Settings_OnOffCallback_Channel_B_Status(OSC_Settings_OnOff_Type*            
   extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_VerticalResolution_Object;
   extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_VerticalOffset_Object;
 
-  extern OSC_Menu_Element_Type OSC_Settings_TriggerLevel;
-  extern OSC_Menu_Element_Type OSC_Settings_TriggerSlope;
-  extern OSC_Menu_Element_Type OSC_Settings_VerticalResolution;
-  extern OSC_Menu_Element_Type OSC_Settings_VerticalOffset;
+  extern OSC_Settings_Type OSC_Settings_TriggerLevel;
+  extern OSC_Settings_Type OSC_Settings_TriggerSlope;
+  extern OSC_Settings_Type OSC_Settings_VerticalResolution;
+  extern OSC_Settings_Type OSC_Settings_VerticalOffset;
 
 /*########################################## VERTICAL MENU ############################################*/
 
@@ -90,13 +95,15 @@ OSC_Settings_OnOffCallback_Channel_B_Status(OSC_Settings_OnOff_Type*            
   extern OSC_Settings_OnOff_Type   OSC_Settings_Channel_B_Status_Object;
   extern OSC_Settings_OnOff_Type   OSC_Settings_DataAcquisitionMode_Object;
   extern OSC_Settings_Option_Type  OSC_Settings_DataProcessingMode_Object;
+  extern OSC_Settings_OnOff_Type   OSC_Settings_WaveformMode_Object;
 
-  extern OSC_Menu_Element_Type OSC_Settings_ChannelSelect;
-  extern OSC_Menu_Element_Type OSC_Settings_TriggerSource;
-  extern OSC_Menu_Element_Type OSC_Settings_Channel_A_Status;
-  extern OSC_Menu_Element_Type OSC_Settings_Channel_B_Status;
-  extern OSC_Menu_Element_Type OSC_Settings_DataAcquisitionMode;
-  extern OSC_Menu_Element_Type OSC_Settings_DataProcessingMode;
+  extern OSC_Settings_Type OSC_Settings_ChannelSelect;
+  extern OSC_Settings_Type OSC_Settings_TriggerSource;
+  extern OSC_Settings_Type OSC_Settings_Channel_A_Status;
+  extern OSC_Settings_Type OSC_Settings_Channel_B_Status;
+  extern OSC_Settings_Type OSC_Settings_DataAcquisitionMode;
+  extern OSC_Settings_Type OSC_Settings_DataProcessingMode;
+  extern OSC_Settings_Type OSC_Settings_WaveformMode;
 
 /*############################################ MODE MENU ##############################################*/
 
@@ -110,9 +117,9 @@ OSC_Settings_OnOffCallback_Channel_B_Status(OSC_Settings_OnOff_Type*            
   extern OSC_Settings_IntegerContinuous_Type OSC_Settings_VoltagePerLSB_Object;
   extern OSC_Settings_IntegerDiscrete_Type   OSC_Settings_SampleRate_Object;
 
-  extern OSC_Menu_Element_Type OSC_Settings_BacklightIntensity;
-  extern OSC_Menu_Element_Type OSC_Settings_VoltagePerLSB;
-  extern OSC_Menu_Element_Type OSC_Settings_SampleRate;
+  extern OSC_Settings_Type OSC_Settings_BacklightIntensity;
+  extern OSC_Settings_Type OSC_Settings_VoltagePerLSB;
+  extern OSC_Settings_Type OSC_Settings_SampleRate;
 
 /*########################################## HARDWARE MENU ############################################*/
 

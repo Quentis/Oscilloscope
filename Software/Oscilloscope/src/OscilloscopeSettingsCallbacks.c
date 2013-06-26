@@ -11,7 +11,8 @@ OSC_Settings_IntegerContinuousCallback_BacklightIntensity(OSC_Settings_IntegerCo
 
 OSC_Settings_OnOffValue_Type
 OSC_Settings_OnOffCallback_Channel_A_Status(OSC_Settings_OnOff_Type*                          this,
-                                            OSC_Settings_Event_Type                           settingsEvent){
+                                            OSC_Settings_Event_Type                           settingsEvent)
+{
   OSC_Settings_OnOffCallback_Default(this,settingsEvent);
   #ifdef OSC_LED_INDICATION_ACTIVE
   if(this->status == OSC_CFG_CHANNEL_A_STATUS_ENABLED){
@@ -25,7 +26,8 @@ OSC_Settings_OnOffCallback_Channel_A_Status(OSC_Settings_OnOff_Type*            
 
 OSC_Settings_OnOffValue_Type
 OSC_Settings_OnOffCallback_Channel_B_Status(OSC_Settings_OnOff_Type*                          this,
-                                            OSC_Settings_Event_Type                           settingsEvent){
+                                            OSC_Settings_Event_Type                           settingsEvent)
+{
   OSC_Settings_OnOffCallback_Default(this,settingsEvent);
   #ifdef OSC_LED_INDICATION_ACTIVE
   if(this->status == OSC_CFG_CHANNEL_B_STATUS_ENABLED){
@@ -34,5 +36,18 @@ OSC_Settings_OnOffCallback_Channel_B_Status(OSC_Settings_OnOff_Type*            
     OSC_LED_CHANNEL_B_CLEAR();
   }
   #endif
+  return this->status;
+}
+
+OSC_Settings_OnOffValue_Type
+OSC_Settings_OnOffCallback_WaveformMode(OSC_Settings_OnOff_Type*                              this,
+                                        OSC_Settings_Event_Type                               settingsEvent)
+{
+  OSC_Settings_OnOffCallback_Default(this,settingsEvent);
+  if(this->status == OSC_CFG_WAVEFORM_MODE_NORMAL){
+    OSC_DisplayManager_WaveformMode = OSC_DisplayManager_WaveformMode_Normal;
+  } else {    /*this->status == OSC_CFG_WAVEFORM_MODE_SMOOTH*/
+    OSC_DisplayManager_WaveformMode = OSC_DisplayManager_WaveformMode_Smooth;
+  }
   return this->status;
 }

@@ -45,6 +45,11 @@ typedef uint8_t OSC_DisplayManager_LineNumber_Type;
 typedef uint8_t OSC_DisplayManager_CharPosition_Type;
 
 typedef enum {
+  OSC_DisplayManager_WaveformMode_Normal,
+  OSC_DisplayManager_WaveformMode_Smooth
+} OSC_DisplayManager_WaveformMode_Type;
+
+typedef enum {
   OSC_DisplayManager_Graphics_LineEffect_Normal,
   OSC_DisplayManager_Graphics_LineEffect_Dashed
 } OSC_DisplayManager_Graphics_LineEffect_Type;
@@ -74,6 +79,7 @@ typedef struct {
   OSC_DisplayManager_Waveform_DataType_Type   dataType;
 } OSC_DisplayManager_Waveform_Type;
 
+OSC_DisplayManager_WaveformMode_Type OSC_DisplayManager_WaveformMode;
 OSC_DisplayManager_Waveform_Type OSC_DisplayManager_Waveform_Channel_A[2];
 OSC_DisplayManager_Waveform_Type OSC_DisplayManager_Waveform_Channel_B[2];
 

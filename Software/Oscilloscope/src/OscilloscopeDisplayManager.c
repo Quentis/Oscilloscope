@@ -2,6 +2,7 @@
 
 static uint8_t   OSC_DM_DisplayMatrix[OSC_DM_MATRIX_ROW_COUNT][OSC_DM_MATRIX_COLUMN_COUNT];
 static uint32_t  OSC_DM_DisplayMatrix_DirtyBits[OSC_DM_MATRIX_DIRTYBIT_ROW_COUNT][OSC_DM_MATRIX_DIRTYBIT_COLUMN_COUNT];
+OSC_DisplayManager_WaveformMode_Type OSC_DisplayManager_WaveformMode = OSC_DisplayManager_WaveformMode_Normal;
 
 void OSC_DisplayManager_Init(void){
   uint8_t i,j;
@@ -42,7 +43,22 @@ OSC_DisplayManager_Err_Type OSC_DisplayManager_ClearScreen(void){
 OSC_DisplayManager_Err_Type OSC_DisplayManager_Graphics_UpdateWaveform(OSC_DisplayManager_Waveform_Type* waveform){
   uint32_t index;
   for (index = 0; index < OSC_DM_MATRIX_COLUMN_COUNT; ++index) {
+    if(waveform->dataPoints[0][index] == OSC_DM_GRAPHICS_INVALID_PIXEL_VALUE) continue;
+
     OSC_DM_MATRIX_SET_PIXEL(index,waveform->dataPoints[0][index]);
+    if(OSC_DisplayManager_WaveformMode == OSC_DisplayManager_WaveformMode_Smooth){
+      if(index > 0){
+        if(OSC_DM_ABS(waveform->dataPoints[0][index] - waveform->dataPoints[0][index - 1]) > 1){
+          OSC_DisplayManager_Graphics_Line_Type lineCoords;
+          lineCoords.pointFirst.x = index - 1;
+          lineCoords.pointFirst.y = waveform->dataPoints[0][index - 1];
+          lineCoords.pointSecond.x = index;
+          lineCoords.pointSecond.y = waveform->dataPoints[0][index];
+          OSC_DisplayManager_Graphics_DrawLine(&lineCoords,OSC_DisplayManager_Graphics_LineEffect_Normal);
+        }
+      }
+    }
+
     if(waveform->dataType == OSC_DisplayManager_Waveform_DataType_MinMax){
       OSC_DM_MATRIX_SET_PIXEL(index,waveform->dataPoints[1][index]);
     }
