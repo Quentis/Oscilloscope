@@ -29,21 +29,19 @@ OSC_DSP_StateMachine_Type  OSC_DSP_StateMachine = {
     OSC_DSP_TriggerSlope_RisingEdge,                /*triggerSlope*/                      /*UPDATE-FROM-CONFIG*/
     OSC_DSP_TriggerSource_Channel_A,                /*triggerSource*/                     /*UPDATE-FROM-CONFIG*/
     OSC_DSP_TriggerState_Disabled,                  /*triggerState*/                      /*COMPUTED*/
-    OSC_DSP_SAMPLE_RATE                            /*sampleRate*/                        /*UPDATE-FROM-CONFIG*/
+    OSC_DSP_SAMPLE_RATE                             /*sampleRate*/                        /*UPDATE-FROM-CONFIG*/
     /*FIXME: It is not used in version 1.0 --> The timer should be adjusted according to this*/
 };
 
 /*===================================== WAVEFORM PROPERTIES DEFINITIONS =====================================*/
 OSC_DSP_WaveformProperties_Type OSC_DSP_WaveformProperties = {
-    0,                                                 /*virtualTriggerPosition*/
-    0,                                                 /*triggerPositionOnDisplay*/
-    0,                                                 /*samplePerPixel*/
-    0,                                                 /*verticalScaleFactorNumerator*/
-    0,                                                 /*verticalScaleFactorDenominator*/
-    0,                                                 /*verticalOffsetInPixel*/
-    0,                                                 /*verticalOffsetIn_mV*/
-    OSC_DSP_DataProcessingMode_Normal,                 /*dataProcessingMode*/
-    0                                                  /*waveformMemoryIndex*/
+    0,                                      /*virtualTriggerPosition*/
+    0,                                      /*triggerPositionOnDisplay*/
+    0,                                      /*samplePerPixel*/
+    {0,0,0},                                /*channel_A:{verticalScaleFactorNumerator,verticalScaleFactorDenominator,verticalOffsetInPixel,verticalOffsetIn_mV}*/
+    {0,0,0},                                /*channel_B:{verticalScaleFactorNumerator,verticalScaleFactorDenominator,verticalOffsetInPixel,verticalOffsetIn_mV}*/
+    OSC_DSP_DataProcessingMode_Normal,      /*dataProcessingMode*/
+    0                                       /*waveformMemoryIndex*/
 };
 
 /*====================================== EXTERNAL FUNCTION DEFINITIONS ======================================*/
@@ -165,7 +163,7 @@ void OSC_DSP_WaveformProperties_Update(void){
   int32_t   timePerDivision;
   int32_t   horizontalOffsetInPixel;
   int32_t   voltagePerLSB;
-  int32_t   voltagePerDivision;
+  int32_t   voltagePerDivision_Channel_A,voltagePerDivision_Channel_B;
 
   sampleRate       = OSC_Settings_SampleRate_Object.valueSet[OSC_Settings_SampleRate_Object.currentIndex];                      /*sample/ms*/
   timePerDivision  = OSC_Settings_HorizontalResolution_Object.valueSet[OSC_Settings_HorizontalResolution_Object.currentIndex];  /*us/div*/
@@ -193,13 +191,18 @@ void OSC_DSP_WaveformProperties_Update(void){
         (OSC_Settings_TriggerPosition_Object.upperBound - OSC_Settings_TriggerPosition_Object.lowerBound);
 
   voltagePerLSB      = OSC_Settings_VoltagePerLSB_Object.value;
-  voltagePerDivision = OSC_Settings_VerticalResolution_Object.valueSet[OSC_Settings_VerticalResolution_Object.currentIndex];
+  voltagePerDivision_Channel_A = OSC_Settings_Channel_A_VerticalResolution_Object.valueSet[OSC_Settings_Channel_A_VerticalResolution_Object.currentIndex];
+  voltagePerDivision_Channel_B = OSC_Settings_Channel_B_VerticalResolution_Object.valueSet[OSC_Settings_Channel_B_VerticalResolution_Object.currentIndex];
 
-  OSC_DSP_WaveformProperties.verticalOffsetInPixel = OSC_Settings_VerticalOffset_Object.value;
+  OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalOffsetInPixel = OSC_Settings_Channel_A_VerticalOffset_Object.value;
+  OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalOffsetInPixel = OSC_Settings_Channel_B_VerticalOffset_Object.value;
 
-  OSC_DSP_WaveformProperties.verticalScaleFactorNumerator   = voltagePerLSB * OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
-  OSC_DSP_WaveformProperties.verticalScaleFactorDenominator = voltagePerDivision;
-  OSC_DSP_WaveformProperties.verticalOffsetIn_mV            = (OSC_DSP_WaveformProperties.verticalOffsetIn_mV * voltagePerDivision) / OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
+  OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalScaleFactorNumerator   = voltagePerLSB * OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
+  OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalScaleFactorDenominator = voltagePerDivision_Channel_A;
+  OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalOffsetIn_mV            = (OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalOffsetIn_mV * voltagePerDivision_Channel_A) / OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
+  OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalScaleFactorNumerator   = voltagePerLSB * OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
+  OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalScaleFactorDenominator = voltagePerDivision_Channel_B;
+  OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalOffsetIn_mV            = (OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalOffsetIn_mV * voltagePerDivision_Channel_B) / OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
 
   switch(OSC_Settings_DataProcessingMode_Object.optionID){
     case OSC_CFG_DATA_PROCESSING_MODE_NORMAL:
@@ -280,13 +283,13 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
 
       if(OSC_DSP_WaveformProperties.dataProcessingMode == OSC_DSP_DataProcessingMode_Peak){
         OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
-                           OSC_DSP_Waveform_VerticalAdjust((dataValue >> 16) & 0xFFFF);
+                           OSC_DSP_Waveform_VerticalAdjust((dataValue >> 16) & 0xFFFF,&OSC_DSP_WaveformProperties.channel_A_VerticalProperties);
         OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[1][displayIndex] =
-                           OSC_DSP_Waveform_VerticalAdjust(dataValue & 0xFFFF);
+                           OSC_DSP_Waveform_VerticalAdjust(dataValue & 0xFFFF,&OSC_DSP_WaveformProperties.channel_A_VerticalProperties);
         OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType = OSC_DisplayManager_Waveform_DataType_MinMax;
       } else {  /*OSC_DSP_WaveformProperties.dataProcessingMode can be OSC_DSP_DataProcessingMode_Normal and OSC_DSP_DataProcessingMode_Average*/
         OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
-                           OSC_DSP_Waveform_VerticalAdjust(dataValue);
+                           OSC_DSP_Waveform_VerticalAdjust(dataValue,&OSC_DSP_WaveformProperties.channel_A_VerticalProperties);
         OSC_DisplayManager_Waveform_Channel_A[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType =
                            OSC_DisplayManager_Waveform_DataType_Normal;
       }
@@ -302,13 +305,13 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
 
       if(OSC_DSP_WaveformProperties.dataProcessingMode == OSC_DSP_DataProcessingMode_Peak){
         OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
-                           OSC_DSP_Waveform_VerticalAdjust((dataValue >> 16) & 0xFFFF);
+                           OSC_DSP_Waveform_VerticalAdjust((dataValue >> 16) & 0xFFFF,&OSC_DSP_WaveformProperties.channel_B_VerticalProperties);
         OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[1][displayIndex] =
-                           OSC_DSP_Waveform_VerticalAdjust(dataValue & 0xFFFF);
+                           OSC_DSP_Waveform_VerticalAdjust(dataValue & 0xFFFF,&OSC_DSP_WaveformProperties.channel_B_VerticalProperties);
         OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType = OSC_DisplayManager_Waveform_DataType_MinMax;
       } else {  /*OSC_DSP_WaveformProperties.dataProcessingMode can be OSC_DSP_DataProcessingMode_Normal and OSC_DSP_DataProcessingMode_Average*/
         OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataPoints[0][displayIndex] =
-                           OSC_DSP_Waveform_VerticalAdjust(dataValue);
+                           OSC_DSP_Waveform_VerticalAdjust(dataValue,&OSC_DSP_WaveformProperties.channel_B_VerticalProperties);
         OSC_DisplayManager_Waveform_Channel_B[OSC_DSP_WaveformProperties.waveformMemoryIndex].dataType =
                            OSC_DisplayManager_Waveform_DataType_Normal;
       }
@@ -331,10 +334,10 @@ OSC_DSP_CalculationStatus_Type OSC_DSP_Waveform_Construct(void){
   }
 }
 
-int32_t OSC_DSP_Waveform_VerticalAdjust(int32_t rawData){
+int32_t OSC_DSP_Waveform_VerticalAdjust(int32_t rawData,OSC_DSP_WaveformVerticalProperties_Type* waveformVerticalProperties){
   int32_t data;
-  data = ((OSC_DSP_WaveformProperties.verticalScaleFactorNumerator * (rawData - OSC_DSP_RAW_DATA_ZERO_VALUE)) / OSC_DSP_WaveformProperties.verticalScaleFactorDenominator) +
-           OSC_DSP_WaveformProperties.verticalOffsetInPixel + OSC_DSP_ZERO_DATA_VERTICAL_PIXEL_COUNT;
+  data = ((waveformVerticalProperties->verticalScaleFactorNumerator * (rawData - OSC_DSP_RAW_DATA_ZERO_VALUE)) / waveformVerticalProperties->verticalScaleFactorDenominator) +
+           waveformVerticalProperties->verticalOffsetInPixel + OSC_DSP_ZERO_DATA_VERTICAL_PIXEL_COUNT;
   if(data < 0){
     data = 0;
     #ifdef OSC_LED_INDICATION_ACTIVE

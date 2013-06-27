@@ -97,6 +97,14 @@ typedef enum {
 } OSC_DSP_DataProcessingStatus_Type;
 
 typedef struct {
+  int32_t                              verticalScaleFactorNumerator;
+  int32_t                              verticalScaleFactorDenominator;
+  int32_t                              verticalOffsetInPixel;
+  int32_t                              verticalOffsetIn_mV;
+} OSC_DSP_WaveformVerticalProperties_Type;
+
+
+typedef struct {
   OSC_DSP_State_Type                      dataAcquisitionState;
   int32_t                                 firstDataPosition;
   int32_t                                 preTriggerMemoryLength;
@@ -111,15 +119,13 @@ typedef struct {
 } OSC_DSP_StateMachine_Type;
 
 typedef struct {
-  int32_t                              virtualTriggerPositionInData;
-  int32_t                              triggerPositionOnDisplay;
-  int32_t                              samplePerPixel;
-  int32_t                              verticalScaleFactorNumerator;
-  int32_t                              verticalScaleFactorDenominator;
-  int32_t                              verticalOffsetInPixel;
-  int32_t                              verticalOffsetIn_mV;
-  OSC_DSP_DataProcessingMode_Type      dataProcessingMode;
-  uint8_t                              waveformMemoryIndex;
+  int32_t                                      virtualTriggerPositionInData;
+  int32_t                                      triggerPositionOnDisplay;
+  int32_t                                      samplePerPixel;
+  OSC_DSP_WaveformVerticalProperties_Type      channel_A_VerticalProperties;
+  OSC_DSP_WaveformVerticalProperties_Type      channel_B_VerticalProperties;
+  OSC_DSP_DataProcessingMode_Type              dataProcessingMode;
+  uint8_t                                      waveformMemoryIndex;
 } OSC_DSP_WaveformProperties_Type;
 
 /*==================================== EXTERNAL VARIABLE DECLARATIONS =================================*/
@@ -140,7 +146,7 @@ void      OSC_DSP_StateMachine_Update(void);
 void      OSC_DSP_WaveformProperties_Update(void);
 void      OSC_DSP_StateMachine_Update(void);
 uint8_t   OSC_DSP_Waveform_GetLastUpdatedMemoryIndex(void);
-int32_t   OSC_DSP_Waveform_VerticalAdjust(int32_t rawData);
+int32_t   OSC_DSP_Waveform_VerticalAdjust(int32_t rawData,OSC_DSP_WaveformVerticalProperties_Type* waveformVerticalProperties);
 uint32_t  OSC_DSP_Waveform_CalculateSampleValue(
             OSC_DSP_Channel_Type              channel,
             int32_t                           startIndex,

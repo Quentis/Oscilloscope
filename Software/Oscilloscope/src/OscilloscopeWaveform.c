@@ -7,6 +7,7 @@ void OSC_Waveform_Display(OSC_Waveform_Event_Type waveformEvent){
   switch(waveformEvent){
     case OSC_Waveform_Event_Open:
       MTR_Alarm_Enable(MTR_ALARM_NAME_WAVEFORM_DISPLAY_UPDATE);
+      OSC_DSP_StartDataAcquisition(); /*This will update the DSP state machine with the new settings*/
       break;
     case OSC_Waveform_Event_Close:
       MTR_Alarm_Disable(MTR_ALARM_NAME_WAVEFORM_DISPLAY_UPDATE);
@@ -40,17 +41,34 @@ void OSC_Waveform_Display(OSC_Waveform_Event_Type waveformEvent){
       }
       break;
     case OSC_Waveform_Event_VerticalIncrease:
-      if(OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Resolution){
-        OSC_Settings_Modify(&OSC_Settings_VerticalResolution,OSC_Settings_Event_StepUpSingle);
-      } else {    /*OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Offset*/
-        OSC_Settings_Modify(&OSC_Settings_VerticalOffset,OSC_Settings_Event_StepUpSingle);
+      if(OSC_Settings_ChannelSelect_Object.status == OSC_CFG_CHANNEL_SELECT_CHANNEL_A_SELECTED){
+        if(OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Resolution){
+          OSC_Settings_Modify(&OSC_Settings_Channel_A_VerticalResolution,OSC_Settings_Event_StepUpSingle);
+        } else {    /*OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Offset*/
+          OSC_Settings_Modify(&OSC_Settings_Channel_A_VerticalOffset,OSC_Settings_Event_StepUpSingle);
+        }
+      } else if(OSC_Settings_ChannelSelect_Object.status == OSC_CFG_CHANNEL_SELECT_CHANNEL_B_SELECTED) {
+        if(OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Resolution){
+          OSC_Settings_Modify(&OSC_Settings_Channel_B_VerticalResolution,OSC_Settings_Event_StepUpSingle);
+        } else {    /*OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Offset*/
+          OSC_Settings_Modify(&OSC_Settings_Channel_B_VerticalOffset,OSC_Settings_Event_StepUpSingle);
+        }
       }
       break;
     case OSC_Waveform_Event_VerticalDecrease:
-      if(OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Resolution){
-        OSC_Settings_Modify(&OSC_Settings_VerticalResolution,OSC_Settings_Event_StepDownSingle);
-      } else {    /*OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Offset*/
-        OSC_Settings_Modify(&OSC_Settings_VerticalOffset,OSC_Settings_Event_StepDownSingle);
+      if(OSC_Settings_ChannelSelect_Object.status == OSC_CFG_CHANNEL_SELECT_CHANNEL_A_SELECTED){
+        if(OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Resolution){
+          OSC_Settings_Modify(&OSC_Settings_Channel_A_VerticalResolution,OSC_Settings_Event_StepDownSingle);
+        } else {    /*OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Offset*/
+          OSC_Settings_Modify(&OSC_Settings_Channel_A_VerticalOffset,OSC_Settings_Event_StepDownSingle);
+        }
+      } else if(OSC_Settings_ChannelSelect_Object.status == OSC_CFG_CHANNEL_SELECT_CHANNEL_B_SELECTED){
+        if(OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Resolution){
+          OSC_Settings_Modify(&OSC_Settings_Channel_B_VerticalResolution,OSC_Settings_Event_StepDownSingle);
+        } else {    /*OSC_Waveform_VerticalMode == OSC_Waveform_VerticalMode_Offset*/
+          OSC_Settings_Modify(&OSC_Settings_Channel_B_VerticalOffset,OSC_Settings_Event_StepDownSingle);
+      }
+
       }
       break;
     case OSC_Waveform_Event_TriggerLevelIncrease:

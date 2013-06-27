@@ -110,28 +110,28 @@
         (void*)&OSC_Settings_TriggerSlope_Object
     };
 
-/*======================================== VERTICAL RESOLUTION ========================================*/
-    OSC_Settings_IntegerDiscreteValue_Type OSC_Settings_VerticalResolution_valueSet[] = {500,1000,1500,2000,2500};
-    char* OSC_Settings_VerticalResolution_nameOfValues[] = {"0.5V/dv","1V/dv","1.5V/dv","2V/dv","2.5V/dv"};
+/*=================================== CHANNEL A VERTICAL RESOLUTION ===================================*/
+    OSC_Settings_IntegerDiscreteValue_Type OSC_Settings_Channel_A_VerticalResolution_valueSet[] = {500,1000,1500,2000,2500};
+    char* OSC_Settings_Channel_A_VerticalResolution_nameOfValues[] = {"0.5V/dv","1V/dv","1.5V/dv","2V/dv","2.5V/dv"};
 
-    OSC_Settings_IntegerDiscrete_Type OSC_Settings_VerticalResolution_Object = {
+    OSC_Settings_IntegerDiscrete_Type OSC_Settings_Channel_A_VerticalResolution_Object = {
         (OSC_Settings_IntegerDiscreteValue_Type*)
-        OSC_Settings_VerticalResolution_valueSet,           /*valueSet*/
+        OSC_Settings_Channel_A_VerticalResolution_valueSet, /*valueSet*/
         2,                                                  /*currentIndex*/
         5,                                                  /*length*/
         NULL,                                               /*callback*/
         (char** const)
-        OSC_Settings_VerticalResolution_nameOfValues,       /*nameOfValues*/
+        OSC_Settings_Channel_A_VerticalResolution_nameOfValues,       /*nameOfValues*/
         "VerticalRes"                                       /*name*/
     };
 
-    OSC_Settings_Type OSC_Settings_VerticalResolution = {
+    OSC_Settings_Type OSC_Settings_Channel_A_VerticalResolution = {
         OSC_settings_TypeInfo_IntegerDiscrete,
-        (void*)&OSC_Settings_VerticalResolution_Object
+        (void*)&OSC_Settings_Channel_A_VerticalResolution_Object
     };
 
-/*=========================================== VERTICAL OFFSET =========================================*/
-    OSC_Settings_IntegerContinuous_Type OSC_Settings_VerticalOffset_Object = {
+/*====================================== CHANNEL A VERTICAL OFFSET ====================================*/
+    OSC_Settings_IntegerContinuous_Type OSC_Settings_Channel_A_VerticalOffset_Object = {
         0,                    /*value*/
        -64,                   /*lowerBound*/
         64,                   /*upperBound*/
@@ -142,9 +142,46 @@
         "p"                   /*unitName*/
     };
 
-    OSC_Settings_Type OSC_Settings_VerticalOffset = {
+    OSC_Settings_Type OSC_Settings_Channel_A_VerticalOffset = {
         OSC_Settings_TypeInfo_IntegerContinuous,
-        (void*)&OSC_Settings_VerticalOffset_Object
+        (void*)&OSC_Settings_Channel_A_VerticalOffset_Object
+    };
+
+/*=================================== CHANNEL B VERTICAL RESOLUTION ===================================*/
+    OSC_Settings_IntegerDiscreteValue_Type OSC_Settings_Channel_B_VerticalResolution_valueSet[] = {500,1000,1500,2000,2500};
+    char* OSC_Settings_Channel_B_VerticalResolution_nameOfValues[] = {"0.5V/dv","1V/dv","1.5V/dv","2V/dv","2.5V/dv"};
+
+    OSC_Settings_IntegerDiscrete_Type OSC_Settings_Channel_B_VerticalResolution_Object = {
+        (OSC_Settings_IntegerDiscreteValue_Type*)
+        OSC_Settings_Channel_B_VerticalResolution_valueSet,           /*valueSet*/
+        2,                                                  /*currentIndex*/
+        5,                                                  /*length*/
+        NULL,                                               /*callback*/
+        (char** const)
+        OSC_Settings_Channel_B_VerticalResolution_nameOfValues,       /*nameOfValues*/
+        "VerticalRes"                                       /*name*/
+    };
+
+    OSC_Settings_Type OSC_Settings_Channel_B_VerticalResolution = {
+        OSC_settings_TypeInfo_IntegerDiscrete,
+        (void*)&OSC_Settings_Channel_B_VerticalResolution_Object
+    };
+
+    /*====================================== CHANNEL B VERTICAL OFFSET ====================================*/
+    OSC_Settings_IntegerContinuous_Type OSC_Settings_Channel_B_VerticalOffset_Object = {
+        0,                    /*value*/
+       -64,                   /*lowerBound*/
+        64,                   /*upperBound*/
+        1,                    /*incrementStepSingle*/
+        8,                    /*incrementStepMultiple*/
+        NULL,                 /*callback*/
+        "VertOffset",         /*name*/
+        "p"                   /*unitName*/
+    };
+
+    OSC_Settings_Type OSC_Settings_Channel_B_VerticalOffset = {
+        OSC_Settings_TypeInfo_IntegerContinuous,
+        (void*)&OSC_Settings_Channel_B_VerticalOffset_Object
     };
 
 /*########################################## VERTICAL MENU ############################################*/
@@ -152,8 +189,10 @@
     OSC_Menu_Element_Type* OSC_Menu_ElementList_VerticalMenu[] = {
         &OSC_Settings_TriggerLevel,
         &OSC_Settings_TriggerSlope,
-        &OSC_Settings_VerticalResolution,
-        &OSC_Settings_VerticalOffset
+        &OSC_Settings_Channel_A_VerticalResolution,
+        &OSC_Settings_Channel_A_VerticalOffset,
+        &OSC_Settings_Channel_B_VerticalResolution,
+        &OSC_Settings_Channel_B_VerticalOffset
     };
 
     OSC_Menu_Type OSC_Menu_Vertical = {

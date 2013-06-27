@@ -132,6 +132,7 @@ static void OSC_View_WaveformStateMachine(OSC_View_Event_Type event){
       OSC_Waveform_Display(OSC_Waveform_Event_SingleDataAcquisitionStart);
       break;
     case OSC_View_Event_VerticalMiddleClickDouble:
+      OSC_Waveform_Display(OSC_Waveform_Event_Close);
       OSC_View_NotificationOpen(event);
       break;
     case OSC_View_Event_VerticalUpClickDouble:

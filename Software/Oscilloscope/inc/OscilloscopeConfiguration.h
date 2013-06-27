@@ -73,13 +73,17 @@ OSC_Settings_OnOffCallback_WaveformMode(OSC_Settings_OnOff_Type*                
 
   extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_TriggerLevel_Object;
   extern OSC_Settings_OnOff_Type               OSC_Settings_TriggerSlope_Object;
-  extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_VerticalResolution_Object;
-  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_VerticalOffset_Object;
+  extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_Channel_A_VerticalResolution_Object;
+  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_Channel_A_VerticalOffset_Object;
+  extern OSC_Settings_IntegerDiscrete_Type     OSC_Settings_Channel_B_VerticalResolution_Object;
+  extern OSC_Settings_IntegerContinuous_Type   OSC_Settings_Channel_B_VerticalOffset_Object;
 
   extern OSC_Settings_Type OSC_Settings_TriggerLevel;
   extern OSC_Settings_Type OSC_Settings_TriggerSlope;
-  extern OSC_Settings_Type OSC_Settings_VerticalResolution;
-  extern OSC_Settings_Type OSC_Settings_VerticalOffset;
+  extern OSC_Settings_Type OSC_Settings_Channel_A_VerticalResolution;
+  extern OSC_Settings_Type OSC_Settings_Channel_A_VerticalOffset;
+  extern OSC_Settings_Type OSC_Settings_Channel_B_VerticalResolution;
+  extern OSC_Settings_Type OSC_Settings_Channel_B_VerticalOffset;
 
 /*########################################## VERTICAL MENU ############################################*/
 
