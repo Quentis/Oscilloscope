@@ -6,5 +6,6 @@
 #include "OscilloscopeLED.h"
 #include "OscilloscopeConfiguration.h"
 #include "OscilloscopeDisplayManager.h"
+#include "OscilloscopeWaveform.h"
 
 #endif /* OSCILLOSCOPESETTINGSCALLBACKS_H_ */

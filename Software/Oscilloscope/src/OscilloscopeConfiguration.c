@@ -116,13 +116,13 @@
 
     OSC_Settings_IntegerDiscrete_Type OSC_Settings_Channel_A_VerticalResolution_Object = {
         (OSC_Settings_IntegerDiscreteValue_Type*)
-        OSC_Settings_Channel_A_VerticalResolution_valueSet, /*valueSet*/
-        2,                                                  /*currentIndex*/
-        5,                                                  /*length*/
-        NULL,                                               /*callback*/
+        OSC_Settings_Channel_A_VerticalResolution_valueSet,                   /*valueSet*/
+        2,                                                                    /*currentIndex*/
+        5,                                                                    /*length*/
+        OSC_Settings_IntegerDiscreteCallback_Channel_B_VerticalResolution,    /*callback*/
         (char** const)
-        OSC_Settings_Channel_A_VerticalResolution_nameOfValues,       /*nameOfValues*/
-        "VerticalRes"                                       /*name*/
+        OSC_Settings_Channel_A_VerticalResolution_nameOfValues,               /*nameOfValues*/
+        "VertResChnA"                                                         /*name*/
     };
 
     OSC_Settings_Type OSC_Settings_Channel_A_VerticalResolution = {
@@ -133,13 +133,13 @@
 /*====================================== CHANNEL A VERTICAL OFFSET ====================================*/
     OSC_Settings_IntegerContinuous_Type OSC_Settings_Channel_A_VerticalOffset_Object = {
         0,                    /*value*/
-       -64,                   /*lowerBound*/
-        64,                   /*upperBound*/
-        1,                    /*incrementStepSingle*/
-        8,                    /*incrementStepMultiple*/
+       -7500,                 /*lowerBound*/
+        7500,                 /*upperBound*/
+        100,                  /*incrementStepSingle*/
+        1000,                 /*incrementStepMultiple*/
         NULL,                 /*callback*/
-        "VertOffset",         /*name*/
-        "p"                   /*unitName*/
+        "VertOffChnA",        /*name*/
+        "mV"                  /*unitName*/
     };
 
     OSC_Settings_Type OSC_Settings_Channel_A_VerticalOffset = {
@@ -153,13 +153,13 @@
 
     OSC_Settings_IntegerDiscrete_Type OSC_Settings_Channel_B_VerticalResolution_Object = {
         (OSC_Settings_IntegerDiscreteValue_Type*)
-        OSC_Settings_Channel_B_VerticalResolution_valueSet,           /*valueSet*/
-        2,                                                  /*currentIndex*/
-        5,                                                  /*length*/
-        NULL,                                               /*callback*/
+        OSC_Settings_Channel_B_VerticalResolution_valueSet,                   /*valueSet*/
+        2,                                                                    /*currentIndex*/
+        5,                                                                    /*length*/
+        OSC_Settings_IntegerDiscreteCallback_Channel_B_VerticalResolution,    /*callback*/
         (char** const)
-        OSC_Settings_Channel_B_VerticalResolution_nameOfValues,       /*nameOfValues*/
-        "VerticalRes"                                       /*name*/
+        OSC_Settings_Channel_B_VerticalResolution_nameOfValues,               /*nameOfValues*/
+        "VertResChnB"                                                         /*name*/
     };
 
     OSC_Settings_Type OSC_Settings_Channel_B_VerticalResolution = {
@@ -170,13 +170,13 @@
     /*====================================== CHANNEL B VERTICAL OFFSET ====================================*/
     OSC_Settings_IntegerContinuous_Type OSC_Settings_Channel_B_VerticalOffset_Object = {
         0,                    /*value*/
-       -64,                   /*lowerBound*/
-        64,                   /*upperBound*/
-        1,                    /*incrementStepSingle*/
-        8,                    /*incrementStepMultiple*/
+       -7500,                 /*lowerBound*/
+        7500,                 /*upperBound*/
+        100,                  /*incrementStepSingle*/
+        1000,                 /*incrementStepMultiple*/
         NULL,                 /*callback*/
-        "VertOffset",         /*name*/
-        "p"                   /*unitName*/
+        "VertOffChnB",        /*name*/
+        "mV"                  /*unitName*/
     };
 
     OSC_Settings_Type OSC_Settings_Channel_B_VerticalOffset = {

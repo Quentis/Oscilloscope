@@ -38,8 +38,8 @@ OSC_DSP_WaveformProperties_Type OSC_DSP_WaveformProperties = {
     0,                                      /*virtualTriggerPosition*/
     0,                                      /*triggerPositionOnDisplay*/
     0,                                      /*samplePerPixel*/
-    {0,0,0},                                /*channel_A:{verticalScaleFactorNumerator,verticalScaleFactorDenominator,verticalOffsetInPixel,verticalOffsetIn_mV}*/
-    {0,0,0},                                /*channel_B:{verticalScaleFactorNumerator,verticalScaleFactorDenominator,verticalOffsetInPixel,verticalOffsetIn_mV}*/
+    {0,0,0,0},                              /*channel_A:{verticalScaleFactorNumerator,verticalScaleFactorDenominator,verticalOffsetInPixel,verticalOffsetIn_mV}*/
+    {0,0,0,0},                              /*channel_B:{verticalScaleFactorNumerator,verticalScaleFactorDenominator,verticalOffsetInPixel,verticalOffsetIn_mV}*/
     OSC_DSP_DataProcessingMode_Normal,      /*dataProcessingMode*/
     0                                       /*waveformMemoryIndex*/
 };
@@ -194,15 +194,15 @@ void OSC_DSP_WaveformProperties_Update(void){
   voltagePerDivision_Channel_A = OSC_Settings_Channel_A_VerticalResolution_Object.valueSet[OSC_Settings_Channel_A_VerticalResolution_Object.currentIndex];
   voltagePerDivision_Channel_B = OSC_Settings_Channel_B_VerticalResolution_Object.valueSet[OSC_Settings_Channel_B_VerticalResolution_Object.currentIndex];
 
-  OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalOffsetInPixel = OSC_Settings_Channel_A_VerticalOffset_Object.value;
-  OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalOffsetInPixel = OSC_Settings_Channel_B_VerticalOffset_Object.value;
+  OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalOffsetIn_mV = OSC_Settings_Channel_A_VerticalOffset_Object.value;
+  OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalOffsetIn_mV = OSC_Settings_Channel_B_VerticalOffset_Object.value;
+  OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalOffsetInPixel = (OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalOffsetIn_mV * OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION) / voltagePerDivision_Channel_A;
+  OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalOffsetInPixel = (OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalOffsetIn_mV * OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION) / voltagePerDivision_Channel_B;
 
   OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalScaleFactorNumerator   = voltagePerLSB * OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
   OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalScaleFactorDenominator = voltagePerDivision_Channel_A;
-  OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalOffsetIn_mV            = (OSC_DSP_WaveformProperties.channel_A_VerticalProperties.verticalOffsetIn_mV * voltagePerDivision_Channel_A) / OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
   OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalScaleFactorNumerator   = voltagePerLSB * OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
   OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalScaleFactorDenominator = voltagePerDivision_Channel_B;
-  OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalOffsetIn_mV            = (OSC_DSP_WaveformProperties.channel_B_VerticalProperties.verticalOffsetIn_mV * voltagePerDivision_Channel_B) / OSC_DSP_WAVEFORM_PIXEL_PER_VERTICAL_DIVISION;
 
   switch(OSC_Settings_DataProcessingMode_Object.optionID){
     case OSC_CFG_DATA_PROCESSING_MODE_NORMAL:

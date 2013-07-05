@@ -36,20 +36,28 @@
 
 /*=================================== CALLBACK FUNCTION REFERENCES ====================================*/
 extern OSC_Settings_IntegerContinuousValue_Type
-OSC_Settings_IntegerContinuousCallback_BacklightIntensity(OSC_Settings_IntegerContinuous_Type*    this,
-                                                          OSC_Settings_Event_Type                 settingsEvent);
+OSC_Settings_IntegerContinuousCallback_BacklightIntensity(OSC_Settings_IntegerContinuous_Type*        this,
+                                                          OSC_Settings_Event_Type                     settingsEvent);
 
 extern OSC_Settings_OnOffValue_Type
-OSC_Settings_OnOffCallback_Channel_A_Status(OSC_Settings_OnOff_Type*                              this,
-                                            OSC_Settings_Event_Type                               settingsEvent);
+OSC_Settings_OnOffCallback_Channel_A_Status(OSC_Settings_OnOff_Type*                                  this,
+                                            OSC_Settings_Event_Type                                   settingsEvent);
 
 extern OSC_Settings_OnOffValue_Type
-OSC_Settings_OnOffCallback_Channel_B_Status(OSC_Settings_OnOff_Type*                              this,
-                                            OSC_Settings_Event_Type                               settingsEvent);
+OSC_Settings_OnOffCallback_Channel_B_Status(OSC_Settings_OnOff_Type*                                  this,
+                                            OSC_Settings_Event_Type                                   settingsEvent);
 
 extern OSC_Settings_OnOffValue_Type
-OSC_Settings_OnOffCallback_WaveformMode(OSC_Settings_OnOff_Type*                                  this,
-                                        OSC_Settings_Event_Type                                   settingsEvent);
+OSC_Settings_OnOffCallback_WaveformMode(OSC_Settings_OnOff_Type*                                      this,
+                                        OSC_Settings_Event_Type                                       settingsEvent);
+
+OSC_Settings_IntegerDiscreteIndex_Type
+OSC_Settings_IntegerDiscreteCallback_Channel_A_VerticalResolution(OSC_Settings_IntegerDiscrete_Type*  this,
+                                                                  OSC_Settings_Event_Type             settingsEvent);
+
+OSC_Settings_IntegerDiscreteIndex_Type
+OSC_Settings_IntegerDiscreteCallback_Channel_B_VerticalResolution(OSC_Settings_IntegerDiscrete_Type*  this,
+                                                                  OSC_Settings_Event_Type             settingsEvent);
 
 /*=====================================================================================================*/
 /*                                      HORIIZONTAL MENU ELEMENTS                                      */
